@@ -23,18 +23,14 @@ jobs:
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Sync dependencies
-        working-directory: personal-site
         run: uv sync --all-extras
 
       - name: Lint (ruff)
-        working-directory: personal-site
         run: uv run ruff check .
 
       - name: Type-check (mypy)
-        working-directory: personal-site
         run: uv run mypy app
 
       - name: Tests (pytest)
-        working-directory: personal-site
         run: uv run pytest
 
