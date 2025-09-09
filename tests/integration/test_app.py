@@ -28,3 +28,9 @@ def test_rss_feed():
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("application/rss+xml")
 
+
+def test_healthz():
+    r = client.get("/healthz")
+    assert r.status_code == 200
+    assert r.json() == {"status": "ok"}
+

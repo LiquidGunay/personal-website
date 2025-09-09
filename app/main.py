@@ -39,3 +39,8 @@ def feed() -> Response:
     return Response(content=xml, media_type="application/rss+xml")
 
 
+@app.get("/healthz")
+def healthz() -> dict[str, str]:
+    return {"status": "ok"}
+
+
