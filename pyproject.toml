@@ -1,0 +1,76 @@
+[project]
+name = "personal-site"
+version = "0.1.0"
+description = "Personal blog and portfolio using FastAPI + FastHTML"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "pydantic>=2.7",
+  "python-frontmatter>=1.1.0",
+  "markdown-it-py[plugins]>=3.0.0",
+  "mdurl>=0.1.2",
+  "pygments>=2.18.0",
+  "jinja2>=3.1.4",
+  "httpx>=0.27.0",
+  "starlette>=0.37",
+  "python-slugify>=8.0.4",
+  "typer>=0.12.3",
+  "orjson>=3.10.7",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2",
+  "pytest-asyncio>=0.23",
+  "mypy>=1.10",
+  "ruff>=0.5.6",
+  "types-PyYAML",
+  "anyio>=4.4.0",
+  "coverage[toml]>=7.6"
+]
+
+[tool.uv]
+dev-dependencies = [
+  "pytest>=8.2",
+  "pytest-asyncio>=0.23",
+  "mypy>=1.10",
+  "ruff>=0.5.6",
+  "types-PyYAML",
+  "anyio>=4.4.0",
+  "coverage[toml]>=7.6",
+]
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF"]
+target-version = "py312"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_return_any = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+no_implicit_optional = true
+strict_equality = true
+exclude = ["tests/"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+asyncio_mode = "auto"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+exclude = ["tests*", "scripts*", "content*"]
+
