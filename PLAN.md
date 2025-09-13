@@ -155,4 +155,85 @@ Conclusion: Markdown now; revisit DB if/when you need web editing, comments, adv
 4) Add RSS/sitemap and dark mode toggle
 5) Set up Railway project and connect GitHub for deploy
 
+## UI Plan (ui_plan)
+
+Design inspiration: clean, content-first aesthetic similar to Lilian Weng’s Lil’Log (PaperMod-like spacing/typography, narrow readable column, subtle accents). See reference: [Lil’Log](https://lilianweng.github.io/).
+
+### Navigation and Pages
+- Top nav tabs: About, Blog, Coursework. No separate “Posts” vs “Archive”.
+- Routes:
+  - `/` → About (landing page)
+  - `/blog` → Blog index + archive combined (year-grouped list; optional tag chips; pagination)
+  - `/blog/<slug>` → Post detail
+  - `/coursework` → Coursework visualization page
+  - Keep: `/feed.xml`, `/sitemap.xml`, `/robots.txt`; optional `/tags/<tag>` later
+- Mobile nav: simple disclosure menu; sticky header.
+- Brand: text wordmark; no logo for now.
+
+### Look & Feel
+- Layout: single column, ~740px content width; ample whitespace; strong vertical rhythm.
+- Typography: match Lil’Log (Inter), fallback to system stack; keep configurable via CSS var; readable monospace; 1.6–1.8 line-height.
+- Color: neutral grays + a single accent (blue/indigo). Default theme follows system (prefers-color-scheme); theme toggle available.
+- Components: subtle borders, focus/hover states; accessible skip-link.
+
+### FastHTML Architecture
+- `app/views/layout.py`: BaseLayout (head, meta, header/nav, footer, theme toggle)
+- `app/views/components.py`: NavBar, Footer, PostCard, TagPill, Paginator, Hero, Section, Callout, ThemeToggle
+- `app/views/pages_about.py`: AboutPage
+- `app/views/pages_blog.py`: BlogIndexPage, PostPage
+- `app/views/pages_coursework.py`: CourseworkPage
+- Wire routes in `app/main.py`; content via `app/services/content.py`.
+
+### Blog Index (Posts + Archive on one page)
+- Hero/intro at top with short tagline and RSS link.
+- Recent posts list grouped by year; “Older posts” anchor scrolls to archive section on same page.
+- Optional tag filter chips (progressive enhancement, no heavy JS).
+
+### About Page (Landing `/`)
+- Hero with avatar, name, one-liner.
+- Planned elements: QuoteCarousel (rotating favorite quotes), FeaturedPostLink, optional Chatbot placeholder (flagged off by default). Content TBD for now.
+- Source from `content/pages/about.md` (Markdown) rendered through the existing pipeline; allow small inline components like Callout.
+
+### Coursework Page (`/coursework`)
+- For now: page shell only; visualization content TBD.
+- Brainstorm ideas (to pick later):
+  - Grouped vs stacked bars by subject, segmented by level/status
+  - Swimlane timeline by term/year (per-subject rows)
+  - Treemap by subject → course count or credit hours
+  - Sunburst: subject → level → status
+  - Heatmap: term on x, subject on y, count/intensity
+  - Beeswarm/dot plot: distribution by year/level
+- Future implementation: Python-first via Altair → Vega-Lite JSON; embed with `vega-embed` only on this page; provide no-JS fallback table.
+
+### UI Libraries and Assets
+- Baseline CSS: either tiny classless CSS (e.g., Pico.css) or Open Props tokens + ~100 lines of custom CSS in `app/static/base.css` to achieve PaperMod-like spacing/typography.
+- Icons: Tabler Icons (inline SVGs) for nav and UI glyphs.
+- Syntax highlighting: Pygments styles mapped to light/dark themes.
+
+### Accessibility & Performance
+- Color contrast AA/AAA where feasible; visible focus states; skip-links; semantic landmarks.
+- Ship zero JS by default; load `vega-embed` only on `/coursework`.
+- Images `loading="lazy"`, width/height set; responsive typography; avoid heavy webfonts unless necessary.
+
+### SEO & Meta
+- Per-page titles and descriptions; OpenGraph/Twitter images; canonical URLs; `noindex` for drafts.
+
+### Content Authoring
+- Posts at `content/posts/<slug>/index.md` (unchanged).
+- About at `content/pages/about.md`.
+- Coursework data at `content/coursework/data.yaml`.
+
+### Implementation Steps
+1) Create FastHTML components/pages listed above; wire routes in `app/main.py`.
+2) Establish baseline CSS and theme toggle in `app/static/base.css`.
+3) Build `/blog` with year grouping and optional tag chips; keep archive on same page.
+4) Render `/` from `about.md` with hero and planned sections (placeholders).
+5) Add `/coursework` shell and capture visualization ideas; defer charts to later.
+
+### Open Questions
+- Accent color preference?
+- About: provide avatar asset and 3–5 quotes; which featured post to link? Any chatbot vendor/approach if/when we add it?
+- Coursework: confirm preferred visualization direction and data source format.
+- Logo: none for now (revisit later if branding changes).
+
 

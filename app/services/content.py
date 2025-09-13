@@ -13,6 +13,7 @@ from pygments.formatters import HtmlFormatter  # type: ignore[import-untyped]
 
 
 CONTENT_DIR = Path("content/posts")
+PAGES_DIR = Path("content/pages")
 
 
 md = MarkdownIt("commonmark").use(footnote_plugin).use(tasklists_plugin)
@@ -30,6 +31,14 @@ class Post:
     updated: datetime | None
     cover_image: str | None
     html: str
+
+
+@dataclass
+class Page:
+    title: str
+    html: str
+    featured_slug: str | None = None
+    quotes: list[str] | None = None
 
 
 def _parse_date(value: str | datetime | None) -> datetime | None:
@@ -97,5 +106,19 @@ def get_post_by_slug(slug: str) -> Post | None:
 def syntax_highlight_css() -> str:
     css: str = HtmlFormatter(style="github-dark").get_style_defs(".codehilite")
     return css
+
+
+def get_page(slug: str) -> Page | None:
+    """Load a simple Markdown page from content/pages/<slug>.md with optional frontmatter title."""
+    path = PAGES_DIR / f"{slug}.md"
+    if not path.exists():
+        return None
+    fm = frontmatter.load(path)
+    title = fm.get("title") or slug.capitalize()
+    html = md.render(fm.content)
+    featured_slug = fm.get("featured_slug")
+    quotes_list = fm.get("quotes") or []
+    quotes = list(quotes_list) if isinstance(quotes_list, (list, tuple)) else []
+    return Page(title=title, html=html, featured_slug=featured_slug, quotes=quotes)
 
 

@@ -5,10 +5,10 @@ from app.main import app
 client = TestClient(app)
 
 
-def test_home_page():
+def test_home_about_page():
     r = client.get("/")
     assert r.status_code == 200
-    assert "Latest posts" in r.text
+    assert "About" in r.text
 
 
 def test_blog_index():
@@ -33,4 +33,10 @@ def test_healthz():
     r = client.get("/healthz")
     assert r.status_code == 200
     assert r.json() == {"status": "ok"}
+
+
+def test_coursework_page():
+    r = client.get("/coursework")
+    assert r.status_code == 200
+    assert "Coursework" in r.text
 

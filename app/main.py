@@ -6,7 +6,13 @@ from starlette.staticfiles import StaticFiles
 
 from .services.content import get_post_by_slug, list_posts
 from .services.rss import render_rss
-from .views.pages import render_blog_index_page, render_home_page, render_post_page
+from .views.pages import (
+    render_about_page,
+    render_blog_index_page,
+    render_coursework_page,
+    render_home_page,
+    render_post_page,
+)
 
 app = FastAPI()
 
@@ -15,8 +21,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.get("/", response_class=HTMLResponse)
 def home() -> HTMLResponse:
-    posts = list_posts(limit=10)
-    return HTMLResponse(render_home_page(posts))
+    return HTMLResponse(render_about_page())
 
 
 @app.get("/blog", response_class=HTMLResponse)
@@ -31,6 +36,11 @@ def blog_post(slug: str) -> HTMLResponse:
     if post is None:
         raise HTTPException(status_code=404, detail="Post not found")
     return HTMLResponse(render_post_page(post))
+
+
+@app.get("/coursework", response_class=HTMLResponse)
+def coursework() -> HTMLResponse:
+    return HTMLResponse(render_coursework_page())
 
 
 @app.get("/feed.xml")
