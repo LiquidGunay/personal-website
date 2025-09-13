@@ -34,20 +34,20 @@ def _layout(title: str, body: str) -> str:
       <small>© {datetime.now().year}</small>
     </footer>
     <script>
-      (function(){
+      (function(){{
         var root = document.documentElement;
         var stored = localStorage.getItem('theme');
-        if (stored === 'dark') { root.dataset.theme = 'dark'; }
-        if (stored === 'light') { root.dataset.theme = 'light'; }
+        if (stored === 'dark') {{ root.dataset.theme = 'dark'; }}
+        if (stored === 'light') {{ root.dataset.theme = 'light'; }}
         var btn = document.getElementById('theme-toggle');
-        if (btn) {
-          btn.addEventListener('click', function(){
+        if (btn) {{
+          btn.addEventListener('click', function(){{
             var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
             root.dataset.theme = next;
             localStorage.setItem('theme', next);
-          });
-        }
-      })();
+          }});
+        }}
+      }})();
     </script>
   </body>
 </html>
@@ -128,17 +128,17 @@ def render_about_page() -> str:
       {body_md}
     </section>
     <script>
-      (function(){
+      (function(){{
         var box = document.querySelector('.quotes');
         if(!box) return;
         var quotes = box.querySelectorAll('blockquote');
         var i = 0;
-        setInterval(function(){
+        setInterval(function(){{
           quotes[i].style.display='none';
           i = (i+1)%quotes.length;
           quotes[i].style.display='block';
-        }, 5000);
-      })();
+        }}, 5000);
+      }})();
     </script>
     """
     return _layout("About", body)

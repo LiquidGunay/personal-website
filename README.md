@@ -22,4 +22,12 @@
 ### Tests
 - `uv run pytest`
 
+### Git hooks (pre-push)
+- Enable repo-local hooks so tests run before pushing:
+  - `git config core.hooksPath .githooks`
+  - Ensure executable: `chmod +x .githooks/pre-push scripts/prepush.sh`
+- The pre-push hook:
+  - Blocks on `pytest` failures
+  - Runs `ruff` and `mypy` in warn-only mode
+
 
