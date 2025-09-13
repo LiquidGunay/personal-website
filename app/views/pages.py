@@ -6,10 +6,11 @@ from datetime import datetime
 from ..services.content import Page, Post, list_posts, syntax_highlight_css
 
 
-def _layout(title: str, body: str) -> str:
+def _layout(title: str, body: str, theme: str | None = None, current_path: str = "/") -> str:
+    theme_attr = f" data-theme=\"{theme}\"" if theme else ""
     return f"""
 <!doctype html>
-<html lang=\"en\">
+<html lang=\"en\"{theme_attr}>
   <head>
     <meta charset=\"utf-8\" />
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
@@ -18,13 +19,12 @@ def _layout(title: str, body: str) -> str:
     <style>{syntax_highlight_css()}</style>
   </head>
   <body>
-    <a class="skip" href="#content">Skip to content</a>
     <header>
       <nav>
         <a href=\"/\">About</a>
         <a href=\"/blog\">Blog</a>
         <a href=\"/coursework\">Coursework</a>
-        <button id=\"theme-toggle\" aria-label=\"Toggle theme\">🌓</button>
+        <a id=\"theme-toggle\" aria-label=\"Toggle theme\" href=\"/toggle-theme?next={current_path}\">🌓</a>
       </nav>
     </header>
     <main id=\"content\">
@@ -33,28 +33,12 @@ def _layout(title: str, body: str) -> str:
     <footer>
       <small>© {datetime.now().year}</small>
     </footer>
-    <script>
-      (function(){{
-        var root = document.documentElement;
-        var stored = localStorage.getItem('theme');
-        if (stored === 'dark') {{ root.dataset.theme = 'dark'; }}
-        if (stored === 'light') {{ root.dataset.theme = 'light'; }}
-        var btn = document.getElementById('theme-toggle');
-        if (btn) {{
-          btn.addEventListener('click', function(){{
-            var next = root.dataset.theme === 'dark' ? 'light' : 'dark';
-            root.dataset.theme = next;
-            localStorage.setItem('theme', next);
-          }});
-        }}
-      }})();
-    </script>
   </body>
 </html>
 """
 
 
-def render_home_page(posts: Iterable[Post]) -> str:
+def render_home_page(posts: Iterable[Post], theme: str | None = None, current_path: str = "/") -> str:
     items = "\n".join(
         (
             f"<li><a href=\"/blog/{p.slug}\">{p.title}</a> "
@@ -69,10 +53,10 @@ def render_home_page(posts: Iterable[Post]) -> str:
       <ul>{items}</ul>
     </section>
     """
-    return _layout("Home", body)
+    return _layout("Home", body, theme=theme, current_path=current_path)
 
 
-def render_about_page() -> str:
+def render_about_page(theme: str | None = None, current_path: str = "/") -> str:
     # Try to load a markdown page if provided later
     page: Page | None = None
     try:
@@ -92,11 +76,16 @@ def render_about_page() -> str:
             "Simplicity is prerequisite for reliability.",
             "Programs must be written for people to read.",
         ]
-    quotes_parts: list[str] = []
-    for idx, q in enumerate(quotes_list):
-        style = "" if idx == 0 else ' style="display:none"'
-        quotes_parts.append(f"<blockquote{style}>“{q}”</blockquote>")
-    quotes_html = "".join(quotes_parts)
+    _slides: list[str] = []
+    for _q in quotes_list:
+        _slides.append(f"<div class=\"quote-slide\"><blockquote>“{_q}”</blockquote></div>")
+    quotes_html = (
+        "<div class=\"quote-tile\">"
+        + "<button class=\"quote-nav prev\" aria-label=\"Previous quote\">‹</button>"
+        + f"<div class=\"quote-track\">{''.join(_slides)}</div>"
+        + "<button class=\"quote-nav next\" aria-label=\"Next quote\">›</button>"
+        + "</div>"
+    )
 
     # Featured: prefer frontmatter featured_slug; fallback to latest
     featured = None
@@ -124,27 +113,36 @@ def render_about_page() -> str:
       </div>
     </section>
     <section>
-      <div class=\"quotes\" data-rotate=\"1\">{quotes_html}</div>
+      <div class=\"quotes\">{quotes_html}</div>
       {body_md}
     </section>
     <script>
       (function(){{
-        var box = document.querySelector('.quotes');
-        if(!box) return;
-        var quotes = box.querySelectorAll('blockquote');
-        var i = 0;
-        setInterval(function(){{
-          quotes[i].style.display='none';
-          i = (i+1)%quotes.length;
-          quotes[i].style.display='block';
-        }}, 5000);
+        var tile = document.querySelector('.quote-tile');
+        if(!tile) return;
+        var track = tile.querySelector('.quote-track');
+        var slides = tile.querySelectorAll('.quote-slide');
+        var idx = 0;
+        function go(n){{
+          idx = (n + slides.length) % slides.length;
+          track.style.transform = 'translateX(' + (-idx * 100) + '%)';
+        }}
+        var timer = setInterval(function(){{ go(idx+1); }}, 6000);
+        tile.addEventListener('mouseenter', function(){{ clearInterval(timer); }});
+        tile.addEventListener('mouseleave', function(){{ timer = setInterval(function(){{ go(idx+1); }}, 6000); }});
+        var prev = tile.querySelector('.quote-nav.prev');
+        var next = tile.querySelector('.quote-nav.next');
+        if (prev) prev.addEventListener('click', function(){{ go(idx-1); }});
+        if (next) next.addEventListener('click', function(){{ go(idx+1); }});
+        track.style.width = (slides.length * 100) + '%';
+        go(0);
       }})();
     </script>
     """
-    return _layout("About", body)
+    return _layout("About", body, theme=theme, current_path=current_path)
 
 
-def render_blog_index_page(posts: Iterable[Post]) -> str:
+def render_blog_index_page(posts: Iterable[Post], theme: str | None = None, current_path: str = "/") -> str:
     # Group by year
     groups: dict[int, list[Post]] = {}
     for p in posts:
@@ -170,10 +168,10 @@ def render_blog_index_page(posts: Iterable[Post]) -> str:
       {''.join(sections)}
     </section>
     """
-    return _layout("Blog", body)
+    return _layout("Blog", body, theme=theme, current_path=current_path)
 
 
-def render_post_page(post: Post) -> str:
+def render_post_page(post: Post, theme: str | None = None, current_path: str = "/") -> str:
     body = f"""
     <article>
       <h1>{post.title}</h1>
@@ -181,16 +179,16 @@ def render_post_page(post: Post) -> str:
       <div class=\"post\">{post.html}</div>
     </article>
     """
-    return _layout(post.title, body)
+    return _layout(post.title, body, theme=theme, current_path=current_path)
 
 
-def render_coursework_page() -> str:
+def render_coursework_page(theme: str | None = None, current_path: str = "/") -> str:
     body = """
     <section>
       <h1>Coursework</h1>
       <p>Visualization ideas coming soon. Brainstorm: grouped/stacked bars, timelines, treemap, sunburst, heatmap, beeswarm.</p>
     </section>
     """
-    return _layout("Coursework", body)
+    return _layout("Coursework", body, theme=theme, current_path=current_path)
 
 
