@@ -17,6 +17,22 @@
 - **Container**: None in v1 (Railway buildpacks/Nixpacks); Docker optional later for portability
 - **Hosting**: Railway for v1; optional Fly.io later. Domain via any registrar; DNS to hosting provider.
 
+## Implementation Status (v1)
+
+- [x] Routes: `/` (About), `/blog`, `/blog/<slug>`, `/coursework`, `/feed.xml`
+- [x] Blog index: combined index+archive with year grouping and tag chips
+- [x] About page: featured post link (frontmatter), quotes slider (autoplay, nav, tile)
+- [x] Theme: server-side cookie toggle, `<html data-theme="...">`, CSS variables
+- [x] Baseline CSS: typography, spacing, tile, nav; Pygments injection
+- [x] Content pipeline: Markdown + frontmatter for posts and pages
+- [x] Tests: integration coverage for routes, RSS, quotes, theme; pre-push hook
+- [ ] Coursework data model (`content/coursework/data.yaml`)
+- [ ] Coursework visualization (Altair → Vega-Lite embed + no-JS fallback table)
+- [ ] About: real content (avatar asset, quotes list, featured post selection)
+- [ ] Blog: optional tag filter UX (progressive enhancement)
+- [ ] SEO polish (OG images automation, canonical review)
+- [ ] Analytics (later: Umami/Plausible per PLAN)
+
 ### Content Model (Markdown-first)
 - **Location**: `content/posts/<slug>/index.md` with optional media alongside
 - **Frontmatter** (min): `title`, `slug`, `date`, `summary`, `tags`, `draft`, `updated`, `cover_image`
@@ -30,15 +46,13 @@
   - `/sitemap.xml`, `/robots.txt`
 - **Search**: not in v1; future: prebuilt Lunr index (opt-in, tiny JS)
 
-### Tradeoffs: Markdown vs DB-backed CMS
-- **Markdown (chosen for v1)**
-  - Pros: simple authoring in git, versioning, zero infra, fully local/offline, easy review via PRs, predictable builds
-  - Cons: limited editorial tooling (no WYSIWYG/admin), heavy taxonomy/queries require building indices, no multi-user workflow
-- **DB-backed CMS** (headless or traditional)
-  - Pros: richer querying (by tags/date), multi-author workflows, scheduling/drafts, web editor, future comments/auth fit better
-  - Cons: introduces infra (DB, migrations, backups), auth/security surface, more moving parts; overkill for solo v1
+## Next Tasks
 
-Conclusion: Markdown now; revisit DB if/when you need web editing, comments, advanced querying, or multi-user.
+1) Define coursework data file `content/coursework/data.yaml` and render a server-side table
+2) Embed Vega-Lite chart via Altair on `/coursework` with no-JS fallback
+3) Fill About content (avatar, finalized quotes, featured post)
+4) Optional tag filter behavior on `/blog` (progressive enhancement)
+5) SEO polish and later analytics integration (per hosting/privacy preference)
 
 ### RSS: What and Why
 - **Utility**: Lets readers and aggregators subscribe; enables cross-posting (e.g., dev.to, Medium import), newsletter tools, and discoverability.
@@ -132,19 +146,6 @@ Conclusion: Markdown now; revisit DB if/when you need web editing, comments, adv
 
 ### Notes on Minimal JS
 - Prefer server-rendered pages. Only ship vendor JS per page when charts are present. No SPA runtime.
-
----
-
-## Explanations you asked for
-
-### Markdown vs DB-backed CMS (summary)
-- Markdown fits a code-first, git-based workflow with minimal infra and cost. A DB adds operational overhead but unlocks web editing, user content, and complex queries.
-
-### RSS utility (summary)
-- Enables readers/aggregators to subscribe, supports cross-post/import elsewhere, and improves distribution with negligible maintenance.
-
-### Downsides of iframes (summary)
-- Heavier than inline embeds, isolated styling, limited SEO for framed content, and cross-document messaging if you need interactions. They are ideal when isolation and simplicity outweigh these costs (e.g., live Marimo apps).
 
 ---
 
