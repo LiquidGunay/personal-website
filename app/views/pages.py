@@ -6,8 +6,17 @@ from datetime import datetime
 from ..services.content import Page, Post, list_posts, syntax_highlight_css
 
 
-def _layout(title: str, body: str, theme: str | None = None, current_path: str = "/") -> str:
+def _layout(
+    title: str,
+    body: str,
+    theme: str | None = None,
+    current_path: str = "/",
+    *,
+    body_class: str = "",
+    extra_head: str = "",
+) -> str:
     theme_attr = f" data-theme=\"{theme}\"" if theme else ""
+    class_attr = f" class=\"{body_class}\"" if body_class else ""
     return f"""
 <!doctype html>
 <html lang=\"en\"{theme_attr}>
@@ -16,9 +25,10 @@ def _layout(title: str, body: str, theme: str | None = None, current_path: str =
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
     <title>{title}</title>
     <link rel=\"stylesheet\" href=\"/static/base.css\" />
+    {extra_head}
     <style>{syntax_highlight_css()}</style>
   </head>
-  <body>
+  <body{class_attr}>
     <header>
       <nav>
         <a href=\"/\">About</a>
@@ -204,5 +214,12 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
     <script src=\"https://cdn.jsdelivr.net/npm/d3@7\"></script>
     <script src=\"/static/coursework.js\"></script>
     """
-    return _layout("Coursework", body, theme=theme, current_path=current_path)
+    return _layout(
+        "Coursework",
+        body,
+        theme=theme,
+        current_path=current_path,
+        body_class="wide",
+        extra_head='<link rel="stylesheet" href="/static/coursework.css" />',
+    )
 

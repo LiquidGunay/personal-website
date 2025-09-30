@@ -12,23 +12,11 @@
     ['Other', '#64748b'],
   ]);
 
-  const style = document.createElement('style');
-  style.textContent = `
-    .cw { max-width: min(1300px, 95vw); margin: clamp(2rem, 5vw, 4.5rem) auto; display: flex; flex-direction: column; gap: clamp(1.5rem, 3vw, 2.5rem); }
-    .cw figure { background: var(--tile); border-radius: 1.2rem; padding: clamp(1.2rem, 2vw, 2rem); box-shadow: 0 22px 48px color-mix(in oklab, var(--fg) 10%, transparent); display: flex; flex-direction: column; gap: 1rem; }
-    .cw figure h2 { margin: 0; font-size: clamp(1.25rem, 1.2vw + 1rem, 1.6rem); }
-    .cw figure p { margin: 0; font-size: clamp(0.95rem, 0.4vw + 0.85rem, 1.05rem); color: color-mix(in oklab, var(--fg) 85%, var(--bg) 15%); }
-    .cw .viz-canvas { position: relative; width: 100%; min-height: clamp(520px, 68vh, 880px); }
-    .cw .viz-canvas svg { width: 100%; height: 100%; display: block; }
-    .cw .viz-canvas svg text { font-family: var(--font-sans); fill: currentColor; }
-    .cw .viz-canvas svg .node-label { font-size: clamp(0.66rem, 0.25vw + 0.58rem, 0.85rem); letter-spacing: 0.01em; }
-    .cw .viz-canvas svg .link { fill: none; stroke: color-mix(in oklab, var(--fg) 22%, transparent); stroke-width: 1.2; }
-    .cw .viz-canvas svg .node circle { stroke: color-mix(in oklab, var(--bg) 35%, transparent); stroke-width: 1.2; }
-    .cw .viz-canvas svg .node.dimmed { opacity: 0.15; }
-    .cw .viz-canvas svg .link.dimmed { opacity: 0.08; }
-    .cw-tooltip { position: absolute; pointer-events: none; background: color-mix(in oklab, var(--bg) 86%, #000 14%); color: var(--fg); border: 1px solid color-mix(in oklab, var(--border) 60%, transparent); padding: .55rem .7rem; border-radius: .6rem; font-size: .85rem; max-width: 20rem; box-shadow: 0 16px 40px color-mix(in oklab, var(--fg) 8%, transparent); display: none; z-index: 5; line-height: 1.4; }
-  `;
-  document.head.appendChild(style);
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const explicitTheme = document.documentElement.dataset.theme;
+  const darkMode = explicitTheme === 'dark' || (!explicitTheme && prefersDark);
+  const surfaceColour = darkMode ? '#1f2937' : '#f8fafc';
+  const borderColour = darkMode ? 'rgba(148, 163, 184, 0.5)' : 'rgba(15, 23, 42, 0.18)';
 
   fetch('/static/courses.json', { cache: 'no-store' })
     .then((response) => response.json())
@@ -43,10 +31,49 @@
     const tooltip = createTooltip(mount);
 
     const radialEl = mount.querySelector('[data-viz="radial"]');
-    if (radialEl) renderRadialTree(radialEl, data.hierarchy, courseMap, tooltip);
+    if (radialEl) {
+      let lastWidth = 0;
+      const measureWidth = () =>
+        Math.round(radialEl.getBoundingClientRect().width || radialEl.clientWidth || 0);
+      const render = () => {
+        const width = measureWidth();
+        if (!width) return;
+        renderRadialTree(radialEl, data.hierarchy, courseMap, tooltip, width);
+        lastWidth = width;
+      };
+      render();
+
+      if (typeof ResizeObserver !== 'undefined') {
+        const observer = new ResizeObserver((entries) => {
+          const entry = entries[0];
+          if (!entry) return;
+          const width = measureWidth();
+          if (!width || Math.abs(width - lastWidth) < 8) return;
+          window.requestAnimationFrame(() => render());
+        });
+        observer.observe(radialEl);
+      } else {
+        window.addEventListener(
+          'resize',
+          debounce(() => {
+            const width = measureWidth();
+            if (!width || Math.abs(width - lastWidth) < 8) return;
+            render();
+          }, 200),
+        );
+      }
+    }
 
     const fallbackEl = document.getElementById('cw-fallback');
     if (fallbackEl) fallbackEl.innerHTML = buildFallbackList(data.hierarchy);
+  }
+
+  function debounce(fn, wait) {
+    let t;
+    return () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(() => fn(), wait);
+    };
   }
 
   function buildCourseMap(tree) {
@@ -133,11 +160,12 @@
     return [cx, cy, Math.max(span, diameter / 3)];
   }
 
-  function renderRadialTree(container, hierarchyData, courseMap, tooltip) {
+  function renderRadialTree(container, hierarchyData, courseMap, tooltip, measuredWidth) {
     container.innerHTML = '';
+    hideTooltip(tooltip);
 
-    const bounds = container.getBoundingClientRect();
-    const baseSize = Math.max(bounds.width, container.clientWidth, 880);
+    const baseSize = computeBaseSize(container, measuredWidth);
+
     const margin = 90;
     const outerRadius = baseSize / 2;
     const innerRadius = outerRadius - margin;
@@ -161,6 +189,9 @@
       .select(container)
       .append('svg')
       .attr('viewBox', `${-outerRadius} ${-outerRadius} ${diameter} ${diameter}`)
+      .attr('width', diameter)
+      .attr('height', diameter)
+      .attr('preserveAspectRatio', 'xMidYMid meet')
       .attr('role', 'img')
       .attr('aria-label', 'Radial coursework map with zoomable clusters');
 
@@ -173,10 +204,7 @@
       .data(root.links())
       .join('path')
       .attr('class', 'link')
-      .attr(
-        'stroke',
-        (d) => `color-mix(in oklab, ${colourFor(topCategory(d.target))} 35%, var(--bg) 65%)`
-      )
+      .attr('stroke', (d) => blendWithSurface(colourFor(topCategory(d.target)), 0.45))
       .attr(
         'd',
         d3
@@ -198,14 +226,15 @@
       .append('circle')
       .attr('r', (d) => nodeRadius(d))
       .attr('fill', (d) => {
-        if (d.depth === 0) return colourFor('Other');
+        if (d.depth === 0) return blendWithSurface('#64748b', 0.4);
         const cat = topCategory(d);
         const base = colourFor(cat);
         const t = d.children ? (d.depth === 1 ? 0.52 : 0.7) : 0.88;
-        return d3.interpolateLab('#f8fafc', base)(t);
+        return blendWithSurface(base, t);
       })
       .attr('fill-opacity', (d) => (d.children ? 0.95 : 1))
       .style('cursor', (d) => (d.children ? 'pointer' : 'default'))
+      .attr('stroke', borderColour)
       .on('click', (event, d) => {
         event.stopPropagation();
         if (focus === d) return;
@@ -282,6 +311,27 @@
       node.classed('dimmed', (d) => !active.has(d));
       link.classed('dimmed', (d) => !active.has(d.source) && !active.has(d.target));
     }
+    return baseSize;
+  }
+
+  function computeBaseSize(container, measuredWidth = 0) {
+    const rect = container.getBoundingClientRect();
+    const measured = Math.max(
+      measuredWidth,
+      rect.width || 0,
+      container.clientWidth || 0,
+      mount.clientWidth || 0,
+    );
+    const viewport = typeof window !== 'undefined' ? window.innerWidth || 0 : 0;
+    const fallback = viewport
+      ? Math.max(Math.min(viewport - 80, 1150), 320)
+      : 960;
+    const candidate = Math.max(measured, fallback);
+    return Math.max(Math.min(candidate, 1300), viewport < 640 ? 320 : 560);
+  }
+
+  function blendWithSurface(color, weight) {
+    return d3.interpolateLab(surfaceColour, color)(weight);
   }
 
   function buildFallbackList(tree) {
