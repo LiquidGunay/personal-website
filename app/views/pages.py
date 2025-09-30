@@ -1,9 +1,24 @@
 from __future__ import annotations
 
+import hashlib
 from collections.abc import Iterable
 from datetime import datetime
+from functools import lru_cache
+from pathlib import Path
 
 from ..services.content import Page, Post, list_posts, syntax_highlight_css
+
+_STATIC_ROOT = Path(__file__).resolve().parent.parent / "static"
+
+
+@lru_cache(maxsize=None)
+def static_url(path: str) -> str:
+    file_path = _STATIC_ROOT / path
+    try:
+        digest = hashlib.sha1(file_path.read_bytes()).hexdigest()[:12]
+    except FileNotFoundError:
+        return f"/static/{path}"
+    return f"/static/{path}?v={digest}"
 
 
 def _layout(
@@ -24,7 +39,7 @@ def _layout(
     <meta charset=\"utf-8\" />
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
     <title>{title}</title>
-    <link rel=\"stylesheet\" href=\"/static/base.css\" />
+    <link rel=\"stylesheet\" href=\"{static_url('base.css')}\" />
     {extra_head}
     <style>{syntax_highlight_css()}</style>
   </head>
@@ -193,7 +208,9 @@ def render_post_page(post: Post, theme: str | None = None, current_path: str = "
 
 
 def render_coursework_page(theme: str | None = None, current_path: str = "/") -> str:
-    body = """
+    coursework_js = static_url("coursework.js")
+    coursework_css = static_url("coursework.css")
+    body = f"""
     <section>
       <h1>Coursework</h1>
       <p>A zoomable radial map showing how every course connects back to its parent field. Click a branch to dive into the cluster, or click the background to reset.</p>
@@ -212,7 +229,7 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
       </noscript>
     </section>
     <script src=\"https://cdn.jsdelivr.net/npm/d3@7\"></script>
-    <script src=\"/static/coursework.js\"></script>
+    <script src=\"{coursework_js}\"></script>
     """
     return _layout(
         "Coursework",
@@ -220,6 +237,5 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
         theme=theme,
         current_path=current_path,
         body_class="wide",
-        extra_head='<link rel="stylesheet" href="/static/coursework.css" />',
+        extra_head=f'<link rel="stylesheet" href="{coursework_css}" />',
     )
-
