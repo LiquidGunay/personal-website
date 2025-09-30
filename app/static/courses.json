@@ -1,116 +1,279 @@
 {
-  "name": "Coursework",
-  "children": [
+  "hierarchy": {
+    "name": "Coursework",
+    "children": [
+      {
+        "name": "Physics",
+        "children": [
+          {
+            "name": "Foundations",
+            "children": [
+              { "id": "PH 102", "code": "PH 102", "name": "Physics II" },
+              { "id": "PH 110", "code": "PH 110", "name": "Physics Laboratory" },
+              { "id": "PH 201", "code": "PH 201", "name": "Mathematical Physics" },
+              { "id": "PH 202", "code": "PH 202", "name": "Electromagnetics" },
+              { "id": "PH 203", "code": "PH 203", "name": "Classical Mechanics" },
+              { "id": "PH 206", "code": "PH 206", "name": "Computational Physics" },
+              { "id": "PH 207", "code": "PH 207", "name": "Heat and Thermodynamics" }
+            ]
+          },
+          {
+            "name": "Quantum & Modern",
+            "children": [
+              { "id": "PH 204", "code": "PH 204", "name": "Quantum Mechanics" },
+              { "id": "PH 301", "code": "PH 301", "name": "Statistical Mechanics" },
+              { "id": "PH 302", "code": "PH 302", "name": "Solid State Physics" },
+              { "id": "PH 307", "code": "PH 307", "name": "Atomic and Molecular Spectroscopy" },
+              { "id": "PH 310", "code": "PH 310", "name": "Lasers and Ultrafast Optics" },
+              { "id": "PH 458", "code": "PH 458", "name": "Applied Superconductivity" },
+              { "id": "PH 462", "code": "PH 462", "name": "Quantum Technologies & Phenomena" },
+              { "id": "PH 464", "code": "PH 464", "name": "Fundamentals of Cosmology" },
+              { "id": "PH 466", "code": "PH 466", "name": "Advanced Statistical Mechanics" },
+              { "id": "PH 551", "code": "PH 551", "name": "Nonlinear Dynamics and Chaos" }
+            ]
+          },
+          {
+            "name": "Laboratories & Projects",
+            "children": [
+              { "id": "PH 312", "code": "PH 312", "name": "Mini Project" },
+              { "id": "adv-physics-lab", "code": null, "name": "Advanced Physics Laboratory" },
+              { "id": "nuclear-science", "code": null, "name": "Nuclear Science and Engineering" }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Electronics",
+        "children": [
+          {
+            "name": "Circuits & Signals",
+            "children": [
+              { "id": "EE 101", "code": "EE 101", "name": "Basic Electronics" },
+              { "id": "EEE 220", "code": "EEE 220", "name": "Signals and Systems" },
+              { "id": "PH 209", "code": "PH 209", "name": "Analog Electronics" },
+              { "id": "PH 205", "code": "PH 205", "name": "Semiconductor Devices" }
+            ]
+          },
+          {
+            "name": "Measurement & Practice",
+            "children": [
+              { "id": "PH 304", "code": "PH 304", "name": "Measurement Techniques" },
+              { "id": "PH 305", "code": "PH 305", "name": "Engineering Optics" },
+              { "id": "PH 309", "code": "PH 309", "name": "Electronics Laboratory" }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Mathematics",
+        "children": [
+          {
+            "name": "Core Theory",
+            "children": [
+              { "id": "MA 101", "code": "MA 101", "name": "Mathematics I" },
+              { "id": "MA 211M", "code": "MA 211M", "name": "Real Analysis" },
+              { "id": "MA 312M", "code": "MA 312M", "name": "Modern Algebra" }
+            ]
+          },
+          {
+            "name": "Geometry & Probability",
+            "children": [
+              { "id": "MA 212M", "code": "MA 212M", "name": "Differential Geometry" },
+              { "id": "MA 411M", "code": "MA 411M", "name": "Mathematical Statistics" }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Computer Science",
+        "children": [
+          {
+            "name": "Foundations & Systems",
+            "children": [
+              { "id": "CS 101", "code": "CS 101", "name": "Introduction to Computing" },
+              { "id": "CS 110", "code": "CS 110", "name": "Computing Lab" },
+              { "id": "CS 343", "code": "CS 343", "name": "Operating Systems" },
+              { "id": "CS 341", "code": "CS 341", "name": "Computer Networks" }
+            ]
+          },
+          {
+            "name": "Intelligent Systems",
+            "children": [
+              { "id": "CS 590", "code": "CS 590", "name": "Deep Learning" },
+              { "id": "DA 671", "code": "DA 671", "name": "Introduction to Reinforcement Learning" }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Economics",
+        "children": [
+          {
+            "name": "Economic Theory",
+            "children": [
+              { "id": "HS 123", "code": "HS 123", "name": "Game Theory and Economics" },
+              { "id": "HS 239", "code": "HS 239", "name": "Economics of Uncertainty and Information" }
+            ]
+          },
+          {
+            "name": "Behaviour & Policy",
+            "children": [
+              { "id": "HS 148", "code": "HS 148", "name": "Consumer Behaviour" },
+              { "id": "HS 200", "code": "HS 200", "name": "Sustainable Development Goals" }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "Other",
+        "children": [
+          {
+            "name": "Natural Sciences",
+            "children": [
+              { "id": "CH 101", "code": "CH 101", "name": "Chemistry" },
+              { "id": "CH 110", "code": "CH 110", "name": "Chemistry Laboratory" },
+              { "id": "BT 101", "code": "BT 101", "name": "Introductory Biology" }
+            ]
+          },
+          {
+            "name": "Professional Skills",
+            "children": [
+              { "id": "CCE 101", "code": "CCE 101", "name": "Engineering Drawing I" },
+              { "id": "ME 110", "code": "ME 110", "name": "Workshop" },
+              { "id": "SA 109", "code": "SA 109", "name": "S&G Lawn Tennis" },
+              { "id": "SA 215", "code": "SA 215", "name": "Yoga-2" },
+              { "id": "SA 216", "code": "SA 216", "name": "Yoga-3" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "links": [
+    { "source": "MA 101", "target": "PH 201" },
+    { "source": "MA 101", "target": "MA 211M" },
+    { "source": "MA 101", "target": "MA 212M" },
+    { "source": "MA 101", "target": "MA 312M" },
+    { "source": "MA 101", "target": "MA 411M" },
+    { "source": "MA 211M", "target": "MA 312M" },
+    { "source": "MA 211M", "target": "MA 411M" },
+    { "source": "PH 102", "target": "PH 202" },
+    { "source": "PH 102", "target": "PH 203" },
+    { "source": "PH 102", "target": "PH 207" },
+    { "source": "PH 201", "target": "PH 204" },
+    { "source": "PH 201", "target": "PH 301" },
+    { "source": "PH 201", "target": "PH 302" },
+    { "source": "PH 202", "target": "PH 310" },
+    { "source": "PH 203", "target": "PH 204" },
+    { "source": "PH 204", "target": "PH 458" },
+    { "source": "PH 204", "target": "PH 462" },
+    { "source": "PH 204", "target": "PH 551" },
+    { "source": "PH 301", "target": "PH 466" },
+    { "source": "PH 302", "target": "PH 458" },
+    { "source": "PH 302", "target": "PH 309" },
+    { "source": "PH 205", "target": "PH 309" },
+    { "source": "PH 205", "target": "PH 312" },
+    { "source": "PH 209", "target": "PH 309" },
+    { "source": "PH 304", "target": "PH 309" },
+    { "source": "EE 101", "target": "PH 209" },
+    { "source": "EEE 220", "target": "CS 341" },
+    { "source": "CS 101", "target": "CS 341" },
+    { "source": "CS 101", "target": "CS 343" },
+    { "source": "CS 101", "target": "CS 590" },
+    { "source": "CS 101", "target": "DA 671" },
+    { "source": "CS 341", "target": "DA 671" },
+    { "source": "CS 343", "target": "CS 590" },
+    { "source": "CS 343", "target": "DA 671" },
+    { "source": "CS 590", "target": "DA 671" },
+    { "source": "CH 101", "target": "nuclear-science" },
+    { "source": "PH 310", "target": "PH 462" },
+    { "source": "PH 458", "target": "PH 462" },
+    { "source": "PH 312", "target": "adv-physics-lab" }
+  ],
+  "stages": [
     {
-      "name": "Foundations",
-      "children": [
-        { "name": "Mathematics I" },
-        { "name": "Mathematics II" },
-        { "name": "Physics I" },
-        { "name": "Mathematical Physics" },
-        { "name": "Computational Physics" }
+      "name": "Year 1 Foundations",
+      "description": "Core science, mathematics, and skills taken in the first year.",
+      "courses": [
+        "MA 101",
+        "PH 102",
+        "PH 110",
+        "CH 101",
+        "CH 110",
+        "BT 101",
+        "CS 101",
+        "CS 110",
+        "EE 101",
+        "CCE 101",
+        "ME 110",
+        "SA 109"
       ]
     },
     {
-      "name": "Quantum & Modern",
-      "children": [
-        { "name": "Quantum Mechanics" },
-        { "name": "Atomic & Molecular Spectroscopy" },
-        { "name": "Solid State Physics" },
-        { "name": "Applied Superconductivity" },
-        { "name": "Fundamentals of Cosmology" },
-        { "name": "Nuclear Science & Engineering" },
-        { "name": "Quantum Technologies (Macrosystems)" }
+      "name": "Physics Core",
+      "description": "Intermediate lecture and lab courses building analytical and experimental depth.",
+      "courses": [
+        "PH 201",
+        "PH 202",
+        "PH 203",
+        "PH 205",
+        "PH 206",
+        "PH 207",
+        "PH 209",
+        "PH 304",
+        "PH 305",
+        "PH 309"
       ]
     },
     {
-      "name": "Statistical & Thermal",
-      "children": [
-        { "name": "Statistical Mechanics" },
-        { "name": "Advanced Statistical Mechanics" },
-        { "name": "Heat & Thermodynamics" }
+      "name": "Advanced Physics & Research",
+      "description": "Specialised electives, research labs, and project work in upper years.",
+      "courses": [
+        "PH 301",
+        "PH 302",
+        "PH 307",
+        "PH 310",
+        "PH 312",
+        "PH 458",
+        "PH 462",
+        "PH 464",
+        "PH 466",
+        "PH 551",
+        "adv-physics-lab",
+        "nuclear-science"
       ]
     },
     {
-      "name": "EM & Optics",
-      "children": [
-        { "name": "Electromagnetics" },
-        { "name": "Engineering Optics" },
-        { "name": "Lasers & Ultrafast Optics" }
+      "name": "Mathematics Minor",
+      "description": "A focused collection of proof-heavy mathematics courses.",
+      "courses": [
+        "MA 211M",
+        "MA 212M",
+        "MA 312M",
+        "MA 411M"
       ]
     },
     {
-      "name": "Electronics & Instrumentation",
-      "children": [
-        { "name": "Basic Electronics" },
-        { "name": "Analog Electronics" },
-        { "name": "Digital Electronics & Microprocessors" },
-        { "name": "Electronics Laboratory" },
-        { "name": "General Physics Lab" },
-        { "name": "Measurement Techniques" },
-        { "name": "Advanced Physics Laboratory" }
+      "name": "Computing & Intelligence",
+      "description": "Systems and machine learning courses taken alongside physics work.",
+      "courses": [
+        "CS 341",
+        "CS 343",
+        "CS 590",
+        "DA 671"
       ]
     },
     {
-      "name": "Computer Science & AI",
-      "children": [
-        { "name": "Introduction to Computing" },
-        { "name": "Computing Lab" },
-        { "name": "Computer Networks" },
-        { "name": "Operating Systems" },
-        { "name": "Deep Learning" },
-        { "name": "Introduction to Reinforcement Learning" }
-      ]
-    },
-    {
-      "name": "Humanities & Economics",
-      "children": [
-        { "name": "Sustainable Development Goals" },
-        { "name": "Game Theory & Economics" },
-        { "name": "Consumer Behaviour" },
-        { "name": "Economics of Uncertainty & Information" },
-        { "name": "Public Economics" }
-      ]
-    },
-    {
-      "name": "Natural Sciences",
-      "children": [
-        { "name": "Chemistry" },
-        { "name": "Chemistry Laboratory" },
-        { "name": "Introductory Biology" }
-      ]
-    },
-    {
-      "name": "Workshops & Core Skills",
-      "children": [
-        { "name": "Engineering Drawing" },
-        { "name": "Workshop" },
-        { "name": "Engineering Mechanics" }
-      ]
-    },
-    {
-      "name": "Nonlinear & Materials",
-      "children": [
-        { "name": "Nonlinear Dynamics & Chaos" },
-        { "name": "Simulation Techniques in Physical Systems" },
-        { "name": "Electroceramics" }
-      ]
-    },
-    {
-      "name": "Projects",
-      "children": [
-        { "name": "Mini Project" }
-      ]
-    },
-    {
-      "name": "Mathematics (Minor)",
-      "children": [
-        { "name": "Real Analysis" },
-        { "name": "Mathematical Statistics" },
-        { "name": "Modern Algebra" },
-        { "name": "Differential Geometry" }
+      "name": "Economics & Humanities",
+      "description": "Courses that broadened perspectives on economics, policy, and wellbeing.",
+      "courses": [
+        "HS 123",
+        "HS 148",
+        "HS 239",
+        "HS 200",
+        "SA 215",
+        "SA 216"
       ]
     }
   ]
 }
-
