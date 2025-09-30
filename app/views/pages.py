@@ -186,9 +186,15 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
     body = """
     <section>
       <h1>Coursework</h1>
-      <p>Visualization ideas coming soon. Brainstorm: grouped/stacked bars, timelines, treemap, sunburst, heatmap, beeswarm.</p>
+      <p>An interactive map of my B.Tech coursework grouped by themes. Click a category to zoom in; hover over a course to see details. No grades or semesters shown.</p>
+      <div id=\"cw-viz\" class=\"cw\" aria-label=\"Interactive coursework visualization\"></div>
+      <noscript>
+        <p><strong>Note:</strong> This visualization requires JavaScript. Below is a plain list as fallback.</p>
+        <div id=\"cw-fallback\"></div>
+      </noscript>
     </section>
+    <script src=\"https://cdn.jsdelivr.net/npm/d3@7\"></script>
+    <script src=\"/static/coursework.js\"></script>
     """
     return _layout("Coursework", body, theme=theme, current_path=current_path)
-
 

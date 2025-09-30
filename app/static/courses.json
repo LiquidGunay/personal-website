@@ -1,0 +1,116 @@
+{
+  "name": "Coursework",
+  "children": [
+    {
+      "name": "Foundations",
+      "children": [
+        { "name": "Mathematics I" },
+        { "name": "Mathematics II" },
+        { "name": "Physics I" },
+        { "name": "Mathematical Physics" },
+        { "name": "Computational Physics" }
+      ]
+    },
+    {
+      "name": "Quantum & Modern",
+      "children": [
+        { "name": "Quantum Mechanics" },
+        { "name": "Atomic & Molecular Spectroscopy" },
+        { "name": "Solid State Physics" },
+        { "name": "Applied Superconductivity" },
+        { "name": "Fundamentals of Cosmology" },
+        { "name": "Nuclear Science & Engineering" },
+        { "name": "Quantum Technologies (Macrosystems)" }
+      ]
+    },
+    {
+      "name": "Statistical & Thermal",
+      "children": [
+        { "name": "Statistical Mechanics" },
+        { "name": "Advanced Statistical Mechanics" },
+        { "name": "Heat & Thermodynamics" }
+      ]
+    },
+    {
+      "name": "EM & Optics",
+      "children": [
+        { "name": "Electromagnetics" },
+        { "name": "Engineering Optics" },
+        { "name": "Lasers & Ultrafast Optics" }
+      ]
+    },
+    {
+      "name": "Electronics & Instrumentation",
+      "children": [
+        { "name": "Basic Electronics" },
+        { "name": "Analog Electronics" },
+        { "name": "Digital Electronics & Microprocessors" },
+        { "name": "Electronics Laboratory" },
+        { "name": "General Physics Lab" },
+        { "name": "Measurement Techniques" },
+        { "name": "Advanced Physics Laboratory" }
+      ]
+    },
+    {
+      "name": "Computer Science & AI",
+      "children": [
+        { "name": "Introduction to Computing" },
+        { "name": "Computing Lab" },
+        { "name": "Computer Networks" },
+        { "name": "Operating Systems" },
+        { "name": "Deep Learning" },
+        { "name": "Introduction to Reinforcement Learning" }
+      ]
+    },
+    {
+      "name": "Humanities & Economics",
+      "children": [
+        { "name": "Sustainable Development Goals" },
+        { "name": "Game Theory & Economics" },
+        { "name": "Consumer Behaviour" },
+        { "name": "Economics of Uncertainty & Information" },
+        { "name": "Public Economics" }
+      ]
+    },
+    {
+      "name": "Natural Sciences",
+      "children": [
+        { "name": "Chemistry" },
+        { "name": "Chemistry Laboratory" },
+        { "name": "Introductory Biology" }
+      ]
+    },
+    {
+      "name": "Workshops & Core Skills",
+      "children": [
+        { "name": "Engineering Drawing" },
+        { "name": "Workshop" },
+        { "name": "Engineering Mechanics" }
+      ]
+    },
+    {
+      "name": "Nonlinear & Materials",
+      "children": [
+        { "name": "Nonlinear Dynamics & Chaos" },
+        { "name": "Simulation Techniques in Physical Systems" },
+        { "name": "Electroceramics" }
+      ]
+    },
+    {
+      "name": "Projects",
+      "children": [
+        { "name": "Mini Project" }
+      ]
+    },
+    {
+      "name": "Mathematics (Minor)",
+      "children": [
+        { "name": "Real Analysis" },
+        { "name": "Mathematical Statistics" },
+        { "name": "Modern Algebra" },
+        { "name": "Differential Geometry" }
+      ]
+    }
+  ]
+}
+
