@@ -6,8 +6,17 @@ from datetime import datetime
 from ..services.content import Page, Post, list_posts, syntax_highlight_css
 
 
-def _layout(title: str, body: str, theme: str | None = None, current_path: str = "/") -> str:
+def _layout(
+    title: str,
+    body: str,
+    theme: str | None = None,
+    current_path: str = "/",
+    *,
+    body_class: str = "",
+    extra_head: str = "",
+) -> str:
     theme_attr = f" data-theme=\"{theme}\"" if theme else ""
+    class_attr = f" class=\"{body_class}\"" if body_class else ""
     return f"""
 <!doctype html>
 <html lang=\"en\"{theme_attr}>
@@ -16,9 +25,10 @@ def _layout(title: str, body: str, theme: str | None = None, current_path: str =
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
     <title>{title}</title>
     <link rel=\"stylesheet\" href=\"/static/base.css\" />
+    {extra_head}
     <style>{syntax_highlight_css()}</style>
   </head>
-  <body>
+  <body{class_attr}>
     <header>
       <nav>
         <a href=\"/\">About</a>
@@ -186,8 +196,16 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
     body = """
     <section>
       <h1>Coursework</h1>
-      <p>An interactive map of my B.Tech coursework grouped by themes. Click a category to zoom in; hover over a course to see details. No grades or semesters shown.</p>
-      <div id=\"cw-viz\" class=\"cw\" aria-label=\"Interactive coursework visualization\"></div>
+      <p>A zoomable radial map showing how every course connects back to its parent field. Click a branch to dive into the cluster, or click the background to reset.</p>
+      <div id=\"cw-viz\" class=\"cw\" aria-label=\"Interactive radial coursework map\">
+        <figure>
+          <figcaption>
+            <h2>Radial tree of clusters</h2>
+            <p>Each top level branch represents Physics, Electronics, Mathematics, Computer Science, Economics, or Other courses. Zoom in to follow the breakdown from field → sub-field → individual module.</p>
+          </figcaption>
+          <div class=\"viz-canvas\" data-viz=\"radial\" aria-label=\"Radial coursework tree\"></div>
+        </figure>
+      </div>
       <noscript>
         <p><strong>Note:</strong> This visualization requires JavaScript. Below is a plain list as fallback.</p>
         <div id=\"cw-fallback\"></div>
@@ -196,5 +214,12 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
     <script src=\"https://cdn.jsdelivr.net/npm/d3@7\"></script>
     <script src=\"/static/coursework.js\"></script>
     """
-    return _layout("Coursework", body, theme=theme, current_path=current_path)
+    return _layout(
+        "Coursework",
+        body,
+        theme=theme,
+        current_path=current_path,
+        body_class="wide",
+        extra_head='<link rel="stylesheet" href="/static/coursework.css" />',
+    )
 

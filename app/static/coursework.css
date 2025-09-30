@@ -1,0 +1,108 @@
+#cw-viz.cw {
+  width: min(95vw, 1300px);
+  margin: clamp(2rem, 5vw, 4.5rem) auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.cw figure {
+  background: var(--tile);
+  border-radius: 1.2rem;
+  padding: clamp(1.25rem, 2vw, 2rem);
+  box-shadow: 0 22px 48px rgba(15, 23, 42, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cw figure h2 {
+  margin: 0;
+  font-size: clamp(1.25rem, 1.2vw + 1rem, 1.6rem);
+}
+
+.cw figure p {
+  margin: 0;
+  font-size: clamp(0.95rem, 0.4vw + 0.85rem, 1.05rem);
+  color: rgba(15, 23, 42, 0.75);
+}
+
+body.dark .cw figure p,
+html[data-theme="dark"] .cw figure p {
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.cw .viz-canvas {
+  position: relative;
+  width: 100%;
+  min-height: clamp(420px, 68vh, 880px);
+  aspect-ratio: 1 / 1;
+}
+
+.cw .viz-canvas svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.cw .viz-canvas svg text {
+  font-family: var(--font-sans);
+  fill: currentColor;
+}
+
+.cw .viz-canvas svg .node-label {
+  font-size: clamp(0.66rem, 0.25vw + 0.58rem, 0.85rem);
+  letter-spacing: 0.01em;
+}
+
+.cw .viz-canvas svg .node circle {
+  stroke-width: 1.2;
+}
+
+.cw .viz-canvas svg .node.dimmed {
+  opacity: 0.18;
+}
+
+.cw .viz-canvas svg .link {
+  fill: none;
+  stroke-width: 1.25;
+}
+
+.cw .viz-canvas svg .link.dimmed {
+  opacity: 0.1;
+}
+
+.cw-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(15, 23, 42, 0.88);
+  color: #f8fafc;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.6rem;
+  font-size: 0.85rem;
+  max-width: 20rem;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15);
+  display: none;
+  z-index: 5;
+  line-height: 1.4;
+}
+
+html[data-theme="dark"] .cw-tooltip,
+body.dark .cw-tooltip {
+  background: rgba(15, 23, 42, 0.85);
+  color: #f1f5f9;
+  border-color: rgba(148, 163, 184, 0.5);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
+}
+
+@media (max-width: 720px) {
+  #cw-viz.cw {
+    margin: clamp(1.5rem, 10vw, 2.5rem) auto;
+    gap: 1.25rem;
+  }
+
+  .cw .viz-canvas {
+    min-height: clamp(360px, 80vw, 520px);
+  }
+}
