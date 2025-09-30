@@ -165,6 +165,7 @@
     hideTooltip(tooltip);
 
     const baseSize = computeBaseSize(container, measuredWidth);
+
     const margin = 90;
     const outerRadius = baseSize / 2;
     const innerRadius = outerRadius - margin;
