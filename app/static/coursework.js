@@ -33,9 +33,13 @@
     const radialEl = mount.querySelector('[data-viz="radial"]');
     if (radialEl) {
       let lastWidth = 0;
+      const measureWidth = () =>
+        Math.round(radialEl.getBoundingClientRect().width || radialEl.clientWidth || 0);
       const render = () => {
-        const used = renderRadialTree(radialEl, data.hierarchy, courseMap, tooltip);
-        lastWidth = used;
+        const width = measureWidth();
+        if (!width) return;
+        renderRadialTree(radialEl, data.hierarchy, courseMap, tooltip, width);
+        lastWidth = width;
       };
       render();
 
@@ -43,13 +47,20 @@
         const observer = new ResizeObserver((entries) => {
           const entry = entries[0];
           if (!entry) return;
-          const width = Math.round(entry.contentRect?.width || radialEl.clientWidth || 0);
+          const width = measureWidth();
           if (!width || Math.abs(width - lastWidth) < 8) return;
           window.requestAnimationFrame(() => render());
         });
         observer.observe(radialEl);
       } else {
-        window.addEventListener('resize', debounce(render, 200));
+        window.addEventListener(
+          'resize',
+          debounce(() => {
+            const width = measureWidth();
+            if (!width || Math.abs(width - lastWidth) < 8) return;
+            render();
+          }, 200),
+        );
       }
     }
 
@@ -149,11 +160,11 @@
     return [cx, cy, Math.max(span, diameter / 3)];
   }
 
-  function renderRadialTree(container, hierarchyData, courseMap, tooltip) {
+  function renderRadialTree(container, hierarchyData, courseMap, tooltip, measuredWidth) {
     container.innerHTML = '';
     hideTooltip(tooltip);
 
-    const baseSize = computeBaseSize(container);
+    const baseSize = computeBaseSize(container, measuredWidth);
     const margin = 90;
     const outerRadius = baseSize / 2;
     const innerRadius = outerRadius - margin;
@@ -302,9 +313,14 @@
     return baseSize;
   }
 
-  function computeBaseSize(container) {
+  function computeBaseSize(container, measuredWidth = 0) {
     const rect = container.getBoundingClientRect();
-    const measured = Math.max(rect.width || 0, container.clientWidth || 0, mount.clientWidth || 0);
+    const measured = Math.max(
+      measuredWidth,
+      rect.width || 0,
+      container.clientWidth || 0,
+      mount.clientWidth || 0,
+    );
     const viewport = typeof window !== 'undefined' ? window.innerWidth || 0 : 0;
     const fallback = viewport
       ? Math.max(Math.min(viewport - 80, 1150), 320)
