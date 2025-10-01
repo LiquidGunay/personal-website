@@ -7,6 +7,14 @@ quotes:
   - "Programs must be written for people to read."
 ---
 
-Welcome! This page will soon include an avatar hero, a rotating set of favorite quotes, a featured post link, and (maybe) a small chatbot. For now, this is placeholder content.
+Welcome! Swap in your own story here—this is just scaffolding so you can see how the page flows.
 
+## What I'm focused on
 
+- Replace this list with the projects, research, or themes you care about right now.
+- Highlight the threads that connect your work.
+- Leave yourself room to expand with writing samples or talks below.
+
+## Elsewhere on the site
+
+Use the featured link on the left to point people to the piece you're most proud of, or surface a new essay when it drops. The quote block is sourced from the front matter list above.

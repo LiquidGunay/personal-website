@@ -39,6 +39,7 @@ class Page:
     html: str
     featured_slug: str | None = None
     quotes: list[str] | None = None
+    meta: dict[str, object] | None = None
 
 
 def _parse_date(value: str | datetime | None) -> datetime | None:
@@ -119,6 +120,12 @@ def get_page(slug: str) -> Page | None:
     featured_slug = fm.get("featured_slug")
     quotes_list = fm.get("quotes") or []
     quotes = list(quotes_list) if isinstance(quotes_list, (list, tuple)) else []
-    return Page(title=title, html=html, featured_slug=featured_slug, quotes=quotes)
-
+    metadata = dict(fm.metadata)
+    return Page(
+        title=title,
+        html=html,
+        featured_slug=featured_slug,
+        quotes=quotes,
+        meta=metadata,
+    )
 

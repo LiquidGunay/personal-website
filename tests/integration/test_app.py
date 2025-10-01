@@ -48,12 +48,12 @@ def test_theme_toggle_present_on_pages():
         assert 'id="theme-toggle"' in r.text
 
 
-def test_about_quotes_slider_markup():
+def test_about_page_layout_markup():
     r = client.get("/")
     assert r.status_code == 200
-    assert 'class="quote-tile"' in r.text
-    assert 'class="quote-track"' in r.text
-    assert 'class="quote-slide"' in r.text
+    assert 'class="about-layout"' in r.text
+    assert 'class="about-card about-featured"' in r.text
+    assert 'class="about-card about-quotes"' in r.text
 
 
 def test_theme_cookie_toggle_and_html_attr():
@@ -70,4 +70,3 @@ def test_theme_cookie_toggle_and_html_attr():
     r3 = client.get("/", headers={"Cookie": cookie})
     assert r3.status_code == 200
     assert 'data-theme="' in r3.text
-

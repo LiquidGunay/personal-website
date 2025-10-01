@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import hashlib
-from collections.abc import Iterable
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
+from collections.abc import Iterable
+from html import escape
 
 from ..services.content import Page, Post, list_posts, syntax_highlight_css
 
@@ -82,37 +83,37 @@ def render_home_page(posts: Iterable[Post], theme: str | None = None, current_pa
 
 
 def render_about_page(theme: str | None = None, current_path: str = "/") -> str:
-    # Try to load a markdown page if provided later
     page: Page | None = None
+    page_meta: dict[str, object]
     try:
         from ..services.content import get_page
 
         page = get_page("about")
     except Exception:
         page = None
+    page_meta = dict(page.meta or {}) if page else {}
 
-    # Build quotes HTML from frontmatter, fallback to defaults
     quotes_list: list[str] = []
     if page and getattr(page, "quotes", None):
-        quotes_list = [str(q) for q in (page.quotes or [])]
+        quotes_list = [str(q) for q in page.quotes or []]
     if not quotes_list:
         quotes_list = [
             "Make it work, make it right, make it fast.",
             "Simplicity is prerequisite for reliability.",
             "Programs must be written for people to read.",
         ]
-    _slides: list[str] = []
-    for _q in quotes_list:
-        _slides.append(f"<div class=\"quote-slide\"><blockquote>“{_q}”</blockquote></div>")
-    quotes_html = (
-        "<div class=\"quote-tile\">"
-        + "<button class=\"quote-nav prev\" aria-label=\"Previous quote\">‹</button>"
-        + f"<div class=\"quote-track\">{''.join(_slides)}</div>"
-        + "<button class=\"quote-nav next\" aria-label=\"Next quote\">›</button>"
-        + "</div>"
-    )
+    quotes_block = ""
+    if quotes_list:
+        quote_items = "".join(
+            f"<li><blockquote>&ldquo;{escape(str(q))}&rdquo;</blockquote></li>" for q in quotes_list
+        )
+        quotes_block = (
+            "<div class=\"about-card about-quotes\">"
+            "<h2>Favorite notes</h2>"
+            f"<ul class=\"quote-list\">{quote_items}</ul>"
+            "</div>"
+        )
 
-    # Featured: prefer frontmatter featured_slug; fallback to latest
     featured = None
     if page and getattr(page, "featured_slug", None):
         try:
@@ -123,48 +124,81 @@ def render_about_page(theme: str | None = None, current_path: str = "/") -> str:
             featured = None
     if featured is None:
         featured = next(iter(list_posts(limit=1)), None)
-    featured_html = (
-        f'<a class="featured" href="/blog/{featured.slug}">Featured: {featured.title}</a>'
-        if featured
-        else ""
+    featured_block = ""
+    if featured:
+        featured_block = (
+            f"<a class=\"about-card about-featured\" href=\"/blog/{escape(featured.slug)}\">"
+            "<span class=\"card-eyebrow\">Featured writing</span>"
+            f"<span class=\"card-title\">{escape(featured.title)}</span>"
+            "<span class=\"card-cta\">Read the post →</span>"
+            "</a>"
+        )
+
+    links_block = ""
+    links_data = page_meta.get("links") if isinstance(page_meta.get("links"), list) else []
+    contact_items: list[str] = []
+    for item in links_data or []:
+        if not isinstance(item, dict):
+            continue
+        label_raw = item.get("label") or item.get("name") or item.get("title")
+        url_raw = item.get("url")
+        note_raw = item.get("note") or item.get("description")
+        if not label_raw or not url_raw:
+            continue
+        label = escape(str(label_raw))
+        url = escape(str(url_raw), quote=True)
+        note = escape(str(note_raw)) if note_raw else ""
+        note_span = f"<span class=\"about-link-note\">{note}</span>" if note else ""
+        contact_items.append(
+            f"<li><a href=\"{url}\">{label}</a>{note_span}</li>"
+        )
+    if contact_items:
+        links_block = (
+            "<div class=\"about-card about-links\">"
+            "<h2>Connect</h2>"
+            f"<ul>{''.join(contact_items)}</ul>"
+            "</div>"
+        )
+
+    hero_title_raw = page_meta.get("hero_title") or (page.title if page else None) or "About"
+    hero_title = escape(str(hero_title_raw))
+    hero_tagline_raw = page_meta.get("hero_tagline") or page_meta.get("tagline")
+    hero_tagline = escape(str(hero_tagline_raw)) if hero_tagline_raw else ""
+    location = page_meta.get("location")
+    location_html = (
+        f"<p class=\"about-location\">{escape(str(location))}</p>" if location else ""
     )
+
     body_md = page.html if page else "<p>Welcome! Content coming soon.</p>"
+
     body = f"""
-    <section class=\"hero\"> 
-      <div class=\"avatar\" aria-hidden=\"true\"></div>
-      <div>
-        <h1>About</h1>
-        {featured_html}
-      </div>
+    <section class=\"about-layout\">
+      <aside class=\"about-sidebar\">
+        <figure class=\"about-photo\">
+          <img src=\"{static_url('about-portrait.png')}\" alt=\"Portrait of the site owner\" width=\"864\" height=\"1098\" loading=\"lazy\" />
+        </figure>
+        {location_html}
+        {featured_block}
+        {links_block}
+        {quotes_block}
+      </aside>
+      <article class=\"about-content\">
+        <header class=\"about-header\">
+          <p class=\"about-eyebrow\">About</p>
+          <h1>{hero_title}</h1>
+          {f'<p class="about-tagline">{hero_tagline}</p>' if hero_tagline else ''}
+        </header>
+        <div class=\"about-body\">{body_md}</div>
+      </article>
     </section>
-    <section>
-      <div class=\"quotes\">{quotes_html}</div>
-      {body_md}
-    </section>
-    <script>
-      (function(){{
-        var tile = document.querySelector('.quote-tile');
-        if(!tile) return;
-        var track = tile.querySelector('.quote-track');
-        var slides = tile.querySelectorAll('.quote-slide');
-        var idx = 0;
-        function go(n){{
-          idx = (n + slides.length) % slides.length;
-          track.style.transform = 'translateX(' + (-idx * 100) + '%)';
-        }}
-        var timer = setInterval(function(){{ go(idx+1); }}, 6000);
-        tile.addEventListener('mouseenter', function(){{ clearInterval(timer); }});
-        tile.addEventListener('mouseleave', function(){{ timer = setInterval(function(){{ go(idx+1); }}, 6000); }});
-        var prev = tile.querySelector('.quote-nav.prev');
-        var next = tile.querySelector('.quote-nav.next');
-        if (prev) prev.addEventListener('click', function(){{ go(idx-1); }});
-        if (next) next.addEventListener('click', function(){{ go(idx+1); }});
-        track.style.width = (slides.length * 100) + '%';
-        go(0);
-      }})();
-    </script>
     """
-    return _layout("About", body, theme=theme, current_path=current_path)
+    return _layout(
+        "About",
+        body,
+        theme=theme,
+        current_path=current_path,
+        body_class="wide about-page",
+    )
 
 
 def render_blog_index_page(posts: Iterable[Post], theme: str | None = None, current_path: str = "/") -> str:

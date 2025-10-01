@@ -36,4 +36,43 @@ a.skip:focus{left:0;top:0;background:#fff;color:#000;padding:.5rem 1rem;border-r
 .quote-nav.prev{left:.5rem}
 .quote-nav.next{right:.5rem}
 .quote-tile:hover .quote-nav{opacity:1}
-
+.about-page main{padding-block:clamp(2rem,4vw,4rem)}
+.about-layout{display:grid;grid-template-columns:minmax(220px,320px) minmax(0,1fr);gap:clamp(2rem,4vw,4rem);align-items:start}
+.about-sidebar{display:flex;flex-direction:column;gap:clamp(1.25rem,2.5vw,1.75rem);position:sticky;top:clamp(1rem,4vw,2.5rem)}
+.about-photo{margin:0;border-radius:1.25rem;overflow:hidden;box-shadow:0 20px 45px -30px rgba(15,23,42,.45);background:linear-gradient(135deg,rgba(59,130,246,.18),rgba(2,6,23,.1))}
+.about-photo img{display:block;width:100%;height:auto}
+.about-location{margin:0;font-size:.95rem;color:rgba(15,23,42,.7)}
+html[data-theme="dark"] .about-location{color:rgba(230,237,243,.75)}
+.about-card{border:1px solid var(--border);border-radius:1rem;padding:1.25rem;background:var(--tile);display:block;text-decoration:none;color:inherit}
+.about-card h2{margin-top:0;margin-bottom:.75rem;font-size:.95rem;letter-spacing:.08em;text-transform:uppercase}
+.about-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.5rem}
+.about-card.about-links a{font-weight:600;text-decoration:none;color:var(--fg)}
+.about-card.about-links a:hover{color:var(--accent)}
+.about-link-note{display:block;font-size:.85rem;color:rgba(15,23,42,.7)}
+html[data-theme="dark"] .about-link-note{color:rgba(230,237,243,.6)}
+.about-card.about-featured{transition:transform .2s ease,box-shadow .2s ease}
+.about-card.about-featured:hover{transform:translateY(-3px);box-shadow:0 24px 45px -32px rgba(15,23,42,.55)}
+.card-eyebrow{display:block;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.65rem;color:rgba(15,23,42,.7)}
+html[data-theme="dark"] .card-eyebrow{color:rgba(230,237,243,.75)}
+.card-title{display:block;font-size:1.1rem;font-weight:600;margin-bottom:.4rem}
+.card-cta{display:inline-flex;align-items:center;font-size:.9rem;color:var(--accent)}
+.quote-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.75rem}
+.quote-list blockquote{margin:0;font-size:1rem;font-style:italic;color:rgba(15,23,42,.8)}
+html[data-theme="dark"] .quote-list blockquote{color:rgba(230,237,243,.8)}
+.about-content{display:flex;flex-direction:column;gap:clamp(2rem,4vw,3rem)}
+.about-header{display:flex;flex-direction:column;gap:.75rem}
+.about-eyebrow{margin:0;font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(15,23,42,.6)}
+html[data-theme="dark"] .about-eyebrow{color:rgba(230,237,243,.65)}
+.about-header h1{margin:0;font-size:clamp(2.25rem,5vw,3.25rem);line-height:1.05}
+.about-tagline{margin:0;font-size:1.15rem;max-width:40ch;color:rgba(15,23,42,.75)}
+html[data-theme="dark"] .about-tagline{color:rgba(230,237,243,.75)}
+.about-body{display:flex;flex-direction:column;gap:1.5rem;font-size:1.02rem}
+.about-body h2{margin-top:2.5rem;margin-bottom:.75rem;font-size:1.5rem}
+.about-body p{max-width:60ch}
+.about-body ul{padding-left:1.2rem}
+@media (max-width:960px){
+  .about-layout{grid-template-columns:1fr}
+  .about-sidebar{position:static}
+  .about-card{width:100%}
+  .about-content{order:-1}
+}
