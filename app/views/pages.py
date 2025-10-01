@@ -213,12 +213,12 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
     body = f"""
     <section>
       <h1>Coursework</h1>
-      <p>A zoomable radial map showing how every course connects back to its parent field. Click a branch to dive into the cluster, or click the background to reset.</p>
+      <p>An interactive sunburst that starts with the broad subjects I studied and lets you peel into each layer down to individual modules. Click a subject such as Computer Science to reveal its branches, then click again to return.</p>
       <div id=\"cw-viz\" class=\"cw\" aria-label=\"Interactive radial coursework map\">
         <figure>
           <figcaption>
-            <h2>Radial tree of clusters</h2>
-            <p>Each top level branch represents Physics, Electronics, Mathematics, Computer Science, Economics, or Other courses. Zoom in to follow the breakdown from field → sub-field → individual module.</p>
+            <h2>Coursework sunburst</h2>
+            <p>The outer ring holds individual classes. Tap a wedge to zoom deeper, or use the centre hub to backtrack. Hover over a course to see where it fits into my study plan.</p>
           </figcaption>
           <div class=\"viz-canvas\" data-viz=\"radial\" aria-label=\"Radial coursework tree\"></div>
         </figure>
