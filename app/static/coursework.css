@@ -1,9 +1,9 @@
 #cw-viz.cw {
-  width: min(95vw, 1300px);
-  margin: clamp(2rem, 5vw, 4.5rem) auto;
+  width: min(94vw, 1200px);
+  margin: clamp(1.8rem, 4.5vw, 3.8rem) auto;
   display: flex;
   flex-direction: column;
-  gap: clamp(1.5rem, 3vw, 2.5rem);
+  gap: clamp(1.25rem, 2.6vw, 2.25rem);
 }
 
 .cw figure {
@@ -35,7 +35,7 @@ html[data-theme="dark"] .cw figure p {
 .cw .viz-canvas {
   position: relative;
   width: 100%;
-  min-height: clamp(420px, 68vh, 880px);
+  min-height: clamp(360px, 56vh, 720px);
   aspect-ratio: 1 / 1;
 }
 
@@ -51,8 +51,13 @@ html[data-theme="dark"] .cw figure p {
 }
 
 .cw .viz-canvas svg .node-label {
-  font-size: clamp(0.66rem, 0.25vw + 0.58rem, 0.85rem);
+  font-size: clamp(0.6rem, 0.22vw + 0.5rem, 0.78rem);
   letter-spacing: 0.01em;
+}
+
+.cw .viz-canvas svg .node-label.label-hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .cw .viz-canvas svg .node circle {
