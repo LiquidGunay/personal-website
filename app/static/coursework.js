@@ -1,4 +1,4 @@
-// Coursework radial tree visualisation powered by D3
+// Coursework sunburst visualisation powered by D3
 (function () {
   const mount = document.getElementById('cw-viz');
   if (!mount || typeof d3 === 'undefined') return;
@@ -15,8 +15,7 @@
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   const explicitTheme = document.documentElement.dataset.theme;
   const darkMode = explicitTheme === 'dark' || (!explicitTheme && prefersDark);
-  const surfaceColour = darkMode ? '#1f2937' : '#f8fafc';
-  const borderColour = darkMode ? 'rgba(148, 163, 184, 0.5)' : 'rgba(15, 23, 42, 0.18)';
+  const surfaceColour = darkMode ? '#0f172a' : '#f8fafc';
 
   fetch('/static/courses.json', { cache: 'no-store' })
     .then((response) => response.json())
@@ -27,18 +26,18 @@
     });
 
   function init(data) {
-    const courseMap = buildCourseMap(data.hierarchy);
-    const radialEl = mount.querySelector('[data-viz="radial"]');
-    const tooltip = createTooltip(radialEl || mount);
+    const stageMap = buildStageMap(data.stages || []);
+    const courseMap = buildCourseMap(data.hierarchy, stageMap);
+    const sunburstEl = mount.querySelector('[data-viz="radial"]');
+    const tooltip = createTooltip(sunburstEl || mount);
 
-    if (radialEl) {
+    if (sunburstEl) {
       let lastWidth = 0;
-      const measureWidth = () =>
-        Math.round(radialEl.getBoundingClientRect().width || radialEl.clientWidth || 0);
+      const measureWidth = () => Math.round(sunburstEl.getBoundingClientRect().width || sunburstEl.clientWidth || 0);
       const render = () => {
         const width = measureWidth();
         if (!width) return;
-        renderRadialTree(radialEl, data.hierarchy, courseMap, tooltip, width);
+        renderSunburst(sunburstEl, data.hierarchy, courseMap, tooltip, width);
         lastWidth = width;
       };
       render();
@@ -51,7 +50,7 @@
           if (!width || Math.abs(width - lastWidth) < 8) return;
           window.requestAnimationFrame(() => render());
         });
-        observer.observe(radialEl);
+        observer.observe(sunburstEl);
       } else {
         window.addEventListener(
           'resize',
@@ -76,7 +75,7 @@
     };
   }
 
-  function buildCourseMap(tree) {
+  function buildCourseMap(tree, stageMap) {
     const root = d3.hierarchy(structuredCloneSafe(tree));
     const map = new Map();
     root.each((node) => {
@@ -87,9 +86,25 @@
         const code = node.data.code || null;
         const name = node.data.name;
         const full = code ? `${code} · ${name}` : name;
-        map.set(id, { id, code, name, full, category });
+        const stages = stageMap.get(id) || stageMap.get(code) || [];
+        map.set(id, { id, code, name, full, category, stages });
       }
     });
+    return map;
+  }
+
+  function buildStageMap(stages) {
+    const map = new Map();
+    for (const stage of stages) {
+      const entry = {
+        name: stage.name,
+        description: stage.description,
+      };
+      for (const course of stage.courses || []) {
+        if (!map.has(course)) map.set(course, []);
+        map.get(course).push(entry);
+      }
+    }
     return map;
   }
 
@@ -101,22 +116,42 @@
   function createTooltip(parent) {
     const tip = document.createElement('div');
     tip.className = 'cw-tooltip';
+    tip.setAttribute('role', 'status');
     parent.appendChild(tip);
     return tip;
   }
 
-  function showTooltip(tip, event, html) {
+  function showTooltip(tip, anchorRect, html, align = 'right') {
     const container = tip.parentElement;
     if (!container) return;
-    const sourceEvent = event.touches && event.touches[0] ? event.touches[0] : event;
-    const [x, y] = d3.pointer(sourceEvent, container);
     tip.innerHTML = html;
-    tip.style.left = `${x + 16}px`;
-    tip.style.top = `${y + 12}px`;
+    tip.dataset.visible = 'true';
     tip.style.display = 'block';
+    tip.style.visibility = 'hidden';
+    window.requestAnimationFrame(() => {
+      if (tip.dataset.visible !== 'true') return;
+      const containerRect = container.getBoundingClientRect();
+      const tipRect = tip.getBoundingClientRect();
+      const gap = 14;
+      const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+      const baseTop = anchorRect.top + anchorRect.height / 2 - containerRect.top - tipRect.height / 2;
+      let top = clamp(baseTop, 8, containerRect.height - tipRect.height - 8);
+      let left;
+      if (align === 'left') {
+        left = anchorRect.left - containerRect.left - tipRect.width - gap;
+      } else {
+        left = anchorRect.right - containerRect.left + gap;
+      }
+      left = clamp(left, 8, containerRect.width - tipRect.width - 8);
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+      tip.style.visibility = 'visible';
+    });
   }
 
   function hideTooltip(tip) {
+    tip.removeAttribute('data-visible');
+    tip.style.visibility = 'hidden';
     tip.style.display = 'none';
   }
 
@@ -124,9 +159,47 @@
     return palette.get(category) || '#475569';
   }
 
-  function formatCourse(meta) {
+  function escapeHtml(value) {
+    if (value == null) return '';
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function formatCourseTooltip(meta) {
     if (!meta) return '';
-    return meta.full;
+    const title = escapeHtml(meta.code ? `${meta.code} · ${meta.name}` : meta.name);
+    const parts = [`<div class="cw-tip-title">${title}</div>`];
+    const metaChips = [];
+    if (meta.code) metaChips.push(`<span>${escapeHtml(meta.code)}</span>`);
+    metaChips.push(`<span>${escapeHtml(meta.category)}</span>`);
+    parts.push(`<div class="cw-tip-meta">${metaChips.join('')}</div>`);
+    if (meta.stages && meta.stages.length) {
+      const limited = meta.stages.slice(0, 2);
+      parts.push('<ul class="cw-tip-stages">');
+      for (const stage of limited) {
+        parts.push(
+          `<li><strong>${escapeHtml(stage.name)}</strong>${
+            stage.description ? `<span>${escapeHtml(stage.description)}</span>` : ''
+          }</li>`,
+        );
+      }
+      if (meta.stages.length > limited.length) {
+        const remaining = meta.stages.length - limited.length;
+        parts.push(
+          `<li><span>${escapeHtml(
+            `${remaining} more stage${remaining === 1 ? '' : 's'} in plan`,
+          )}</span></li>`,
+        );
+      }
+      parts.push('</ul>');
+    } else {
+      parts.push('<p class="cw-tip-empty">Independent elective without a stage grouping.</p>');
+    }
+    return parts.join('');
   }
 
   function topCategory(node) {
@@ -135,273 +208,239 @@
     return top ? top.data.name : 'Other';
   }
 
-  function nodeRadius(node) {
-    if (!node.children) return 5.5;
-    if (node.depth === 1) return 14;
-    return 7 + Math.sqrt(node.leaves().length);
-  }
-
-  function viewFor(node, diameter, rotationAngle = 0) {
-    if (!node) return [0, 0, diameter];
-    const descendants = node.descendants();
-    if (!descendants.length) return [0, 0, diameter];
-    let minX = Infinity;
-    let maxX = -Infinity;
-    let minY = Infinity;
-    let maxY = -Infinity;
-    let maxR = 0;
-    const cosR = Math.cos(rotationAngle);
-    const sinR = Math.sin(rotationAngle);
-    for (const d of descendants) {
-      const rx = d.px * cosR - d.py * sinR;
-      const ry = d.px * sinR + d.py * cosR;
-      minX = Math.min(minX, rx);
-      maxX = Math.max(maxX, rx);
-      minY = Math.min(minY, ry);
-      maxY = Math.max(maxY, ry);
-      maxR = Math.max(maxR, nodeRadius(d));
-    }
-    const span = Math.max(maxX - minX, maxY - minY) + maxR * 4;
-    const cx = (minX + maxX) / 2;
-    const cy = (minY + maxY) / 2;
-    const minSpan = diameter * 0.75;
-    return [0, 0, Math.max(span, minSpan)];
-  }
-
-  function renderRadialTree(container, hierarchyData, courseMap, tooltip, measuredWidth) {
-    container.innerHTML = '';
+  function renderSunburst(container, hierarchyData, courseMap, tooltip, measuredWidth) {
+    const tooltipWasChild = tooltip && tooltip.parentElement === container;
     hideTooltip(tooltip);
+    if (tooltipWasChild) {
+      container.removeChild(tooltip);
+    }
+    container.innerHTML = '';
 
     const baseSize = computeBaseSize(container, measuredWidth);
-
-    const margin = 90;
-    const outerRadius = baseSize / 2;
-    const innerRadius = outerRadius - margin;
-    const diameter = outerRadius * 2;
+    const radius = baseSize / 2;
+    const radialPadding = 36;
+    const arcRadius = radius - radialPadding;
 
     const root = d3
       .hierarchy(structuredCloneSafe(hierarchyData))
       .sum((d) => (d.children ? 0 : 1))
       .sort((a, b) => (b.value || 0) - (a.value || 0));
 
-    const cluster = d3.cluster().size([2 * Math.PI, innerRadius]);
-    cluster(root);
+    d3.partition().size([2 * Math.PI, root.height + 1])(root);
 
     root.each((node) => {
-      const angle = node.x - Math.PI / 2;
-      node.px = Math.cos(angle) * node.y;
-      node.py = Math.sin(angle) * node.y;
+      node.current = {
+        x0: node.x0,
+        x1: node.x1,
+        y0: node.y0,
+        y1: node.y1,
+      };
     });
 
     const svg = d3
       .select(container)
       .append('svg')
-      .attr('viewBox', `${-outerRadius} ${-outerRadius} ${diameter} ${diameter}`)
-      .attr('width', diameter)
-      .attr('height', diameter)
+      .attr('viewBox', `${-radius} ${-radius} ${baseSize} ${baseSize}`)
+      .attr('width', baseSize)
+      .attr('height', baseSize)
       .attr('preserveAspectRatio', 'xMidYMid meet')
       .attr('role', 'img')
-      .attr('aria-label', 'Radial coursework map with zoomable clusters');
+      .attr('aria-label', 'Zoomable coursework sunburst');
 
     const g = svg.append('g');
+    const radiusStep = arcRadius / (root.height + 1);
+    const maxVisibleDepth = Math.min(root.height, 4);
 
-    let rotation = 0;
-    const tau = Math.PI * 2;
+    const arcVisible = (d) => d.y1 <= maxVisibleDepth + 1 && d.y0 >= 0 && d.x1 > d.x0;
 
-    const linkPath = d3
-      .linkRadial()
-      .angle((d) => rawAngle(d))
-      .radius((d) => d.y);
+    const labelVisible = (d) => {
+      if (!arcVisible(d)) return false;
+      const angleSpan = d.x1 - d.x0;
+      const radialSpan = d.y1 - d.y0;
+      const footprint = angleSpan * radialSpan;
+      if (d.depth === 1) return footprint > 0.02;
+      if (d.depth === 2) return footprint > 0.03;
+      return footprint > 0.055;
+    };
 
-    const link = g
+    const labelTransform = (d) => {
+      const angle = ((d.x0 + d.x1) / 2) * (180 / Math.PI);
+      const radius = ((d.y0 + d.y1) / 2) * radiusStep;
+      const rotate = angle - 90;
+      const flip = angle >= 180 ? 180 : 0;
+      return `rotate(${rotate}) translate(${radius},0) rotate(${flip})`;
+    };
+
+    const labelText = (d) => {
+      if (d.depth === 1) return d.data.name;
+      if (!d.children) {
+        const meta = courseMap.get(d.data.id || d.data.code || d.data.name);
+        return meta?.code || d.data.name;
+      }
+      return d.data.name;
+    };
+
+    const arc = d3
+      .arc()
+      .startAngle((d) => d.x0)
+      .endAngle((d) => d.x1)
+      .padAngle((d) => Math.min((d.x1 - d.x0) / 2, 0.01))
+      .padRadius(arcRadius * 1.4)
+      .innerRadius((d) => Math.max(0, d.y0 * radiusStep))
+      .outerRadius((d) => Math.max(0, d.y1 * radiusStep - 2));
+
+    const defs = svg.append('defs');
+    const glow = defs
+      .append('filter')
+      .attr('id', 'cw-glow')
+      .attr('x', '-150%')
+      .attr('y', '-150%')
+      .attr('width', '300%')
+      .attr('height', '300%');
+    glow.append('feGaussianBlur').attr('stdDeviation', 8).attr('result', 'blur');
+    const merge = glow.append('feMerge');
+    merge.append('feMergeNode').attr('in', 'blur');
+    merge.append('feMergeNode').attr('in', 'SourceGraphic');
+
+    const path = g
       .append('g')
-      .attr('class', 'links')
+      .attr('class', 'cw-arcs')
       .selectAll('path')
-      .data(root.links())
+      .data(root.descendants().slice(1))
       .join('path')
-      .attr('class', 'link')
-      .attr('stroke', (d) => blendWithSurface(colourFor(topCategory(d.target)), 0.45))
-      .attr('d', linkPath);
-
-    const nodes = g
-      .append('g')
-      .attr('class', 'nodes')
-      .selectAll('g')
-      .data(root.descendants())
-      .join('g')
-      .attr('class', 'node')
-      .attr('transform', (d) => translateToNode(d));
-
-    nodes
-      .append('circle')
-      .attr('r', (d) => nodeRadius(d))
+      .attr('class', (d) => `cw-arc depth-${d.depth} ${d.children ? 'branch' : 'leaf'}`)
       .attr('fill', (d) => {
-        if (d.depth === 0) return blendWithSurface('#64748b', 0.4);
         const cat = topCategory(d);
         const base = colourFor(cat);
-        const t = d.children ? (d.depth === 1 ? 0.52 : 0.7) : 0.88;
+        const t = d.children ? (d.depth === 1 ? 0.55 : 0.7) : 0.85;
         return blendWithSurface(base, t);
       })
-      .attr('fill-opacity', (d) => (d.children ? 0.95 : 1))
+      .attr('fill-opacity', (d) => (arcVisible(d.current) ? (d.children ? 0.95 : 1) : 0))
+      .attr('stroke', (d) => blendWithSurface(colourFor(topCategory(d)), d.children ? 0.32 : 0.22))
+      .attr('stroke-width', (d) => (d.children ? 0.75 : 0.6))
+      .attr('d', (d) => arc(d.current))
       .style('cursor', (d) => (d.children ? 'pointer' : 'default'))
-      .attr('stroke', borderColour)
       .on('click', (event, d) => {
         event.stopPropagation();
-        if (focus === d) return;
-        zoom(d, event);
+        hideTooltip(tooltip);
+        if (!d.children) return;
+        clicked(d);
       })
       .on('mouseenter', (event, d) => {
-        const meta = !d.children ? courseMap.get(d.data.id || d.data.code || d.data.name) : null;
-        const label = d.children
-          ? `${d.data.name} · ${d.leaves().length} course${d.leaves().length === 1 ? '' : 's'}`
-          : formatCourse(meta);
-        showTooltip(tooltip, event, label);
-      })
-      .on('mousemove', (event, d) => {
-        const meta = !d.children ? courseMap.get(d.data.id || d.data.code || d.data.name) : null;
-        const label = d.children
-          ? `${d.data.name} · ${d.leaves().length} course${d.leaves().length === 1 ? '' : 's'}`
-          : formatCourse(meta);
-        showTooltip(tooltip, event, label);
-      })
-      .on('mouseleave', () => hideTooltip(tooltip));
-
-    const labels = nodes
-      .append('text')
-      .attr('class', 'node-label')
-      .attr('dy', '0.32em')
-      .attr('x', (d) => labelPosition(d))
-      .attr('y', (d) => labelBaselineShift(d))
-      .attr('text-anchor', (d) => (isRightSide(d) ? 'start' : 'end'))
-      .text((d) => {
-        if (d.depth === 0) return 'Coursework';
-        if (d.depth === 1) return d.data.name;
-        if (!d.children) {
-          const meta = courseMap.get(d.data.id || d.data.code || d.data.name);
-          return meta?.code || d.data.name;
+        if (d.children) {
+          hideTooltip(tooltip);
+          return;
         }
-        return d.data.name;
+        const meta = courseMap.get(d.data.id || d.data.code || d.data.name);
+        const html = formatCourseTooltip(meta);
+        if (!html) return;
+        const align = tooltipAlignment(event.currentTarget, svg.node());
+        showTooltip(tooltip, event.currentTarget.getBoundingClientRect(), html, align);
+        d3.select(event.currentTarget).classed('is-hovered', true).attr('filter', 'url(#cw-glow)');
+      })
+      .on('mouseleave', (event) => {
+        hideTooltip(tooltip);
+        d3.select(event.currentTarget).classed('is-hovered', false).attr('filter', null);
       });
 
-    let focus = root;
-    let view = [0, 0, diameter];
+    const labels = g
+      .append('g')
+      .attr('class', 'cw-labels')
+      .attr('pointer-events', 'none')
+      .selectAll('text')
+      .data(root.descendants().slice(1))
+      .join('text')
+      .attr('class', 'cw-label')
+      .attr('dy', '0.32em')
+      .attr('fill-opacity', (d) => (labelVisible(d.current) ? 1 : 0))
+      .attr('transform', (d) => labelTransform(d.current))
+      .text((d) => labelText(d));
 
-    svg.on('click', () => {
-      if (focus !== root) zoom(root);
+    const center = g
+      .append('g')
+      .attr('class', 'cw-center-group')
+      .attr('pointer-events', 'all')
+      .style('cursor', 'pointer')
+      .datum(root);
+
+    const parentCircle = center
+      .append('circle')
+      .datum(root)
+      .attr('class', 'cw-center')
+      .attr('r', Math.max(36, radiusStep * 0.9))
+      .attr('fill', blendWithSurface('#1e293b', darkMode ? 0.35 : 0.2))
+      .attr('stroke', blendWithSurface('#334155', 0.45))
+      .attr('stroke-width', 1.4);
+
+    const parentLabel = center
+      .append('text')
+      .attr('class', 'cw-center-label')
+      .attr('text-anchor', 'middle')
+      .attr('dy', '0.36em')
+      .text('Coursework');
+
+    center.on('click', (_, d) => {
+      if (!d) return;
+      hideTooltip(tooltip);
+      clicked(d);
     });
 
-    applyRotation();
-    zoomTo(view);
-    updateHighlight();
-
-    function zoom(target, event) {
-      focus = target;
-      const targetRotation = rotationFor(target);
-      const next = target === root ? [0, 0, diameter] : viewFor(target, diameter, targetRotation);
-      const transition = svg
-        .transition()
-        .duration(event?.altKey ? 1000 : 750)
-        .tween('zoom', () => {
-          const i = d3.interpolateZoom(view, next);
-          return (t) => zoomTo(i(t));
-        })
-        .tween('rotate', () => {
-          const r = d3.interpolateNumber(rotation, targetRotation);
-          return (t) => setRotation(r(t));
-        });
-
-      transition.on('end', updateHighlight);
-    }
-
-    function zoomTo(v) {
-      const k = diameter / v[2];
-      view = [0, 0, v[2]];
-      g.attr('transform', `scale(${k})`);
-    }
-
-    function updateHighlight() {
-      const active = new Set(focus.descendants().concat(focus.ancestors ? focus.ancestors() : []));
-      nodes.classed('dimmed', (d) => !active.has(d));
-      link.classed('dimmed', (d) => !active.has(d.source) && !active.has(d.target));
-      updateLabelVisibility(active);
-    }
-
-    function setRotation(value) {
-      rotation = wrapAngle(value);
-      applyRotation();
-    }
-
-    function applyRotation() {
-      nodes.attr('transform', (d) => translateToNode(d));
-      link.attr('d', linkPath);
-      labels
-        .attr('x', (d) => labelPosition(d))
-        .attr('y', (d) => labelBaselineShift(d))
-        .attr('text-anchor', (d) => (isRightSide(d) ? 'start' : 'end'))
-        .attr('transform', null);
-    }
-
-    function rawAngle(d) {
-      return d.x + rotation;
-    }
-
-    function normalizedAngle(d) {
-      let angle = rawAngle(d) % tau;
-      if (angle < 0) angle += tau;
-      return angle;
-    }
-
-    function translateToNode(d) {
-      const angle = rawAngle(d) - Math.PI / 2;
-      const r = d.y;
-      const x = Math.cos(angle) * r;
-      const y = Math.sin(angle) * r;
-      return `translate(${x},${y})`;
-    }
-
-    function isRightSide(d) {
-      return Math.cos(rawAngle(d)) >= 0;
-    }
-
-    function labelPosition(d) {
-      const base = nodeRadius(d) + (d.depth === 0 ? 28 : d.depth === 1 ? 20 : 18);
-      return isRightSide(d) ? base : -base;
-    }
-
-    function labelBaselineShift(d) {
-      return 0;
-    }
-
-    function updateLabelVisibility(activeSet) {
-      labels.each(function (d) {
-        const label = d3.select(this);
-        const visible = d.depth <= 1 || activeSet.has(d) || (d.parent && activeSet.has(d.parent));
-        label
-          .classed('label-hidden', !visible)
-          .style('opacity', visible ? 1 : 0)
-          .style('pointer-events', visible ? 'auto' : 'none');
-      });
-    }
-
-    function rotationFor(node) {
-      if (!node || node === root) {
-        return wrapAngle(0);
+    let focus = root;
+    svg.on('click', () => {
+      if (focus.parent) {
+        hideTooltip(tooltip);
+        clicked(focus.parent);
       }
-      const currentAngle = normalizedAngle(node);
-      const leftBoundary = Math.PI / 2;
-      const rightBoundary = (3 * Math.PI) / 2;
-      const targetAngle = currentAngle > leftBoundary && currentAngle < rightBoundary ? Math.PI : 0;
-      const delta = smallestAngleDifference(targetAngle, currentAngle);
-      return wrapAngle(rotation + delta);
+    });
+
+    function clicked(p) {
+      focus = p;
+      const parentNode = p.parent || root;
+      center.datum(parentNode);
+      parentCircle.datum(parentNode);
+      parentLabel.text(p === root ? 'Coursework' : p.data.name);
+
+      root.each((d) => {
+        d.target = {
+          x0: Math.max(0, Math.min(1, (d.x0 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+          x1: Math.max(0, Math.min(1, (d.x1 - p.x0) / (p.x1 - p.x0))) * 2 * Math.PI,
+          y0: Math.max(0, d.y0 - p.depth),
+          y1: Math.max(0, d.y1 - p.depth),
+        };
+      });
+
+      const transition = svg.transition().duration(750);
+
+      path
+        .transition(transition)
+        .tween('data', (d) => {
+          const i = d3.interpolate(d.current, d.target);
+          return (t) => {
+            d.current = i(t);
+          };
+        })
+        .filter(function (d) {
+          const visible = arcVisible(d.target);
+          return +this.getAttribute('fill-opacity') || visible;
+        })
+        .attr('fill-opacity', (d) => (arcVisible(d.target) ? (d.children ? 0.95 : 1) : 0))
+        .attrTween('d', (d) => () => arc(d.current));
+
+      labels
+        .filter(function (d) {
+          const visible = labelVisible(d.target);
+          return +this.getAttribute('fill-opacity') || visible;
+        })
+        .transition(transition)
+        .attr('fill-opacity', (d) => (labelVisible(d.target) ? 1 : 0))
+        .attrTween('transform', (d) => () => labelTransform(d.current));
     }
 
-    function wrapAngle(value) {
-      return ((value + Math.PI) % tau + tau) % tau - Math.PI;
+    if (tooltipWasChild) {
+      container.appendChild(tooltip);
     }
 
-    function smallestAngleDifference(target, current) {
-      return wrapAngle(target - current);
-    }
+    clicked(root);
     return baseSize;
   }
 
@@ -416,24 +455,30 @@
     const viewportWidth = typeof window !== 'undefined' ? window.innerWidth || 0 : 0;
     const viewportHeight = typeof window !== 'undefined' ? window.innerHeight || 0 : 0;
 
-    const fallbackWidth = viewportWidth
-      ? Math.max(Math.min(viewportWidth - 96, 1100), 320)
-      : 960;
+    const fallbackWidth = viewportWidth ? Math.max(Math.min(viewportWidth - 96, 1100), 320) : 960;
 
     let candidate = Math.max(measured, fallbackWidth);
 
     if (viewportHeight) {
-      const heightCap = Math.max(Math.min(viewportHeight - 280, 760), 420);
+      const heightCap = Math.max(Math.min(viewportHeight - 240, 760), 420);
       candidate = Math.min(candidate, heightCap);
     }
 
-    const upperBound = 1150;
+    const upperBound = 1120;
     const lowerBound = viewportWidth < 640 ? 320 : 480;
     return Math.max(Math.min(candidate, upperBound), lowerBound);
   }
 
   function blendWithSurface(color, weight) {
     return d3.interpolateLab(surfaceColour, color)(weight);
+  }
+
+  function tooltipAlignment(element, svg) {
+    if (!element || !svg) return 'right';
+    const elementRect = element.getBoundingClientRect();
+    const svgRect = svg.getBoundingClientRect();
+    const center = svgRect.left + svgRect.width / 2;
+    return elementRect.left >= center ? 'left' : 'right';
   }
 
   function buildFallbackList(tree) {

@@ -1,42 +1,86 @@
 #cw-viz.cw {
   width: min(94vw, 1200px);
-  margin: clamp(1.8rem, 4.5vw, 3.8rem) auto;
+  margin: clamp(2rem, 5vw, 4rem) auto;
   display: flex;
   flex-direction: column;
-  gap: clamp(1.25rem, 2.6vw, 2.25rem);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
 .cw figure {
-  background: var(--tile);
-  border-radius: 1.2rem;
-  padding: clamp(1.25rem, 2vw, 2rem);
-  box-shadow: 0 22px 48px rgba(15, 23, 42, 0.08);
+  background: color-mix(in oklab, var(--tile, #fff) 85%, transparent 15%);
+  border-radius: 1.35rem;
+  padding: clamp(1.4rem, 2.6vw, 2.35rem);
+  box-shadow: 0 22px 55px rgba(15, 23, 42, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: clamp(1rem, 1.6vw, 1.5rem);
+  border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 12%, transparent 88%);
 }
 
 .cw figure h2 {
   margin: 0;
-  font-size: clamp(1.25rem, 1.2vw + 1rem, 1.6rem);
+  font-size: clamp(1.28rem, 1.3vw + 1rem, 1.7rem);
 }
 
 .cw figure p {
   margin: 0;
-  font-size: clamp(0.95rem, 0.4vw + 0.85rem, 1.05rem);
-  color: rgba(15, 23, 42, 0.75);
+  font-size: clamp(0.95rem, 0.5vw + 0.85rem, 1.05rem);
+  color: color-mix(in srgb, var(--fg, #0f172a) 78%, transparent 22%);
+  line-height: 1.65;
+}
+
+body.dark .cw figure,
+html[data-theme="dark"] .cw figure {
+  background: color-mix(in oklab, rgba(30, 41, 59, 0.94) 92%, transparent 8%);
+  border-color: rgba(148, 163, 184, 0.24);
+  box-shadow: 0 25px 60px rgba(2, 6, 23, 0.55);
 }
 
 body.dark .cw figure p,
 html[data-theme="dark"] .cw figure p {
-  color: rgba(226, 232, 240, 0.75);
+  color: rgba(226, 232, 240, 0.78);
 }
 
 .cw .viz-canvas {
   position: relative;
   width: 100%;
-  min-height: clamp(360px, 56vh, 720px);
   aspect-ratio: 1 / 1;
+  min-height: clamp(360px, 58vh, 760px);
+  border-radius: 1.6rem;
+  padding: clamp(1.1rem, 2.4vw, 2rem);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(59, 130, 246, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 50% 20%, rgba(248, 250, 252, 0.85) 0%, transparent 55%),
+    linear-gradient(145deg, color-mix(in oklab, var(--tile, #fff) 90%, transparent 10%) 0%,
+      color-mix(in oklab, rgba(226, 232, 240, 1) 82%, transparent 18%) 100%);
+  border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 12%, transparent 88%);
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.16);
+  overflow: hidden;
+}
+
+body.dark .cw .viz-canvas,
+html[data-theme="dark"] .cw .viz-canvas {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(125, 211, 252, 0.16) 0%, transparent 60%),
+    radial-gradient(circle at 50% 20%, rgba(30, 41, 59, 0.9) 0%, transparent 65%),
+    linear-gradient(160deg, rgba(15, 23, 42, 0.96) 0%, rgba(9, 14, 23, 0.92) 100%);
+  border-color: rgba(100, 116, 139, 0.32);
+  box-shadow: 0 28px 70px rgba(2, 6, 23, 0.58);
+}
+
+.cw .viz-canvas::after {
+  content: '';
+  position: absolute;
+  inset: clamp(0.55rem, 0.9vw, 1rem);
+  border-radius: 1.3rem;
+  border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 6%, transparent 94%);
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+body.dark .cw .viz-canvas::after,
+html[data-theme="dark"] .cw .viz-canvas::after {
+  border-color: rgba(148, 163, 184, 0.22);
 }
 
 .cw .viz-canvas svg {
@@ -47,67 +91,194 @@ html[data-theme="dark"] .cw figure p {
 
 .cw .viz-canvas svg text {
   font-family: var(--font-sans);
-  fill: currentColor;
+  fill: rgba(15, 23, 42, 0.88);
 }
 
-.cw .viz-canvas svg .node-label {
-  font-size: clamp(0.6rem, 0.22vw + 0.5rem, 0.78rem);
-  letter-spacing: 0.01em;
+body.dark .cw .viz-canvas svg text,
+html[data-theme="dark"] .cw .viz-canvas svg text {
+  fill: rgba(241, 245, 249, 0.92);
 }
 
-.cw .viz-canvas svg .node-label.label-hidden {
-  opacity: 0;
+.cw .viz-canvas svg .cw-arcs path {
+  transition: fill-opacity 0.35s ease, stroke 0.3s ease, filter 0.2s ease;
+  stroke-linejoin: round;
+}
+
+.cw .viz-canvas svg .cw-arcs path.branch {
+  filter: drop-shadow(0 4px 12px rgba(15, 23, 42, 0.08));
+}
+
+.cw .viz-canvas svg .cw-arcs path.leaf {
+  filter: drop-shadow(0 6px 18px rgba(15, 23, 42, 0.18));
+}
+
+.cw .viz-canvas svg .cw-arcs path.is-hovered,
+.cw .viz-canvas svg .cw-arcs path:hover {
+  filter: url(#cw-glow) drop-shadow(0 8px 20px rgba(59, 130, 246, 0.35));
+  stroke: color-mix(in srgb, var(--fg, #0f172a) 24%, transparent 76%);
+}
+
+body.dark .cw .viz-canvas svg .cw-arcs path.is-hovered,
+body.dark .cw .viz-canvas svg .cw-arcs path:hover,
+html[data-theme="dark"] .cw .viz-canvas svg .cw-arcs path.is-hovered,
+html[data-theme="dark"] .cw .viz-canvas svg .cw-arcs path:hover {
+  stroke: rgba(148, 163, 184, 0.42);
+}
+
+.cw .viz-canvas svg .cw-label {
+  font-size: clamp(0.62rem, 0.2vw + 0.56rem, 0.86rem);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+  opacity: 0.94;
+}
+
+body.dark .cw .viz-canvas svg .cw-label,
+html[data-theme="dark"] .cw .viz-canvas svg .cw-label {
+  text-shadow: 0 2px 8px rgba(2, 6, 23, 0.55);
+}
+
+.cw .viz-canvas svg .cw-center-group {
+  transition: transform 0.3s ease;
+}
+
+.cw .viz-canvas svg .cw-center {
+  fill: rgba(248, 250, 252, 0.92);
+  stroke: rgba(148, 163, 184, 0.32);
+  transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+body.dark .cw .viz-canvas svg .cw-center,
+html[data-theme="dark"] .cw .viz-canvas svg .cw-center {
+  fill: rgba(30, 41, 59, 0.92);
+  stroke: rgba(100, 116, 139, 0.45);
+}
+
+.cw .viz-canvas svg .cw-center-group:hover .cw-center {
+  fill: rgba(248, 250, 252, 0.98);
+  stroke: color-mix(in srgb, var(--fg, #0f172a) 22%, transparent 78%);
+}
+
+body.dark .cw .viz-canvas svg .cw-center-group:hover .cw-center,
+html[data-theme="dark"] .cw .viz-canvas svg .cw-center-group:hover .cw-center {
+  fill: rgba(30, 41, 59, 0.98);
+  stroke: rgba(148, 163, 184, 0.55);
+}
+
+.cw .viz-canvas svg .cw-center-label {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: clamp(0.68rem, 0.25vw + 0.64rem, 0.9rem);
+  text-transform: uppercase;
   pointer-events: none;
-}
-
-.cw .viz-canvas svg .node circle {
-  stroke-width: 1.2;
-}
-
-.cw .viz-canvas svg .node.dimmed {
-  opacity: 0.18;
-}
-
-.cw .viz-canvas svg .link {
-  fill: none;
-  stroke-width: 1.25;
-}
-
-.cw .viz-canvas svg .link.dimmed {
-  opacity: 0.1;
 }
 
 .cw-tooltip {
   position: absolute;
   pointer-events: none;
-  background: rgba(15, 23, 42, 0.88);
+  background: rgba(15, 23, 42, 0.94);
   color: #f8fafc;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  padding: 0.55rem 0.7rem;
-  border-radius: 0.6rem;
-  font-size: 0.85rem;
-  max-width: 20rem;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.15);
+  border: 1px solid rgba(148, 163, 184, 0.38);
+  padding: 0.8rem 0.95rem;
+  border-radius: 0.85rem;
+  font-size: 0.86rem;
+  max-width: min(22rem, 82vw);
+  box-shadow: 0 20px 48px rgba(15, 23, 42, 0.28);
   display: none;
   z-index: 5;
+  line-height: 1.55;
+  transition: opacity 0.18s ease;
+  opacity: 0;
+}
+
+.cw-tooltip[data-visible="true"] {
+  display: block;
+  opacity: 1;
+}
+
+.cw-tooltip .cw-tip-title {
+  font-weight: 600;
+  font-size: 0.98rem;
+  margin-bottom: 0.25rem;
+}
+
+.cw-tooltip .cw-tip-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+  color: rgba(248, 250, 252, 0.85);
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.6rem;
+}
+
+.cw-tooltip .cw-tip-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.24rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.32);
+  border: 1px solid rgba(148, 163, 184, 0.42);
+  text-transform: uppercase;
+}
+
+.cw-tooltip .cw-tip-stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cw-tooltip .cw-tip-stages li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.cw-tooltip .cw-tip-stages strong {
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.01em;
+}
+
+.cw-tooltip .cw-tip-stages span {
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.82);
   line-height: 1.4;
 }
 
-html[data-theme="dark"] .cw-tooltip,
-body.dark .cw-tooltip {
-  background: rgba(15, 23, 42, 0.85);
+.cw-tooltip .cw-tip-empty {
+  margin: 0;
+  font-size: 0.78rem;
+  color: rgba(226, 232, 240, 0.78);
+}
+
+body.dark .cw-tooltip,
+html[data-theme="dark"] .cw-tooltip {
+  background: rgba(15, 23, 42, 0.9);
   color: #f1f5f9;
-  border-color: rgba(148, 163, 184, 0.5);
-  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.4);
+  border-color: rgba(148, 163, 184, 0.55);
+  box-shadow: 0 22px 52px rgba(2, 6, 23, 0.6);
+}
+
+@media (max-width: 900px) {
+  .cw .viz-canvas {
+    padding: clamp(0.9rem, 3.4vw, 1.4rem);
+    border-radius: 1.4rem;
+  }
 }
 
 @media (max-width: 720px) {
   #cw-viz.cw {
-    margin: clamp(1.5rem, 10vw, 2.5rem) auto;
-    gap: 1.25rem;
+    margin: clamp(1.6rem, 9vw, 2.4rem) auto;
+    gap: 1.35rem;
   }
 
   .cw .viz-canvas {
-    min-height: clamp(360px, 80vw, 520px);
+    min-height: clamp(360px, 82vw, 520px);
   }
 }
