@@ -209,8 +209,12 @@
   }
 
   function renderSunburst(container, hierarchyData, courseMap, tooltip, measuredWidth) {
-    container.innerHTML = '';
+    const tooltipWasChild = tooltip && tooltip.parentElement === container;
     hideTooltip(tooltip);
+    if (tooltipWasChild) {
+      container.removeChild(tooltip);
+    }
+    container.innerHTML = '';
 
     const baseSize = computeBaseSize(container, measuredWidth);
     const radius = baseSize / 2;
@@ -430,6 +434,10 @@
         .transition(transition)
         .attr('fill-opacity', (d) => (labelVisible(d.target) ? 1 : 0))
         .attrTween('transform', (d) => () => labelTransform(d.current));
+    }
+
+    if (tooltipWasChild) {
+      container.appendChild(tooltip);
     }
 
     clicked(root);
