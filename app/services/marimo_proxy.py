@@ -69,6 +69,7 @@ def _rewrite_html(html_bytes: bytes, mount: str) -> bytes:
         html = html_bytes.decode("utf-8", errors="replace")
 
     base_href = mount.rstrip("/") + "/"
+    mount_prefix = mount.lstrip("/")
 
     # Ensure relative URLs resolve under the proxy mount.
     if "<base" not in html.lower():
@@ -78,7 +79,13 @@ def _rewrite_html(html_bytes: bytes, mount: str) -> bytes:
             html = html[:insert_at] + f'\n<base href="{base_href}" />' + html[insert_at:]
 
     # Rewrite root-relative asset paths (e.g. src="/static/app.js") to stay under the mount.
-    html = _REWRITE_ATTR_RE.sub(lambda m: f'{m.group("attr")}{base_href}{m.group("rest")}', html)
+    def _rewrite_attr(match: re.Match[str]) -> str:
+        rest = match.group("rest")
+        if rest == mount_prefix or rest.startswith(mount_prefix + "/"):
+            return match.group(0)
+        return f'{match.group("attr")}{base_href}{rest}'
+
+    html = _REWRITE_ATTR_RE.sub(_rewrite_attr, html)
     return html.encode("utf-8")
 
 
