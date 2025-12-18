@@ -1,0 +1,15 @@
+.marimo-embed{
+  margin:1.25rem 0;
+  border:1px solid var(--border);
+  border-radius:1rem;
+  overflow:hidden;
+  background:var(--tile)
+}
+.marimo-embed iframe{
+  display:block;
+  width:100%;
+  height:clamp(520px,85vh,980px);
+  border:0;
+  background:var(--bg)
+}
+.marimo-embed-links{margin-top:.5rem}

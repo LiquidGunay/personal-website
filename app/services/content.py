@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import frontmatter  # type: ignore[import-untyped]
 from markdown_it import MarkdownIt
@@ -31,6 +30,8 @@ class Post:
     updated: datetime | None
     cover_image: str | None
     html: str
+    wide: bool = False
+    extra_css: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -63,6 +64,14 @@ def _load_post(path: Path) -> Post | None:
     draft = bool(fm.get("draft", False))
     updated = _parse_date(fm.get("updated"))
     cover_image = fm.get("cover_image")
+    wide = bool(fm.get("wide", False))
+    extra_css_raw = fm.get("extra_css") or []
+    if isinstance(extra_css_raw, str):
+        extra_css = [extra_css_raw]
+    elif isinstance(extra_css_raw, list | tuple):
+        extra_css = [str(item) for item in extra_css_raw if item]
+    else:
+        extra_css = []
     html = md.render(fm.content)
     return Post(
         title=title,
@@ -74,6 +83,8 @@ def _load_post(path: Path) -> Post | None:
         updated=updated,
         cover_image=cover_image,
         html=html,
+        wide=wide,
+        extra_css=extra_css,
     )
 
 
@@ -119,7 +130,7 @@ def get_page(slug: str) -> Page | None:
     html = md.render(fm.content)
     featured_slug = fm.get("featured_slug")
     quotes_list = fm.get("quotes") or []
-    quotes = list(quotes_list) if isinstance(quotes_list, (list, tuple)) else []
+    quotes = list(quotes_list) if isinstance(quotes_list, list | tuple) else []
     metadata = dict(fm.metadata)
     return Page(
         title=title,
@@ -128,4 +139,3 @@ def get_page(slug: str) -> Page | None:
         quotes=quotes,
         meta=metadata,
     )
-

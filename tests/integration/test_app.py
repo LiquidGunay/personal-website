@@ -23,6 +23,13 @@ def test_blog_post():
     assert "Hello, World" in r.text
 
 
+def test_blog_post_marimo_embed_present():
+    r = client.get("/blog/semantic-entropy-probe-comparison")
+    assert r.status_code == 200
+    assert 'class="marimo-embed"' in r.text
+    assert 'src="/marimo/semantic-entropy-probe-comparison/"' in r.text
+
+
 def test_rss_feed():
     r = client.get("/feed.xml")
     assert r.status_code == 200

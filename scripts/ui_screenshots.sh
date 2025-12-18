@@ -72,6 +72,7 @@ capture() {
 
 capture "/" "about" ""
 capture "/blog" "blog" ""
+capture "/blog/semantic-entropy-probe-comparison" "semantic-entropy-probe-comparison" ".marimo-embed iframe"
 capture "/coursework" "coursework" "#cw-viz svg"
 
 echo "[ui] done -> ${OUT_DIR}"

@@ -135,7 +135,8 @@ def render_about_page(theme: str | None = None, current_path: str = "/") -> str:
         )
 
     links_block = ""
-    links_data = page_meta.get("links") if isinstance(page_meta.get("links"), list) else []
+    links_raw = page_meta.get("links")
+    links_data = links_raw if isinstance(links_raw, list) else []
     contact_items: list[str] = []
     for item in links_data or []:
         if not isinstance(item, dict):
@@ -231,6 +232,18 @@ def render_blog_index_page(posts: Iterable[Post], theme: str | None = None, curr
 
 
 def render_post_page(post: Post, theme: str | None = None, current_path: str = "/") -> str:
+    extra_head = ""
+    if getattr(post, "extra_css", None):
+        css_links = "\n".join(
+            f'<link rel="stylesheet" href="{static_url(css_path)}" />'
+            for css_path in post.extra_css
+        )
+        extra_head = css_links
+
+    body_class = "post-page"
+    if getattr(post, "wide", False):
+        body_class = "wide post-page"
+
     body = f"""
     <article>
       <h1>{post.title}</h1>
@@ -238,7 +251,14 @@ def render_post_page(post: Post, theme: str | None = None, current_path: str = "
       <div class=\"post\">{post.html}</div>
     </article>
     """
-    return _layout(post.title, body, theme=theme, current_path=current_path)
+    return _layout(
+        post.title,
+        body,
+        theme=theme,
+        current_path=current_path,
+        body_class=body_class,
+        extra_head=extra_head,
+    )
 
 
 def render_coursework_page(theme: str | None = None, current_path: str = "/") -> str:
