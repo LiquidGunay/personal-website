@@ -26,8 +26,9 @@
 - [x] Baseline CSS: typography, spacing, tile, nav; Pygments injection
 - [x] Content pipeline: Markdown + frontmatter for posts and pages
 - [x] Tests: integration coverage for routes, RSS, quotes, theme; pre-push hook
-- [ ] Coursework data model (`content/coursework/data.yaml`)
-- [ ] Coursework visualization (Altair → Vega-Lite embed + no-JS fallback table)
+- [x] Coursework visualization (D3 treemap + details panel + no-JS fallback list)
+- [x] Visual regression snapshots script (`scripts/ui_screenshots.sh`)
+- [ ] Coursework data model (`content/coursework/data.yaml`) + generator for `app/static/courses.json`
 - [ ] About: real content (avatar asset, quotes list, featured post selection)
 - [ ] Blog: optional tag filter UX (progressive enhancement)
 - [ ] SEO polish (OG images automation, canonical review)
@@ -48,8 +49,8 @@
 
 ## Next Tasks
 
-1) Define coursework data file `content/coursework/data.yaml` and render a server-side table
-2) Embed Vega-Lite chart via Altair on `/coursework` with no-JS fallback
+1) (Optional) Move coursework source-of-truth to `content/coursework/data.yaml` and generate `app/static/courses.json`
+2) Enrich coursework metadata (term/year/credits) and surface it in the details panel
 3) Fill About content (avatar, finalized quotes, featured post)
 4) Optional tag filter behavior on `/blog` (progressive enhancement)
 5) SEO polish and later analytics integration (per hosting/privacy preference)
@@ -81,7 +82,9 @@
 ### Testing Strategy
 - **Unit**: Markdown parsing, frontmatter validation, slug/date utilities.
 - **Integration**: ASGI routes via `httpx.AsyncClient`; ensure pages render and include essential meta.
-- **E2E (optional)**: Playwright against a built container to validate critical flows (home, blog index, post page, feed). Run locally or nightly to avoid CI cost/time.
+- **E2E/Visual (optional)**:
+  - Use `scripts/ui_screenshots.sh` for screenshot-based UI checks (light/dark + common viewports).
+  - Use Playwright against a built container to validate critical flows (home, blog index, post page, feed). Run locally or nightly to avoid CI cost/time.
 - **Quality gates**: ruff (lint+fmt), mypy (strict-ish on app code), pytest with coverage threshold.
 
 ### CI/CD (GitHub Actions)
@@ -137,6 +140,11 @@
 - Preview environments for PRs
 - E2E tests via Playwright
 - Theming and custom design system
+
+### Coursework Page (`/coursework`)
+- Current: a responsive D3 treemap (subject legend + click-to-pin details panel) with a `noscript` fallback list.
+- Data: currently served from `app/static/courses.json`; prerequisites and “plan stages” are rendered in the details panel.
+- Next: optionally move the source-of-truth into `content/coursework/data.yaml` and generate the JSON during builds.
 
 ### Open Questions / Decisions to Revisit
 - Region selection on Railway
@@ -196,15 +204,11 @@ Design inspiration: clean, content-first aesthetic similar to Lilian Weng’s Li
 - Source from `content/pages/about.md` (Markdown) rendered through the existing pipeline; allow small inline components like Callout.
 
 ### Coursework Page (`/coursework`)
-- For now: page shell only; visualization content TBD.
-- Brainstorm ideas (to pick later):
-  - Grouped vs stacked bars by subject, segmented by level/status
-  - Swimlane timeline by term/year (per-subject rows)
-  - Treemap by subject → course count or credit hours
-  - Sunburst: subject → level → status
-  - Heatmap: term on x, subject on y, count/intensity
-  - Beeswarm/dot plot: distribution by year/level
-- Future implementation: Python-first via Altair → Vega-Lite JSON; embed with `vega-embed` only on this page; provide no-JS fallback table.
+- Current: a treemap-style course map (D3) with a details panel and subject filtering. It stays readable on mobile by using short tile labels + progressive disclosure.
+- Future options (if we want richer views):
+  - Treemap by subject sized by credits/hours (instead of equal tiles)
+  - Timeline/swimlanes by term/year
+  - Prerequisite graph for a selected subject (separate view)
 
 ### UI Libraries and Assets
 - Baseline CSS: either tiny classless CSS (e.g., Pico.css) or Open Props tokens + ~100 lines of custom CSS in `app/static/base.css` to achieve PaperMod-like spacing/typography.
@@ -213,7 +217,7 @@ Design inspiration: clean, content-first aesthetic similar to Lilian Weng’s Li
 
 ### Accessibility & Performance
 - Color contrast AA/AAA where feasible; visible focus states; skip-links; semantic landmarks.
-- Ship zero JS by default; load `vega-embed` only on `/coursework`.
+- Ship zero JS by default; load D3 only on `/coursework`.
 - Images `loading="lazy"`, width/height set; responsive typography; avoid heavy webfonts unless necessary.
 
 ### SEO & Meta
@@ -222,7 +226,7 @@ Design inspiration: clean, content-first aesthetic similar to Lilian Weng’s Li
 ### Content Authoring
 - Posts at `content/posts/<slug>/index.md` (unchanged).
 - About at `content/pages/about.md`.
-- Coursework data at `content/coursework/data.yaml`.
+- Coursework data currently at `app/static/courses.json` (optional future move to `content/coursework/data.yaml`).
 
 ### Implementation Steps
 1) Create FastHTML components/pages listed above; wire routes in `app/main.py`.
@@ -236,5 +240,4 @@ Design inspiration: clean, content-first aesthetic similar to Lilian Weng’s Li
 - About: provide avatar asset and 3–5 quotes; which featured post to link? Any chatbot vendor/approach if/when we add it?
 - Coursework: confirm preferred visualization direction and data source format.
 - Logo: none for now (revisit later if branding changes).
-
 

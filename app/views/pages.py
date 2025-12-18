@@ -245,23 +245,45 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
     coursework_js = static_url("coursework.js")
     coursework_css = static_url("coursework.css")
     body = f"""
-    <section>
-      <h1>Coursework</h1>
-      <p>An interactive sunburst that starts with the broad subjects I studied and lets you peel into each layer down to individual modules. Click a subject such as Computer Science to reveal its branches, then click again to return.</p>
-      <div id=\"cw-viz\" class=\"cw\" aria-label=\"Interactive radial coursework map\">
-        <figure>
-          <figcaption>
-            <h2>Coursework sunburst</h2>
-            <p>The outer ring holds individual classes. Tap a wedge to zoom deeper, or use the centre hub to backtrack. Hover over a course to see where it fits into my study plan.</p>
-          </figcaption>
-          <div class=\"viz-canvas\" data-viz=\"radial\" aria-label=\"Radial coursework tree\"></div>
-        </figure>
+    <section class=\"cw-page\">
+      <header class=\"cw-intro\">
+        <h1>Coursework</h1>
+        <p>An interactive map of modules I took, grouped by subject. Tap a tile to pin details (plan stages + prerequisites) and explore the curriculum at a glance.</p>
+      </header>
+
+      <div id=\"cw-viz\" class=\"cw\" aria-label=\"Interactive coursework map\">
+        <div class=\"cw-layout\">
+          <figure class=\"cw-figure\">
+            <figcaption class=\"cw-caption\">
+              <div class=\"cw-caption-text\">
+                <h2>Coursework map</h2>
+                <p>Each block is a course. Subjects are color-coded, and smaller tiles are still selectable even if unlabeled.</p>
+              </div>
+              <div class=\"cw-legend\" data-cw-legend aria-label=\"Subject legend\"></div>
+            </figcaption>
+            <div class=\"viz-canvas\" data-viz=\"treemap\" aria-label=\"Coursework treemap\"></div>
+          </figure>
+
+          <aside class=\"cw-details\" aria-label=\"Course details\">
+            <div class=\"cw-details-card\">
+              <div class=\"cw-details-header\">
+                <h2>Details</h2>
+                <button type=\"button\" class=\"cw-details-clear\" data-cw-clear hidden>Clear</button>
+              </div>
+              <div class=\"cw-details-body\" data-cw-details>
+                <p class=\"cw-details-empty\">Select a course tile to see its description, plan stages, and prerequisite links.</p>
+              </div>
+            </div>
+          </aside>
+        </div>
       </div>
+
       <noscript>
         <p><strong>Note:</strong> This visualization requires JavaScript. Below is a plain list as fallback.</p>
         <div id=\"cw-fallback\"></div>
       </noscript>
     </section>
+
     <script src=\"https://cdn.jsdelivr.net/npm/d3@7\"></script>
     <script src=\"{coursework_js}\"></script>
     """
@@ -270,6 +292,6 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
         body,
         theme=theme,
         current_path=current_path,
-        body_class="wide",
+        body_class="wide coursework-page",
         extra_head=f'<link rel="stylesheet" href="{coursework_css}" />',
     )

@@ -1,68 +1,146 @@
 #cw-viz.cw {
   width: min(94vw, 1200px);
-  margin: clamp(2rem, 5vw, 4rem) auto;
+  margin: clamp(2rem, 5vw, 3.25rem) auto;
   display: flex;
   flex-direction: column;
   gap: clamp(1.5rem, 3vw, 2.5rem);
 }
 
-.cw figure {
-  background: color-mix(in oklab, var(--tile, #fff) 85%, transparent 15%);
+.cw-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  align-items: start;
+}
+
+.cw-figure {
+  background: color-mix(in oklab, var(--tile, #fff) 86%, transparent 14%);
   border-radius: 1.35rem;
-  padding: clamp(1.4rem, 2.6vw, 2.35rem);
+  padding: clamp(1.15rem, 2.4vw, 2.15rem);
   box-shadow: 0 22px 55px rgba(15, 23, 42, 0.08);
   display: flex;
   flex-direction: column;
-  gap: clamp(1rem, 1.6vw, 1.5rem);
+  gap: clamp(1rem, 1.6vw, 1.4rem);
   border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 12%, transparent 88%);
-}
-
-.cw figure h2 {
   margin: 0;
-  font-size: clamp(1.28rem, 1.3vw + 1rem, 1.7rem);
 }
 
-.cw figure p {
-  margin: 0;
-  font-size: clamp(0.95rem, 0.5vw + 0.85rem, 1.05rem);
-  color: color-mix(in srgb, var(--fg, #0f172a) 78%, transparent 22%);
-  line-height: 1.65;
-}
-
-body.dark .cw figure,
-html[data-theme="dark"] .cw figure {
+body.dark .cw-figure,
+html[data-theme="dark"] .cw-figure {
   background: color-mix(in oklab, rgba(30, 41, 59, 0.94) 92%, transparent 8%);
   border-color: rgba(148, 163, 184, 0.24);
   box-shadow: 0 25px 60px rgba(2, 6, 23, 0.55);
 }
 
-body.dark .cw figure p,
-html[data-theme="dark"] .cw figure p {
+.cw-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem 1.25rem;
+}
+
+.cw-caption-text h2 {
+  margin: 0;
+  font-size: clamp(1.2rem, 1.1vw + 1rem, 1.55rem);
+}
+
+.cw-caption-text p {
+  margin: 0.3rem 0 0;
+  font-size: clamp(0.95rem, 0.45vw + 0.85rem, 1.02rem);
+  color: color-mix(in srgb, var(--fg, #0f172a) 78%, transparent 22%);
+  line-height: 1.6;
+  max-width: 70ch;
+}
+
+body.dark .cw-caption-text p,
+html[data-theme="dark"] .cw-caption-text p {
   color: rgba(226, 232, 240, 0.78);
+}
+
+.cw-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.6rem;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.cw-legend-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 14%, transparent 86%);
+  background: color-mix(in oklab, var(--bg, #fff) 88%, transparent 12%);
+  color: inherit;
+  padding: 0.32rem 0.65rem;
+  font-size: 0.82rem;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.15s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.cw-legend-btn:hover {
+  transform: translateY(-1px);
+  background: color-mix(in oklab, var(--bg, #fff) 78%, transparent 22%);
+}
+
+.cw-legend-btn[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--accent, #3b82f6) 70%, transparent 30%);
+  background: color-mix(in oklab, var(--accent, #3b82f6) 14%, var(--bg, #fff) 86%);
+}
+
+.cw-legend-swatch {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 0.25rem;
+  flex: 0 0 auto;
+  box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.18);
+}
+
+body.dark .cw-legend-btn,
+html[data-theme="dark"] .cw-legend-btn {
+  border-color: rgba(148, 163, 184, 0.28);
+  background: rgba(15, 23, 42, 0.32);
+}
+
+body.dark .cw-legend-btn:hover,
+html[data-theme="dark"] .cw-legend-btn:hover {
+  background: rgba(15, 23, 42, 0.46);
+}
+
+body.dark .cw-legend-swatch,
+html[data-theme="dark"] .cw-legend-swatch {
+  box-shadow: inset 0 0 0 1px rgba(248, 250, 252, 0.18);
 }
 
 .cw .viz-canvas {
   position: relative;
   width: 100%;
-  aspect-ratio: 1 / 1;
-  min-height: clamp(360px, 58vh, 760px);
+  aspect-ratio: 4 / 3;
+  height: auto;
+  min-height: 420px;
+  max-height: min(65vh, 760px);
   border-radius: 1.6rem;
-  padding: clamp(1.1rem, 2.4vw, 2rem);
   background:
-    radial-gradient(circle at 50% 42%, rgba(59, 130, 246, 0.08) 0%, transparent 60%),
-    radial-gradient(circle at 50% 20%, rgba(248, 250, 252, 0.85) 0%, transparent 55%),
-    linear-gradient(145deg, color-mix(in oklab, var(--tile, #fff) 90%, transparent 10%) 0%,
+    radial-gradient(circle at 18% 12%, rgba(59, 130, 246, 0.10) 0%, transparent 55%),
+    radial-gradient(circle at 80% 92%, rgba(148, 163, 184, 0.14) 0%, transparent 60%),
+    linear-gradient(140deg,
+      color-mix(in oklab, var(--tile, #fff) 92%, transparent 8%) 0%,
       color-mix(in oklab, rgba(226, 232, 240, 1) 82%, transparent 18%) 100%);
   border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 12%, transparent 88%);
-  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.16);
+  box-shadow: 0 25px 60px rgba(15, 23, 42, 0.14);
   overflow: hidden;
 }
 
 body.dark .cw .viz-canvas,
 html[data-theme="dark"] .cw .viz-canvas {
   background:
-    radial-gradient(circle at 50% 45%, rgba(125, 211, 252, 0.16) 0%, transparent 60%),
-    radial-gradient(circle at 50% 20%, rgba(30, 41, 59, 0.9) 0%, transparent 65%),
+    radial-gradient(circle at 18% 18%, rgba(125, 211, 252, 0.16) 0%, transparent 58%),
+    radial-gradient(circle at 85% 92%, rgba(59, 130, 246, 0.10) 0%, transparent 60%),
     linear-gradient(160deg, rgba(15, 23, 42, 0.96) 0%, rgba(9, 14, 23, 0.92) 100%);
   border-color: rgba(100, 116, 139, 0.32);
   box-shadow: 0 28px 70px rgba(2, 6, 23, 0.58);
@@ -71,7 +149,7 @@ html[data-theme="dark"] .cw .viz-canvas {
 .cw .viz-canvas::after {
   content: '';
   position: absolute;
-  inset: clamp(0.55rem, 0.9vw, 1rem);
+  inset: clamp(0.55rem, 0.9vw, 0.9rem);
   border-radius: 1.3rem;
   border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 6%, transparent 94%);
   pointer-events: none;
@@ -91,7 +169,7 @@ html[data-theme="dark"] .cw .viz-canvas::after {
 
 .cw .viz-canvas svg text {
   font-family: var(--font-sans);
-  fill: rgba(15, 23, 42, 0.88);
+  fill: rgba(15, 23, 42, 0.92);
 }
 
 body.dark .cw .viz-canvas svg text,
@@ -99,79 +177,210 @@ html[data-theme="dark"] .cw .viz-canvas svg text {
   fill: rgba(241, 245, 249, 0.92);
 }
 
-.cw .viz-canvas svg .cw-arcs path {
-  transition: fill-opacity 0.35s ease, stroke 0.3s ease, filter 0.2s ease;
-  stroke-linejoin: round;
+.cw-subject-bg {
+  stroke: rgba(148, 163, 184, 0.24);
+  stroke-width: 1;
 }
 
-.cw .viz-canvas svg .cw-arcs path.branch {
-  filter: drop-shadow(0 4px 12px rgba(15, 23, 42, 0.08));
-}
-
-.cw .viz-canvas svg .cw-arcs path.leaf {
-  filter: drop-shadow(0 6px 18px rgba(15, 23, 42, 0.18));
-}
-
-.cw .viz-canvas svg .cw-arcs path.is-hovered,
-.cw .viz-canvas svg .cw-arcs path:hover {
-  filter: url(#cw-glow) drop-shadow(0 8px 20px rgba(59, 130, 246, 0.35));
-  stroke: color-mix(in srgb, var(--fg, #0f172a) 24%, transparent 76%);
-}
-
-body.dark .cw .viz-canvas svg .cw-arcs path.is-hovered,
-body.dark .cw .viz-canvas svg .cw-arcs path:hover,
-html[data-theme="dark"] .cw .viz-canvas svg .cw-arcs path.is-hovered,
-html[data-theme="dark"] .cw .viz-canvas svg .cw-arcs path:hover {
-  stroke: rgba(148, 163, 184, 0.42);
-}
-
-.cw .viz-canvas svg .cw-label {
-  font-size: clamp(0.62rem, 0.2vw + 0.56rem, 0.86rem);
-  font-weight: 500;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  text-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
-  opacity: 0.94;
-}
-
-body.dark .cw .viz-canvas svg .cw-label,
-html[data-theme="dark"] .cw .viz-canvas svg .cw-label {
-  text-shadow: 0 2px 8px rgba(2, 6, 23, 0.55);
-}
-
-.cw .viz-canvas svg .cw-center-group {
-  transition: transform 0.3s ease;
-}
-
-.cw .viz-canvas svg .cw-center {
-  fill: rgba(248, 250, 252, 0.92);
+body.dark .cw-subject-bg,
+html[data-theme="dark"] .cw-subject-bg {
   stroke: rgba(148, 163, 184, 0.32);
-  transition: fill 0.3s ease, stroke 0.3s ease;
 }
 
-body.dark .cw .viz-canvas svg .cw-center,
-html[data-theme="dark"] .cw .viz-canvas svg .cw-center {
-  fill: rgba(30, 41, 59, 0.92);
-  stroke: rgba(100, 116, 139, 0.45);
-}
-
-.cw .viz-canvas svg .cw-center-group:hover .cw-center {
-  fill: rgba(248, 250, 252, 0.98);
-  stroke: color-mix(in srgb, var(--fg, #0f172a) 22%, transparent 78%);
-}
-
-body.dark .cw .viz-canvas svg .cw-center-group:hover .cw-center,
-html[data-theme="dark"] .cw .viz-canvas svg .cw-center-group:hover .cw-center {
-  fill: rgba(30, 41, 59, 0.98);
-  stroke: rgba(148, 163, 184, 0.55);
-}
-
-.cw .viz-canvas svg .cw-center-label {
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  font-size: clamp(0.68rem, 0.25vw + 0.64rem, 0.9rem);
+.cw-subject-label {
+  font-size: 0.85rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  opacity: 0.92;
   pointer-events: none;
+}
+
+.cw-tile {
+  cursor: pointer;
+}
+
+.cw-tile-rect {
+  stroke: rgba(15, 23, 42, 0.12);
+  stroke-width: 1;
+  transition: filter 0.2s ease, stroke 0.2s ease, stroke-width 0.2s ease;
+}
+
+body.dark .cw-tile-rect,
+html[data-theme="dark"] .cw-tile-rect {
+  stroke: rgba(148, 163, 184, 0.22);
+}
+
+.cw-tile:hover .cw-tile-rect {
+  filter: drop-shadow(0 10px 20px rgba(15, 23, 42, 0.18));
+  stroke: rgba(15, 23, 42, 0.22);
+  stroke-width: 1.25;
+}
+
+body.dark .cw-tile:hover .cw-tile-rect,
+html[data-theme="dark"] .cw-tile:hover .cw-tile-rect {
+  filter: drop-shadow(0 12px 24px rgba(2, 6, 23, 0.55));
+  stroke: rgba(226, 232, 240, 0.28);
+}
+
+.cw-tile.is-selected .cw-tile-rect {
+  stroke: color-mix(in srgb, var(--accent, #3b82f6) 80%, transparent 20%);
+  stroke-width: 2;
+  filter: drop-shadow(0 14px 30px rgba(59, 130, 246, 0.22));
+}
+
+.cw-tile-label {
+  font-size: clamp(0.66rem, 0.25vw + 0.65rem, 0.82rem);
+  font-weight: 650;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+}
+
+.cw-details {
+  position: sticky;
+  top: clamp(1rem, 4vw, 2.5rem);
+}
+
+.cw-details-card {
+  border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 12%, transparent 88%);
+  border-radius: 1.35rem;
+  padding: clamp(1.1rem, 2vw, 1.55rem);
+  background: color-mix(in oklab, var(--tile, #fff) 90%, transparent 10%);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.06);
+}
+
+body.dark .cw-details-card,
+html[data-theme="dark"] .cw-details-card {
+  border-color: rgba(148, 163, 184, 0.22);
+  background: rgba(15, 23, 42, 0.34);
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.45);
+}
+
+.cw-details-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.85rem;
+}
+
+.cw-details-header h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cw-details-clear {
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 14%, transparent 86%);
+  background: transparent;
+  color: inherit;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.cw-details-clear:hover {
+  background: color-mix(in oklab, var(--bg, #fff) 85%, transparent 15%);
+}
+
+body.dark .cw-details-clear,
+html[data-theme="dark"] .cw-details-clear {
+  border-color: rgba(148, 163, 184, 0.28);
+}
+
+body.dark .cw-details-clear:hover,
+html[data-theme="dark"] .cw-details-clear:hover {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.cw-details-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  font-size: 0.96rem;
+}
+
+.cw-details-empty {
+  margin: 0;
+  color: color-mix(in srgb, var(--fg, #0f172a) 74%, transparent 26%);
+}
+
+body.dark .cw-details-empty,
+html[data-theme="dark"] .cw-details-empty {
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.cw-detail-title {
+  margin: 0;
+  font-size: 1.12rem;
+  font-weight: 700;
+}
+
+.cw-detail-subtitle {
+  margin: 0.2rem 0 0;
+  font-size: 0.92rem;
+  color: color-mix(in srgb, var(--fg, #0f172a) 72%, transparent 28%);
+}
+
+body.dark .cw-detail-subtitle,
+html[data-theme="dark"] .cw-detail-subtitle {
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.cw-detail-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.5rem;
+  margin-top: 0.65rem;
+}
+
+.cw-detail-chips span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.24rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+body.dark .cw-detail-chips span,
+html[data-theme="dark"] .cw-detail-chips span {
+  background: rgba(15, 23, 42, 0.34);
+  border-color: rgba(148, 163, 184, 0.35);
+}
+
+.cw-detail-section h3 {
+  margin: 0 0 0.45rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cw-detail-section ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.cw-detail-section li {
+  line-height: 1.45;
+}
+
+.cw-detail-section a {
+  text-decoration: none;
+}
+
+.cw-detail-section a:hover {
+  text-decoration: underline;
 }
 
 .cw-tooltip {
@@ -180,7 +389,7 @@ html[data-theme="dark"] .cw .viz-canvas svg .cw-center-group:hover .cw-center {
   background: rgba(15, 23, 42, 0.94);
   color: #f8fafc;
   border: 1px solid rgba(148, 163, 184, 0.38);
-  padding: 0.8rem 0.95rem;
+  padding: 0.75rem 0.9rem;
   border-radius: 0.85rem;
   font-size: 0.86rem;
   max-width: min(22rem, 82vw);
@@ -198,7 +407,7 @@ html[data-theme="dark"] .cw .viz-canvas svg .cw-center-group:hover .cw-center {
 }
 
 .cw-tooltip .cw-tip-title {
-  font-weight: 600;
+  font-weight: 650;
   font-size: 0.98rem;
   margin-bottom: 0.25rem;
 }
@@ -240,7 +449,7 @@ html[data-theme="dark"] .cw .viz-canvas svg .cw-center-group:hover .cw-center {
 }
 
 .cw-tooltip .cw-tip-stages strong {
-  font-weight: 600;
+  font-weight: 650;
   font-size: 0.82rem;
   letter-spacing: 0.01em;
 }
@@ -265,20 +474,28 @@ html[data-theme="dark"] .cw-tooltip {
   box-shadow: 0 22px 52px rgba(2, 6, 23, 0.6);
 }
 
-@media (max-width: 900px) {
-  .cw .viz-canvas {
-    padding: clamp(0.9rem, 3.4vw, 1.4rem);
-    border-radius: 1.4rem;
+@media (max-width: 980px) {
+  .cw-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cw-details {
+    position: static;
   }
 }
 
 @media (max-width: 720px) {
   #cw-viz.cw {
     margin: clamp(1.6rem, 9vw, 2.4rem) auto;
-    gap: 1.35rem;
+    gap: 1.25rem;
+  }
+
+  .cw-caption {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .cw .viz-canvas {
-    min-height: clamp(360px, 82vw, 520px);
+    border-radius: 1.35rem;
   }
 }
