@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import logging
 import os
 import re
-from html import escape as html_escape
 from collections.abc import Iterable
+from html import escape as html_escape
+
 import httpx
 from fastapi import Request, WebSocket
 from fastapi.responses import HTMLResponse, Response
+
+logger = logging.getLogger(__name__)
 
 try:
     from websockets.typing import Subprotocol
@@ -183,16 +187,24 @@ async def proxy_marimo_websocket(websocket: WebSocket, *, mount: str, path: str)
         if value:
             upstream_headers.append((header, value))
 
-    await websocket.accept()
+    try:
+        upstream = await websockets.connect(
+            upstream_url,
+            additional_headers=upstream_headers,
+            subprotocols=subprotocols or None,
+            max_size=None,
+        )
+    except Exception:
+        logger.exception("Marimo WS upstream connect failed: %s", upstream_url)
+        await websocket.accept()
+        await websocket.close(code=1011)
+        return
 
-    async with websockets.connect(
-        upstream_url,
-        extra_headers=upstream_headers,
-        subprotocols=subprotocols or None,
-        max_size=None,
-    ) as upstream:
+    selected_subprotocol = getattr(upstream, "subprotocol", None)
+    await websocket.accept(subprotocol=selected_subprotocol)
 
-        async def _client_to_upstream() -> None:
+    async def _client_to_upstream(tg: anyio.abc.TaskGroup) -> None:
+        try:
             while True:
                 message = await websocket.receive()
                 msg_type = message.get("type")
@@ -205,14 +217,40 @@ async def proxy_marimo_websocket(websocket: WebSocket, *, mount: str, path: str)
                     await upstream.send(message["text"])
                 elif message.get("bytes") is not None:
                     await upstream.send(message["bytes"])
+        except Exception:
+            logger.exception("Marimo WS client->upstream failed: %s", upstream_url)
+        finally:
+            try:
+                await upstream.close()
+            except Exception:
+                pass
+            tg.cancel_scope.cancel()
 
-        async def _upstream_to_client() -> None:
+    async def _upstream_to_client(tg: anyio.abc.TaskGroup) -> None:
+        try:
             async for message in upstream:
                 if isinstance(message, str):
                     await websocket.send_text(message)
                 else:
                     await websocket.send_bytes(message)
+        except Exception:
+            logger.exception("Marimo WS upstream->client failed: %s", upstream_url)
+        finally:
+            try:
+                code = getattr(upstream, "close_code", None) or 1000
+                reason = getattr(upstream, "close_reason", "") or ""
+                await websocket.close(code=code, reason=reason)
+            except Exception:
+                pass
+            tg.cancel_scope.cancel()
 
-        async with anyio.create_task_group() as tg:
-            tg.start_soon(_client_to_upstream)
-            tg.start_soon(_upstream_to_client)
+    try:
+        async with upstream:
+            async with anyio.create_task_group() as tg:
+                tg.start_soon(_client_to_upstream, tg)
+                tg.start_soon(_upstream_to_client, tg)
+    finally:
+        try:
+            await upstream.close()
+        except Exception:
+            pass
