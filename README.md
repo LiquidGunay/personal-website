@@ -7,6 +7,13 @@
 3. Run locally:
    - `uv run uvicorn app.main:app --reload`
 
+### Coursework data entry UI (local-only)
+- Start both the site + editor:
+  - `scripts/dev.sh`
+- Or run just the editor on a separate port:
+  - `uv run uvicorn scripts.coursework_editor:app --reload --port 8001`
+- Editor URL: `http://127.0.0.1:8001` (writes to `app/static/courses.json`)
+
 ### Deploy (Railway)
 - Connect the GitHub repo in Railway (Services → New → Deploy from GitHub).
 - Build: Railway auto-detects Python and runs `pip install -r requirements.txt` if present, but we use uv at runtime for local dev. No Docker needed.
@@ -29,5 +36,4 @@
 - The pre-push hook:
   - Blocks on `pytest` failures
   - Runs `ruff` and `mypy` in warn-only mode
-
 

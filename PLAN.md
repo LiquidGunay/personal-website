@@ -143,7 +143,7 @@
 
 ### Coursework Page (`/coursework`)
 - Current: a responsive D3 treemap (subject legend + click-to-pin details panel) with a `noscript` fallback list.
-- Data: currently served from `app/static/courses.json`; prerequisites and “plan stages” are rendered in the details panel.
+- Data: currently served from `app/static/courses.json`; the details panel surfaces year + description.
 - Next: optionally move the source-of-truth into `content/coursework/data.yaml` and generate the JSON during builds.
 
 ### Open Questions / Decisions to Revisit
@@ -240,4 +240,3 @@ Design inspiration: clean, content-first aesthetic similar to Lilian Weng’s Li
 - About: provide avatar asset and 3–5 quotes; which featured post to link? Any chatbot vendor/approach if/when we add it?
 - Coursework: confirm preferred visualization direction and data source format.
 - Logo: none for now (revisit later if branding changes).
-

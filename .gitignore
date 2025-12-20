@@ -12,3 +12,5 @@ coverage.xml
 htmlcov/
 node_modules/
 artifacts/playwright/
+artifacts/dev.log
+artifacts/dev.pid

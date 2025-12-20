@@ -5,6 +5,9 @@ These rules exist to keep the site **responsive**, **accessible**, and **easy to
 ## Responsive + Layout Rules
 
 - Prefer **fluid layout primitives**: `max-width`, `min()`, `max()`, `clamp()`, CSS Grid/Flexbox. Avoid fixed pixel widths/heights unless guarded by `clamp()` or media queries.
+- In Grid/Flex layouts, prevent overflow regressions:
+  - Use `minmax(0, 1fr)` for grid columns that should shrink.
+  - Use `min-width: 0` on flex/grid children that contain long text/code.
 - Keep **line length readable** on desktop (roughly 60–80ch for prose) and avoid accidental horizontal scrolling:
   - Use `overflow-wrap:anywhere` for content areas.
   - Ensure media elements (`img`, `svg`, `video`) are `max-width:100%` with `height:auto`.
@@ -17,12 +20,19 @@ These rules exist to keep the site **responsive**, **accessible**, and **easy to
 
 - The `/coursework` page uses a **D3 treemap** (not the old sunburst) with:
   - Legend filtering by subject.
-  - Click-to-pin details in a side panel (stages + prerequisite links).
+  - Click-to-pin details in a side panel (year + description).
   - A `noscript` fallback list.
 - Don’t rely on dense labels inside the chart. Use **progressive disclosure**:
   - Keep tile labels short (codes); full names + metadata go in the details panel/tooltip.
 - Must remain responsive:
   - Re-render on container resize (`ResizeObserver`) and avoid hard-coded SVG sizes.
+
+## Local-only Tools
+
+- The coursework editor lives in `scripts/coursework_editor.py` and is **not part of the public site**.
+- Keep it local by default:
+  - Bind to `127.0.0.1` (never `0.0.0.0` unless explicitly needed).
+  - Don’t mount it into `app.main` routes; run it as a separate ASGI app.
 
 ## Testing Strategy (Required)
 
@@ -43,9 +53,15 @@ These rules exist to keep the site **responsive**, **accessible**, and **easy to
   - `768×1024` (tablet)
   - `390×844` (mobile)
 
+### Local dev (site + editor)
+
+- Run both: `scripts/dev.sh`
+- URLs:
+  - Site: `http://127.0.0.1:8000`
+  - Editor: `http://127.0.0.1:8001`
+
 ### Using Playwright MCP (for visual checks inside Codex)
 
 - Host locally (same as above) and take screenshots after changes:
   - Resize to each viewport, navigate to each route, then screenshot full page.
 - If CSS/JS in `app/static/` changed, restart the server to refresh cache-busting digests (the `static_url()` helper is cached).
-

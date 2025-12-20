@@ -236,6 +236,18 @@ html[data-theme="dark"] .cw-tile:hover .cw-tile-rect {
   pointer-events: none;
 }
 
+.cw-tile-label tspan.cw-tile-code {
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cw-tile-label tspan.cw-tile-name {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  opacity: 0.92;
+}
+
 .cw-details {
   position: sticky;
   top: clamp(1rem, 4vw, 2.5rem);
@@ -363,6 +375,16 @@ html[data-theme="dark"] .cw-detail-chips span {
   text-transform: uppercase;
 }
 
+.cw-detail-section p {
+  margin: 0;
+  color: color-mix(in srgb, var(--fg, #0f172a) 78%, transparent 22%);
+}
+
+body.dark .cw-detail-section p,
+html[data-theme="dark"] .cw-detail-section p {
+  color: rgba(226, 232, 240, 0.78);
+}
+
 .cw-detail-section ul {
   margin: 0;
   padding-left: 1.1rem;
@@ -433,31 +455,11 @@ html[data-theme="dark"] .cw-detail-chips span {
   text-transform: uppercase;
 }
 
-.cw-tooltip .cw-tip-stages {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.cw-tooltip .cw-tip-stages li {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.cw-tooltip .cw-tip-stages strong {
-  font-weight: 650;
+.cw-tooltip .cw-tip-desc {
+  margin: 0 0 0.65rem;
   font-size: 0.82rem;
-  letter-spacing: 0.01em;
-}
-
-.cw-tooltip .cw-tip-stages span {
-  font-size: 0.78rem;
-  color: rgba(226, 232, 240, 0.82);
-  line-height: 1.4;
+  color: rgba(226, 232, 240, 0.86);
+  line-height: 1.45;
 }
 
 .cw-tooltip .cw-tip-empty {

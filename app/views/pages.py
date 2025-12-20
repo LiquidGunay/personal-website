@@ -268,7 +268,7 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
     <section class=\"cw-page\">
       <header class=\"cw-intro\">
         <h1>Coursework</h1>
-        <p>An interactive map of modules I took, grouped by subject. Tap a tile to pin details (plan stages + prerequisites) and explore the curriculum at a glance.</p>
+        <p>An interactive map of modules I took, grouped by subject. Tap a tile to pin details (year + description) and explore the curriculum at a glance.</p>
       </header>
 
       <div id=\"cw-viz\" class=\"cw\" aria-label=\"Interactive coursework map\">
@@ -291,7 +291,7 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
                 <button type=\"button\" class=\"cw-details-clear\" data-cw-clear hidden>Clear</button>
               </div>
               <div class=\"cw-details-body\" data-cw-details>
-                <p class=\"cw-details-empty\">Select a course tile to see its description, plan stages, and prerequisite links.</p>
+                <p class=\"cw-details-empty\">Select a course tile to see its year and description.</p>
               </div>
             </div>
           </aside>

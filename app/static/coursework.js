@@ -31,9 +31,7 @@
     });
 
   function init(data) {
-    const stageMap = buildStageMap(data.stages || []);
-    const courseMap = buildCourseMap(data.hierarchy, stageMap);
-    const linkIndex = buildLinkIndex(data.links || []);
+    const courseMap = buildCourseMap(data.hierarchy);
 
     const treemapEl = mount.querySelector('[data-viz="treemap"]');
     const legendEl = mount.querySelector('[data-cw-legend]');
@@ -58,7 +56,7 @@
           state.selectedId = null;
         }
         syncClearButton(clearBtn, state.selectedId);
-        renderDetails(detailsEl, state.selectedId ? courseMap.get(state.selectedId) : null, linkIndex, courseMap);
+        renderDetails(detailsEl, state.selectedId ? courseMap.get(state.selectedId) : null);
         render(true);
       });
     }
@@ -67,13 +65,13 @@
       clearBtn.addEventListener('click', () => {
         state.selectedId = null;
         syncClearButton(clearBtn, state.selectedId);
-        renderDetails(detailsEl, null, linkIndex, courseMap);
+        renderDetails(detailsEl, null);
         updateSelection(treemapEl, state.selectedId);
       });
     }
 
     syncClearButton(clearBtn, state.selectedId);
-    renderDetails(detailsEl, null, linkIndex, courseMap);
+    renderDetails(detailsEl, null);
 
     let lastWidth = 0;
     let lastHeight = 0;
@@ -91,7 +89,7 @@
       if (!width || !height) return;
       const focusChanged = state.focusedSubject !== lastFocus;
       if (!force && !focusChanged && Math.abs(width - lastWidth) < 4 && Math.abs(height - lastHeight) < 4) return;
-      renderTreemap(treemapEl, data.hierarchy, courseMap, linkIndex, detailsEl, clearBtn, width, height);
+      renderTreemap(treemapEl, data.hierarchy, courseMap, detailsEl, clearBtn, width, height);
       lastWidth = width;
       lastHeight = height;
       lastFocus = state.focusedSubject;
@@ -123,7 +121,7 @@
     };
   }
 
-  function buildCourseMap(tree, stageMap) {
+  function buildCourseMap(tree) {
     const root = d3.hierarchy(structuredCloneSafe(tree));
     const map = new Map();
     root.each((node) => {
@@ -134,39 +132,12 @@
         const code = node.data.code || null;
         const name = node.data.name;
         const full = code ? `${code} · ${name}` : name;
-        const stages = stageMap.get(id) || stageMap.get(code) || [];
-        map.set(id, { id, code, name, full, category, stages });
+        const year = formatYear(node.data.year, code);
+        const description = typeof node.data.description === 'string' ? node.data.description : '';
+        map.set(id, { id, code, name, full, category, year, description });
       }
     });
     return map;
-  }
-
-  function buildStageMap(stages) {
-    const map = new Map();
-    for (const stage of stages) {
-      const entry = {
-        name: stage.name,
-        description: stage.description,
-      };
-      for (const course of stage.courses || []) {
-        if (!map.has(course)) map.set(course, []);
-        map.get(course).push(entry);
-      }
-    }
-    return map;
-  }
-
-  function buildLinkIndex(links) {
-    const incoming = new Map();
-    const outgoing = new Map();
-    for (const link of links) {
-      if (!link || !link.source || !link.target) continue;
-      if (!outgoing.has(link.source)) outgoing.set(link.source, []);
-      outgoing.get(link.source).push(link.target);
-      if (!incoming.has(link.target)) incoming.set(link.target, []);
-      incoming.get(link.target).push(link.source);
-    }
-    return { incoming, outgoing };
   }
 
   function structuredCloneSafe(obj) {
@@ -190,6 +161,26 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#39;');
+  }
+
+  function inferYearFromCode(code) {
+    if (!code) return null;
+    const match = String(code).match(/(\d{3})/);
+    if (!match) return null;
+    const num = Number.parseInt(match[1], 10);
+    if (!Number.isFinite(num) || num <= 0) return null;
+    const year = Math.floor(num / 100);
+    if (year <= 0) return null;
+    return `Year ${year}`;
+  }
+
+  function formatYear(value, code) {
+    if (value == null || value === '') return inferYearFromCode(code);
+    if (typeof value === 'number' && Number.isFinite(value)) return `Year ${value}`;
+    const str = String(value).trim();
+    if (!str) return inferYearFromCode(code);
+    if (/^\d+$/.test(str) && Number.parseInt(str, 10) <= 12) return `Year ${str}`;
+    return str;
   }
 
   function ensureTooltip(parent) {
@@ -252,39 +243,138 @@
     const metaChips = [];
     if (meta.code) metaChips.push(`<span>${escapeHtml(meta.code)}</span>`);
     metaChips.push(`<span>${escapeHtml(meta.category)}</span>`);
+    if (meta.year) metaChips.push(`<span>${escapeHtml(meta.year)}</span>`);
     parts.push(`<div class="cw-tip-meta">${metaChips.join('')}</div>`);
-    if (meta.stages && meta.stages.length) {
-      const limited = meta.stages.slice(0, 2);
-      parts.push('<ul class="cw-tip-stages">');
-      for (const stage of limited) {
-        parts.push(
-          `<li><strong>${escapeHtml(stage.name)}</strong>${
-            stage.description ? `<span>${escapeHtml(stage.description)}</span>` : ''
-          }</li>`,
-        );
-      }
-      if (meta.stages.length > limited.length) {
-        const remaining = meta.stages.length - limited.length;
-        parts.push(
-          `<li><span>${escapeHtml(
-            `${remaining} more stage${remaining === 1 ? '' : 's'} in plan`,
-          )}</span></li>`,
-        );
-      }
-      parts.push('</ul>');
+    if (meta.description) {
+      parts.push(`<p class="cw-tip-desc">${escapeHtml(meta.description)}</p>`);
     } else {
-      parts.push('<p class="cw-tip-empty">Independent elective without a stage grouping.</p>');
+      parts.push('<p class="cw-tip-empty">Description coming soon.</p>');
     }
     parts.push('<p class="cw-tip-empty">Click to pin details →</p>');
     return parts.join('');
   }
 
-  function courseTileLabel(meta) {
-    if (!meta) return '';
-    if (meta.code) return meta.code;
-    const label = meta.name || '';
-    if (label.length <= 16) return label;
-    return `${label.slice(0, 14)}…`;
+  function truncateTspanToWidth(tspan, width, addEllipsis) {
+    const node = tspan.node();
+    if (!node) return;
+    const raw = tspan.text();
+    if (!raw) return;
+    const suffix = addEllipsis ? '…' : '';
+    let text = raw;
+
+    const setText = (value) => {
+      tspan.text(addEllipsis ? `${value}${suffix}` : value);
+    };
+
+    setText(text);
+    while (node.getComputedTextLength() > width && text.length > 1) {
+      text = text.slice(0, -1);
+      setText(text);
+    }
+  }
+
+  function addEllipsisToTspan(tspan, width) {
+    const node = tspan.node();
+    if (!node) return;
+    let text = tspan.text().replace(/…$/, '');
+    if (!text) return;
+    tspan.text(`${text}…`);
+    while (node.getComputedTextLength() > width && text.length > 1) {
+      const trimmed = text.replace(/\s+\S+$/, '');
+      if (trimmed && trimmed !== text) {
+        text = trimmed;
+      } else {
+        text = text.slice(0, -1);
+      }
+      tspan.text(`${text}…`);
+    }
+  }
+
+  function wrapTextIntoTspans(textEl, value, width, maxLines, className, startDyEm) {
+    const words = String(value || '')
+      .split(/\s+/)
+      .filter(Boolean);
+    if (!words.length) return;
+
+    const x = Number(textEl.attr('x')) || 0;
+    const lineHeightEm = 1.18;
+    let line = [];
+    let lineNumber = 0;
+    let tspan = textEl
+      .append('tspan')
+      .attr('x', x)
+      .attr('dy', startDyEm ? `${startDyEm}em` : 0)
+      .attr('class', className);
+
+    for (let idx = 0; idx < words.length; idx += 1) {
+      const word = words[idx];
+      line.push(word);
+      tspan.text(line.join(' '));
+
+      const node = tspan.node();
+      if (!node) continue;
+      if (node.getComputedTextLength() <= width) continue;
+
+      line.pop();
+      if (line.length === 0) {
+        tspan.text(word);
+        truncateTspanToWidth(tspan, width, idx < words.length - 1);
+        return;
+      }
+
+      tspan.text(line.join(' '));
+
+      if (lineNumber >= maxLines - 1) {
+        addEllipsisToTspan(tspan, width);
+        return;
+      }
+
+      line = [word];
+      lineNumber += 1;
+      tspan = textEl
+        .append('tspan')
+        .attr('x', x)
+        .attr('dy', `${lineHeightEm}em`)
+        .attr('class', className)
+        .text(word);
+    }
+  }
+
+  function renderTileLabel(textEl, meta, width, height, showName) {
+    if (!meta) return;
+    textEl.selectAll('tspan').remove();
+
+    const x = Number(textEl.attr('x')) || 0;
+    const code = meta.code ? String(meta.code) : '';
+    const name = meta.name ? String(meta.name) : '';
+
+    if (!showName) {
+      const label = code || name;
+      if (!label) return;
+      const tspan = textEl
+        .append('tspan')
+        .attr('x', x)
+        .attr('dy', 0)
+        .attr('class', code ? 'cw-tile-code' : 'cw-tile-name')
+        .text(label);
+      truncateTspanToWidth(tspan, width, !code);
+      return;
+    }
+
+    let usedLines = 0;
+    if (code) {
+      const codeTspan = textEl
+        .append('tspan')
+        .attr('x', x)
+        .attr('dy', 0)
+        .attr('class', 'cw-tile-code')
+        .text(code);
+      truncateTspanToWidth(codeTspan, width, false);
+      usedLines += 1;
+    }
+
+    const availableLines = Math.max(1, Math.min(4 - usedLines, Math.floor((height - 28) / 18)));
+    wrapTextIntoTspans(textEl, name, width, availableLines, 'cw-tile-name', usedLines ? 1.25 : 0);
   }
 
   function flattenToSubjectTreemap(tree, focusedSubject) {
@@ -353,71 +443,31 @@
     button.hidden = !selectedId;
   }
 
-  function renderDetails(detailsEl, meta, linkIndex, courseMap) {
+  function renderDetails(detailsEl, meta) {
     if (!detailsEl) return;
     if (!meta) {
       detailsEl.innerHTML =
-        '<p class="cw-details-empty">Select a course tile to see its description, plan stages, and prerequisite links.</p>';
+        '<p class="cw-details-empty">Select a course tile to see its year and description.</p>';
       return;
     }
 
-    const incoming = linkIndex.incoming.get(meta.id) || [];
-    const outgoing = linkIndex.outgoing.get(meta.id) || [];
-
-    const courseLabel = (id) => {
-      const entry = courseMap.get(id);
-      if (!entry) return escapeHtml(String(id));
-      if (entry.code) return escapeHtml(`${entry.code} · ${entry.name}`);
-      return escapeHtml(entry.name);
-    };
-
-    const stagesHtml = meta.stages && meta.stages.length
-      ? `<ul>${meta.stages
-          .map(
-            (s) =>
-              `<li><strong>${escapeHtml(s.name)}</strong>${s.description ? ` — ${escapeHtml(s.description)}` : ''}</li>`,
-          )
-          .join('')}</ul>`
-      : '<p class="cw-details-empty">No plan stage tagged for this module.</p>';
-
-    const prereqHtml = incoming.length
-      ? `<ul>${incoming.map((id) => `<li>${courseLabel(id)}</li>`).join('')}</ul>`
-      : '<p class="cw-details-empty">No prerequisites recorded.</p>';
-
-    const unlocksHtml = outgoing.length
-      ? `<ul>${outgoing.map((id) => `<li>${courseLabel(id)}</li>`).join('')}</ul>`
-      : '<p class="cw-details-empty">No downstream links recorded.</p>';
-
     const title = escapeHtml(meta.code ? `${meta.code} · ${meta.name}` : meta.name);
     const subtitle = escapeHtml(meta.category);
-    const stageCount = meta.stages ? meta.stages.length : 0;
-    const prereqCount = incoming.length;
-    const unlockCount = outgoing.length;
+    const year = meta.year ? escapeHtml(meta.year) : '—';
+    const description = meta.description ? escapeHtml(meta.description) : 'Description coming soon.';
 
     detailsEl.innerHTML = `
       <div>
         <p class="cw-detail-title">${title}</p>
         <p class="cw-detail-subtitle">${subtitle}</p>
-        <div class="cw-detail-chips">
-          <span><span class="cw-legend-swatch" style="background:${escapeHtml(
-            colourFor(meta.category),
-          )}"></span>${escapeHtml(meta.category)}</span>
-          <span>${escapeHtml(String(stageCount))} stage${stageCount === 1 ? '' : 's'}</span>
-          <span>${escapeHtml(String(prereqCount))} prereq${prereqCount === 1 ? '' : 's'}</span>
-          <span>${escapeHtml(String(unlockCount))} unlock${unlockCount === 1 ? '' : 's'}</span>
-        </div>
       </div>
       <div class="cw-detail-section">
-        <h3>Plan stages</h3>
-        ${stagesHtml}
+        <h3>Year</h3>
+        <p>${year}</p>
       </div>
       <div class="cw-detail-section">
-        <h3>Prerequisites</h3>
-        ${prereqHtml}
-      </div>
-      <div class="cw-detail-section">
-        <h3>Unlocks</h3>
-        ${unlocksHtml}
+        <h3>Description</h3>
+        <p>${description}</p>
       </div>
     `;
   }
@@ -431,7 +481,7 @@
     }
   }
 
-  function renderTreemap(container, hierarchyData, courseMap, linkIndex, detailsEl, clearBtn, width, height) {
+  function renderTreemap(container, hierarchyData, courseMap, detailsEl, clearBtn, width, height) {
     clearSvg(container);
     const tooltip = ensureTooltip(container);
     hideTooltip(tooltip);
@@ -495,6 +545,20 @@
       });
 
     const leafNodes = root.leaves();
+    const clipId = (_, i) => `cw-tile-clip-${i}`;
+
+    const defs = svg.append('defs');
+    defs
+      .selectAll('clipPath')
+      .data(leafNodes)
+      .join('clipPath')
+      .attr('id', clipId)
+      .append('rect')
+      .attr('x', (d) => d.x0 + 8)
+      .attr('y', (d) => d.y0 + 8)
+      .attr('width', (d) => Math.max(0, d.x1 - d.x0 - 16))
+      .attr('height', (d) => Math.max(0, d.y1 - d.y0 - 16))
+      .attr('rx', 10);
 
     const tileGroup = svg.append('g').attr('class', 'cw-tiles');
 
@@ -531,7 +595,7 @@
         state.selectedId = id;
         syncClearButton(clearBtn, state.selectedId);
         updateSelection(container, state.selectedId);
-        renderDetails(detailsEl, courseMap.get(id), linkIndex, courseMap);
+        renderDetails(detailsEl, courseMap.get(id));
       })
       .on('keydown', (event, d) => {
         const key = event.key;
@@ -543,7 +607,7 @@
         state.selectedId = id;
         syncClearButton(clearBtn, state.selectedId);
         updateSelection(container, state.selectedId);
-        renderDetails(detailsEl, courseMap.get(id), linkIndex, courseMap);
+        renderDetails(detailsEl, courseMap.get(id));
       });
 
     tiles
@@ -560,25 +624,29 @@
         return blendWithSurface(base, darkMode ? 0.62 : 0.74);
       });
 
+    const focused = Boolean(state.focusedSubject);
+
     tiles
       .append('text')
       .attr('class', 'cw-tile-label')
       .attr('x', (d) => d.x0 + 12)
-      .attr('y', (d) => {
-        const h = d.y1 - d.y0;
-        if (h >= 26) return d.y0 + 20;
-        if (h >= 22) return d.y0 + 16;
-        return d.y0 + 14;
-      })
-      .text((d) => {
+      .attr('y', (d) => d.y0 + 20)
+      .attr('clip-path', (d, i) => `url(#${clipId(d, i)})`)
+      .attr('opacity', 0)
+      .each(function (d) {
         const id = d.data.id || d.data.code || d.data.name;
         const meta = courseMap.get(id);
-        return courseTileLabel(meta);
-      })
-      .attr('opacity', (d) => {
-        const w = d.x1 - d.x0;
-        const h = d.y1 - d.y0;
-        return w >= 38 && h >= 18 ? 1 : 0;
+        if (!meta) return;
+
+        const innerWidth = d.x1 - d.x0 - 24;
+        const innerHeight = d.y1 - d.y0 - 24;
+        if (innerWidth < 36 || innerHeight < 18) return;
+
+        const showName = focused && innerWidth >= 96 && innerHeight >= 64;
+
+        const text = d3.select(this);
+        text.attr('opacity', 1);
+        renderTileLabel(text, meta, innerWidth, innerHeight, showName);
       });
 
     svg.on('click', () => {
@@ -586,7 +654,7 @@
       state.selectedId = null;
       syncClearButton(clearBtn, state.selectedId);
       updateSelection(container, state.selectedId);
-      renderDetails(detailsEl, null, linkIndex, courseMap);
+      renderDetails(detailsEl, null);
     });
   }
 
