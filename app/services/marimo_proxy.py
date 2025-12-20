@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import logging
+import json
 import os
 import re
 from collections.abc import Iterable
-from html import escape as html_escape
+from html import escape as html_escape, unescape as html_unescape
 
 import httpx
 from fastapi import Request, WebSocket
@@ -43,6 +44,12 @@ _DROP_RESPONSE_HEADERS = {
 
 _REWRITE_ATTR_RE = re.compile(r'(?P<attr>\b(?:href|src|action)=["\'])/(?!/)(?P<rest>[^"\']*)')
 _HEAD_TAG_RE = re.compile(r"(?i)<head(\s[^>]*)?>")
+_MARIMO_USER_CONFIG_RE = re.compile(
+    r'(?is)(<marimo-user-config[^>]*\bdata-config=")(?P<cfg>[^"]*)(")'
+)
+_MARIMO_MOUNT_CONFIG_RE = re.compile(
+    r"(?is)(window\.__MARIMO_MOUNT_CONFIG__\s*=\s*\{)(?P<body>.*?)(\}\s*;)"
+)
 
 
 def _marimo_base_url() -> str:
@@ -66,7 +73,7 @@ def _rewrite_location(location: str, mount: str) -> str:
     return mount + location
 
 
-def _rewrite_html(html_bytes: bytes, mount: str) -> bytes:
+def _rewrite_html(html_bytes: bytes, mount: str, *, theme: str | None = None) -> bytes:
     try:
         html = html_bytes.decode("utf-8")
     except Exception:
@@ -74,6 +81,9 @@ def _rewrite_html(html_bytes: bytes, mount: str) -> bytes:
 
     base_href = mount.rstrip("/") + "/"
     mount_prefix = mount.lstrip("/")
+
+    if theme in {"dark", "light"}:
+        html = _rewrite_marimo_theme(html, theme=theme)
 
     # Ensure relative URLs resolve under the proxy mount.
     if "<base" not in html.lower():
@@ -91,6 +101,60 @@ def _rewrite_html(html_bytes: bytes, mount: str) -> bytes:
 
     html = _REWRITE_ATTR_RE.sub(_rewrite_attr, html)
     return html.encode("utf-8")
+
+
+def _rewrite_marimo_theme(html: str, *, theme: str) -> str:
+    html = _rewrite_marimo_mount_config_theme(html, theme=theme)
+    html = _rewrite_marimo_user_config_theme(html, theme=theme)
+    return html
+
+
+def _rewrite_marimo_mount_config_theme(html: str, *, theme: str) -> str:
+    def _replace(match: re.Match[str]) -> str:
+        segment = match.group(0)
+        return re.sub(r'("theme"\s*:\s*")[^"]+(")', rf"\1{theme}\2", segment, count=1)
+
+    return _MARIMO_MOUNT_CONFIG_RE.sub(_replace, html, count=1)
+
+
+def _rewrite_marimo_user_config_theme(html: str, *, theme: str) -> str:
+    def _replace(match: re.Match[str]) -> str:
+        raw_cfg = match.group("cfg")
+        try:
+            cfg_json = html_unescape(raw_cfg)
+            cfg = json.loads(cfg_json)
+            display = cfg.get("display")
+            if not isinstance(display, dict):
+                display = {}
+                cfg["display"] = display
+            display["theme"] = theme
+            new_cfg_json = json.dumps(cfg, ensure_ascii=False, separators=(",", ":"))
+            escaped_cfg = html_escape(new_cfg_json, quote=True)
+            return match.group(1) + escaped_cfg + match.group(3)
+        except Exception:
+            return match.group(0)
+
+    return _MARIMO_USER_CONFIG_RE.sub(_replace, html, count=1)
+
+
+def _append_vary(headers: dict[str, str], value: str) -> None:
+    existing_key: str | None = None
+    existing_value: str | None = None
+    for key, header_value in headers.items():
+        if key.lower() == "vary":
+            existing_key = key
+            existing_value = header_value
+            break
+
+    if existing_key is None or existing_value is None:
+        headers["Vary"] = value
+        return
+
+    parts = [part.strip() for part in existing_value.split(",") if part.strip()]
+    lower_parts = {part.lower() for part in parts}
+    if value.lower() in lower_parts:
+        return
+    headers[existing_key] = existing_value + f", {value}"
 
 
 def _forward_request_headers(headers: Iterable[tuple[str, str]]) -> dict[str, str]:
@@ -152,8 +216,12 @@ async def proxy_marimo_http(request: Request, *, mount: str, path: str) -> Respo
     content = upstream.content
     content_type = upstream.headers.get("content-type", "")
     if "text/html" in content_type:
-        content = _rewrite_html(content, mount=mount)
+        theme_cookie = request.cookies.get("theme")
+        theme = theme_cookie if theme_cookie in {"dark", "light"} else None
+        content = _rewrite_html(content, mount=mount, theme=theme)
         headers.pop("content-length", None)
+        if theme is not None:
+            _append_vary(headers, "Cookie")
 
     return Response(content=content, status_code=upstream.status_code, headers=headers)
 
