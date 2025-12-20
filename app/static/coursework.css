@@ -1,6 +1,7 @@
 #cw-viz.cw {
-  width: min(94vw, 1200px);
-  margin: clamp(2rem, 5vw, 3.25rem) auto;
+  width: 100%;
+  max-width: 1680px;
+  margin: clamp(1.1rem, 2.8vw, 2.2rem) auto;
   display: flex;
   flex-direction: column;
   gap: clamp(1.5rem, 3vw, 2.5rem);
@@ -8,7 +9,7 @@
 
 .cw-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
   gap: clamp(1.25rem, 3vw, 2.5rem);
   align-items: start;
 }
@@ -120,10 +121,10 @@ html[data-theme="dark"] .cw-legend-swatch {
 .cw .viz-canvas {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 6 / 5;
   height: auto;
-  min-height: 420px;
-  max-height: min(65vh, 760px);
+  min-height: 520px;
+  max-height: min(80vh, 960px);
   border-radius: 1.6rem;
   background:
     radial-gradient(circle at 18% 12%, rgba(59, 130, 246, 0.10) 0%, transparent 55%),
@@ -187,10 +188,11 @@ html[data-theme="dark"] .cw-subject-bg {
   stroke: rgba(148, 163, 184, 0.32);
 }
 
-.cw-subject-label {
-  font-size: 0.85rem;
+.cw-subject-label,
+.cw-subject-label-line {
+  font-size: 0.72rem;
   font-weight: 650;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0.92;
   pointer-events: none;
@@ -230,10 +232,26 @@ html[data-theme="dark"] .cw-tile:hover .cw-tile-rect {
 }
 
 .cw-tile-label {
-  font-size: clamp(0.66rem, 0.25vw + 0.65rem, 0.82rem);
+  font-size: clamp(0.6rem, 0.2vw + 0.58rem, 0.78rem);
   font-weight: 650;
   letter-spacing: 0.01em;
   pointer-events: none;
+}
+
+.cw-tile-label.is-compact {
+  font-size: clamp(0.54rem, 0.18vw + 0.56rem, 0.7rem);
+}
+
+.cw-tile-label.is-tiny {
+  font-size: 0.5rem;
+}
+
+.cw-tile-label.is-compact tspan.cw-tile-code {
+  letter-spacing: 0;
+}
+
+.cw-tile-label.is-tiny tspan.cw-tile-code {
+  letter-spacing: 0;
 }
 
 .cw-tile-label tspan.cw-tile-code {
@@ -488,7 +506,7 @@ html[data-theme="dark"] .cw-tooltip {
 
 @media (max-width: 720px) {
   #cw-viz.cw {
-    margin: clamp(1.6rem, 9vw, 2.4rem) auto;
+    margin: clamp(0.9rem, 5.5vw, 1.6rem) auto;
     gap: 1.25rem;
   }
 

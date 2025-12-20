@@ -8,36 +8,168 @@
           {
             "name": "Foundations",
             "children": [
-              { "id": "PH 102", "code": "PH 102", "name": "Physics II" },
-              { "id": "PH 110", "code": "PH 110", "name": "Physics Laboratory" },
-              { "id": "PH 201", "code": "PH 201", "name": "Mathematical Physics" },
-              { "id": "PH 202", "code": "PH 202", "name": "Electromagnetics" },
-              { "id": "PH 203", "code": "PH 203", "name": "Classical Mechanics" },
-              { "id": "PH 206", "code": "PH 206", "name": "Computational Physics" },
-              { "id": "PH 207", "code": "PH 207", "name": "Heat and Thermodynamics" }
+              {
+                "id": "PH 101",
+                "code": "PH 101",
+                "name": "Physics I"
+              },
+              {
+                "id": "PH 102",
+                "code": "PH 102",
+                "name": "Physics II"
+              },
+              {
+                "id": "PH 110",
+                "code": "PH 110",
+                "name": "Physics Lab."
+              },
+              {
+                "id": "PH 201",
+                "code": "PH 201",
+                "name": "Mathematical Physics",
+                "description": "Complex Analysis: Functions, Derivatives, Cauchy-Riemann conditions, Analytic and harmonic functions, Contour integrals, Cauchy-Goursat Theorem, Cauchy integral formula, Taylor series, Laurent series, Singularities, Residue theorem and applications, conformal mapping and application. Partial Differential Equations: Method of separation of variables, Laplace equation, Heat Equation, Wave equations in Cartesian and curvilinear coordinates, Green's function and its applications Integral transformations: Laplace transformations and applications to differential equations, Fourier series, Fourier integrals; Fourier transforms, sine and cosine transforms; solution of PDE by Fourier transform. Group Theory: Groups, subgroups, conjugacy classes, cosets, invariant subgroups, factor groups, kernels, continuous groups, Lie groups, generators, SO(2) and SO(3), SU(2), crystallographic point groups."
+              },
+              {
+                "id": "PH 202",
+                "code": "PH 202",
+                "name": "Electromagnetics",
+                "description": "Electrostatics: Gauss's law, potential, Poisson/Laplace equations, boundary value problems and method of images. Magnetostatics: Biot-Savart law, Ampere's law, vector potential, magnetic materials. Maxwell's equations: differential/integral forms, displacement current, energy and momentum (Poynting vector). Electromagnetic waves: wave equation, plane waves in vacuum and media, polarization, reflection and refraction, waveguides basics, radiation from accelerating charges (intro)."
+              },
+              {
+                "id": "PH 203",
+                "code": "PH 203",
+                "name": "Classical Mechanics",
+                "description": "Principle of least action: Hamilton's principle, Generalised coordinate, Lagrange's equations. Symmetry and conservation laws: cyclic coordinate, energy and momentum conservation, Noether's theorem and symmetry transformations. Two body central force problem: conservation theorems, equation of motion for inverse square law; Kepler's laws, scattering in a central potential. Rigid Body Dynamics: rigid body rotation about a fixed axis, moment of Inertia tensor, Eigen values and principal axis transformations; Euler angles, Euler equations of a rigid body, precession of heavy symmetrical top. Hamiltonian dynamics: Hamilton's equation of motion, Phase space diagram, Poison brackets, Infinitesimal transformations and symmetry generators, Hamilton-Jacobi equation and associated problems. Small oscillations: dynamical matrix, normal modes."
+              },
+              {
+                "id": "PH 206",
+                "code": "PH 206",
+                "name": "Computational Physics",
+                "description": "Introduction to scientific computing; numerical errors and stability. Root finding, interpolation, numerical differentiation/integration. Solving linear systems and eigenvalue problems. Numerical solution of ODEs (Euler/Runge-Kutta) and PDEs (finite difference methods). Monte Carlo methods and random number generation; examples from physics simulations and data analysis."
+              },
+              {
+                "id": "PH 207",
+                "code": "PH 207",
+                "name": "Heat and Thermodynamics",
+                "description": "Basic Concepts: Temperature, Thermodynamic variables, state functions, processes, equation of state. Zeroth law, temperature scales. First law: heat and work, internal energy, enthalpy, specific heats; adiabatic processes. Second law: Kelvin-Planck and Clausius statements; Carnot cycle; entropy and its properties; Maxwell relations. Thermodynamic potentials: Helmholtz and Gibbs free energies; chemical potential; phase transitions and Clausius-Clapeyron equation. Kinetic theory: distribution functions, mean free path; transport phenomena basics."
+              }
             ]
           },
           {
             "name": "Quantum & Modern",
             "children": [
-              { "id": "PH 204", "code": "PH 204", "name": "Quantum Mechanics" },
-              { "id": "PH 301", "code": "PH 301", "name": "Statistical Mechanics" },
-              { "id": "PH 302", "code": "PH 302", "name": "Solid State Physics" },
-              { "id": "PH 307", "code": "PH 307", "name": "Atomic and Molecular Spectroscopy" },
-              { "id": "PH 310", "code": "PH 310", "name": "Lasers and Ultrafast Optics" },
-              { "id": "PH 458", "code": "PH 458", "name": "Applied Superconductivity" },
-              { "id": "PH 462", "code": "PH 462", "name": "Quantum Technologies & Phenomena" },
-              { "id": "PH 464", "code": "PH 464", "name": "Fundamentals of Cosmology" },
-              { "id": "PH 466", "code": "PH 466", "name": "Advanced Statistical Mechanics" },
-              { "id": "PH 551", "code": "PH 551", "name": "Nonlinear Dynamics and Chaos" }
+              {
+                "id": "PH 204",
+                "code": "PH 204",
+                "name": "Quantum Mechanics I",
+                "description": "Postulates of quantum mechanics; wave functions, operators and measurement; Schrodinger equation in 1D; probability current and continuity equation. Exactly solvable problems: particle in a box, step/barrier potentials, harmonic oscillator, angular momentum basics. 3D problems and central potentials (intro): hydrogen atom basics, degeneracy and quantum numbers. Formalism: commutators, uncertainty principle, Dirac notation (intro)."
+              },
+              {
+                "id": "PH 303",
+                "code": "PH 303",
+                "name": "Quantum Mechanics II",
+                "description": "Approximation methods for stationary states: time-independent perturbation theory, the variation method and the Wentzel-Kramers-Brillouin (WKB) method. Time Dependent Perturbation Theory: the Schrodinger and the Heisenberg pictures, Heisenberg equations of motion, the interaction picture; two-level systems, sinusoidal perturbation, Fermi's Golden Rule; the adiabatic and sudden approximation. Special topics in radiation theory: semi-classical treatment of interaction of radiation with matter, Einstein's coefficients, spontaneous and stimulated emission and absorption, application to lasers. Scattering Theory: Born approximation, scattering cross-section, partial wave analysis, phase shifts. Foundations of Quantum mechanics: EPR paradox; Bell's theorem, the no-clone theorem, Schrodinger's Cat."
+              },
+              {
+                "id": "PH 301",
+                "code": "PH 301",
+                "name": "Statistical Mechanics",
+                "description": "Probability concept: One dimensional random walk problem and relevant examples; Different probability distributions: Binomial, Gaussian and Poisson distributions; Central limit theorem; Stirling's approximation. Classical statistical mechanics: microcanonical, canonical and grand canonical ensembles; partition function and thermodynamic quantities; classical ideal gas; equipartition theorem. Quantum statistics: Bose-Einstein and Fermi-Dirac distributions; ideal quantum gases; black-body radiation and phonons (intro). Phase transitions and fluctuations (intro)."
+              },
+              {
+                "id": "PH 302",
+                "code": "PH 302",
+                "name": "Solid State Physics",
+                "description": "Crystal structure and reciprocal lattice; diffraction and Bragg's law. Lattice vibrations and phonons; thermal properties. Free electron theory and band theory; semiconductors and metals; density of states. Electrical conductivity and transport; Hall effect. Magnetism and magnetic materials (intro)."
+              },
+              {
+                "id": "PH 307",
+                "code": "PH 307",
+                "name": "Atomic and Molecular Spectroscopy",
+                "description": "Atomic structure and spectra: hydrogen atom basics, fine structure, Zeeman and Stark effects, selection rules. Many-electron atoms and coupling schemes; term symbols. Molecular structure: rotational/vibrational spectra, diatomic molecules, electronic transitions, Franck-Condon principle. Spectroscopic techniques and applications."
+              },
+              {
+                "id": "PH 306",
+                "code": "PH 306",
+                "name": "Lasers and Ultrafast Optics",
+                "description": "Laser fundamentals: Einstein coefficients, population inversion, gain, optical resonators and modes; laser types and characteristics. Q-switching and mode-locking; pulse generation; ultrafast optics basics. Nonlinear optical effects (intro): second-harmonic generation and related phenomena; applications in spectroscopy and communications (intro)."
+              },
+              {
+                "id": "PH 308",
+                "code": "PH 308",
+                "name": "Nuclear Science and Engineering",
+                "description": "Nuclear structure and radioactive decay; nuclear reactions and cross-sections. Neutron physics and moderation; reactor basics: criticality, neutron diffusion, reactor kinetics (intro). Radiation detection and dosimetry (intro). Applications in energy, medicine and industry; safety basics."
+              },
+              {
+                "id": "PH 415",
+                "code": "PH 415",
+                "name": "Simulation Techniques in Physical Systems",
+                "description": "Introduction to simulation methods, necessity of simulation, numerical errors. Random number generation, tests for random numbers, sampling methods. Monte Carlo integration and applications. Stochastic processes: averages of physical quantities, fluctuations; Markov process and Markov chain; Random walk. Metropolis algorithm. Statistical analysis of data, correlation, autocorrelation. Molecular dynamics basics and numerical integration schemes. Applications in physics simulations."
+              },
+              {
+                "id": "PH 458",
+                "code": "PH 458",
+                "name": "Applied superconductivity II"
+              },
+              {
+                "id": "PH 462",
+                "code": "PH 462",
+                "name": "Quant. Tech. and Phenom. in Macro. sys."
+              },
+              {
+                "id": "PH 464",
+                "code": "PH 464",
+                "name": "Fundamentals of cosmology"
+              },
+              {
+                "id": "PH 466",
+                "code": "PH 466",
+                "name": "Advanced Statistical Mechanics"
+              },
+              {
+                "id": "PH 551",
+                "code": "PH 551",
+                "name": "Nonlinear Dynamics and Chaos"
+              },
+              {
+                "id": "PH 460",
+                "code": "PH 460",
+                "name": "Electroceramics"
+              }
             ]
           },
           {
             "name": "Laboratories & Projects",
             "children": [
-              { "id": "PH 312", "code": "PH 312", "name": "Mini Project" },
-              { "id": "adv-physics-lab", "code": null, "name": "Advanced Physics Laboratory" },
-              { "id": "nuclear-science", "code": null, "name": "Nuclear Science and Engineering" }
+              {
+                "id": "PH 210",
+                "code": "PH 210",
+                "name": "General Physics Lab",
+                "description": "General physics laboratory experiments covering mechanics, heat, electricity & magnetism, optics, and basic data analysis including uncertainty estimation and report writing."
+              },
+              {
+                "id": "PH 310",
+                "code": "PH 310",
+                "name": "Advanced Physics Laboratory",
+                "description": "Experiments based on modern optics, lasers, solid state physics, electronics, microwave, nuclear physics and advanced measurement techniques."
+              },
+              {
+                "id": "PH 312",
+                "code": "PH 312",
+                "name": "Mini Project"
+              },
+              {
+                "id": "PH 304",
+                "code": "PH 304",
+                "name": "Measurement Techniques",
+                "description": "Measurement basics: accuracy, precision, errors and statistical analysis. Transducers and sensors; signal conditioning and amplification. Electrical measurement instruments (oscilloscope, multimeters, bridges); noise and filtering. Data acquisition concepts; experimental methods and calibration practices."
+              },
+              {
+                "id": "PH 305",
+                "code": "PH 305",
+                "name": "Engineering Optics",
+                "description": "Geometrical optics: Matrix formulation for lens, mirrors and their combination; stop and pupil; cardinal points; chromatic and monochromatic aberrations. Wave optics: interference, diffraction and polarization; coherence and interference devices; diffraction gratings and resolving power; introduction to primary monochromatic aberrations and chromatic aberrations."
+              }
             ]
           }
         ]
@@ -46,20 +178,63 @@
         "name": "Electronics",
         "children": [
           {
-            "name": "Circuits & Signals",
+            "name": "Foundations",
             "children": [
-              { "id": "EE 101", "code": "EE 101", "name": "Basic Electronics" },
-              { "id": "EEE 220", "code": "EEE 220", "name": "Signals and Systems" },
-              { "id": "PH 209", "code": "PH 209", "name": "Analog Electronics" },
-              { "id": "PH 205", "code": "PH 205", "name": "Semiconductor Devices" }
+              {
+                "id": "EE 101",
+                "code": "EE 101",
+                "name": "Basic Electronics"
+              },
+              {
+                "id": "EE 102",
+                "code": "EE 102",
+                "name": "Basic Electronics laboratory"
+              },
+              {
+                "id": "EE 220",
+                "code": "EE 220",
+                "name": "Signals and Systems"
+              }
             ]
           },
           {
-            "name": "Measurement & Practice",
+            "name": "Devices & Systems",
             "children": [
-              { "id": "PH 304", "code": "PH 304", "name": "Measurement Techniques" },
-              { "id": "PH 305", "code": "PH 305", "name": "Engineering Optics" },
-              { "id": "PH 309", "code": "PH 309", "name": "Electronics Laboratory" }
+              {
+                "id": "PH 205",
+                "code": "PH 205",
+                "name": "Semiconductor Devices",
+                "description": "Basics: Energy bands; semiconductors; doping; drift and diffusion currents; Einstein relation; quasi-Fermi levels. p-n Junction: diode equation; depletion region; capacitance; breakdown; junction temperature effects. Diode circuits: rectifier; filter; clippers and clampers. Bipolar Junction Transistor: transistor action; Ebers-Moll model; DC characteristics; transistor as amplifier; biasing and stability. Small-signal model and frequency response. Field Effect Transistors: JFET and MOSFET; I-V characteristics; MOS capacitance; threshold voltage; small signal model. Operational Amplifier: basics; ideal op-amp; op-amp circuits; non-idealities and applications."
+              },
+              {
+                "id": "PH 208",
+                "code": "PH 208",
+                "name": "Digital electronics and microprocessors",
+                "description": "Digital system basics: number systems, Boolean algebra, combinational and sequential logic, minimization (K-map), flip-flops, counters, registers. Memory and interfacing basics. Microprocessor architecture (intro): instruction set, addressing modes, assembly language programming basics, interrupts, I/O interfacing, timers and serial communication concepts."
+              },
+              {
+                "id": "PH 209",
+                "code": "PH 209",
+                "name": "Analog Electronics",
+                "description": "Semiconductor diodes: rectifiers, clippers and clampers. Bipolar junction transistor (BJT): operation, characteristics, biasing and stability, small signal model, amplifiers and frequency response. Field effect transistors (FET): JFET and MOSFET characteristics, biasing, small signal model and amplifiers. Feedback and oscillators: feedback principles, stability, RC/LC oscillators. Operational amplifiers: ideal/non-ideal op-amp, basic configurations (inverting/non-inverting), applications (filters, integrators, differentiators)."
+              }
+            ]
+          },
+          {
+            "name": "Labs & Measurement",
+            "children": [
+              {
+                "id": "PH 211",
+                "code": "PH 211",
+                "name": "Electronics Laboratory - I",
+                "description": "Laboratory experiments on analog and digital electronics such as diode and transistor characteristics, amplifier circuits, op-amp circuits, filters/oscillators, logic gates and flip-flops, and basic instrumentation/measurement practices."
+              },
+              {
+                "id": "PH 309",
+                "code": "PH 309",
+                "name": "Electronics Lab-II",
+                "description": "Laboratory experiments on advanced analog/digital electronics and instrumentation, including amplifier design, op-amp applications, filters/oscillators, and microprocessor/digital interfacing experiments (as per department lab modules)."
+              }
             ]
           }
         ]
@@ -68,18 +243,48 @@
         "name": "Mathematics",
         "children": [
           {
-            "name": "Core Theory",
+            "name": "Core",
             "children": [
-              { "id": "MA 101", "code": "MA 101", "name": "Mathematics I" },
-              { "id": "MA 211M", "code": "MA 211M", "name": "Real Analysis" },
-              { "id": "MA 312M", "code": "MA 312M", "name": "Modern Algebra" }
+              {
+                "id": "MA 101",
+                "code": "MA 101",
+                "name": "Mathematics I"
+              },
+              {
+                "id": "MA 102",
+                "code": "MA 102",
+                "name": "Mathematics II"
+              }
             ]
           },
           {
-            "name": "Geometry & Probability",
+            "name": "Minor (Mathematics)",
             "children": [
-              { "id": "MA 212M", "code": "MA 212M", "name": "Differential Geometry" },
-              { "id": "MA 411M", "code": "MA 411M", "name": "Mathematical Statistics" }
+              {
+                "id": "MA 211M",
+                "code": "MA 211M",
+                "name": "Real Analysis"
+              },
+              {
+                "id": "MA 212M",
+                "code": "MA 212M",
+                "name": "Mathematical Statistics"
+              },
+              {
+                "id": "MA 311M",
+                "code": "MA 311M",
+                "name": "Scientific Computing"
+              },
+              {
+                "id": "MA 312M",
+                "code": "MA 312M",
+                "name": "Modern Algebra"
+              },
+              {
+                "id": "MA 411M",
+                "code": "MA 411M",
+                "name": "Differential Geometry"
+              }
             ]
           }
         ]
@@ -90,17 +295,41 @@
           {
             "name": "Foundations & Systems",
             "children": [
-              { "id": "CS 101", "code": "CS 101", "name": "Introduction to Computing" },
-              { "id": "CS 110", "code": "CS 110", "name": "Computing Lab" },
-              { "id": "CS 343", "code": "CS 343", "name": "Operating Systems" },
-              { "id": "CS 341", "code": "CS 341", "name": "Computer Networks" }
+              {
+                "id": "CS 101",
+                "code": "CS 101",
+                "name": "Introduction to Computing"
+              },
+              {
+                "id": "CS 110",
+                "code": "CS 110",
+                "name": "Computing Lab"
+              },
+              {
+                "id": "CS 341",
+                "code": "CS 341",
+                "name": "Computer Networks"
+              },
+              {
+                "id": "CS 343",
+                "code": "CS 343",
+                "name": "Operating Systems"
+              }
             ]
           },
           {
             "name": "Intelligent Systems",
             "children": [
-              { "id": "CS 590", "code": "CS 590", "name": "Deep Learning" },
-              { "id": "DA 671", "code": "DA 671", "name": "Introduction to Reinforcement Learning" }
+              {
+                "id": "CS 590",
+                "code": "CS 590",
+                "name": "Deep Learning"
+              },
+              {
+                "id": "DA 671",
+                "code": "DA 671",
+                "name": "Introduction to Reinforcement Learning"
+              }
             ]
           }
         ]
@@ -111,15 +340,41 @@
           {
             "name": "Economic Theory",
             "children": [
-              { "id": "HS 123", "code": "HS 123", "name": "Game Theory and Economics" },
-              { "id": "HS 239", "code": "HS 239", "name": "Economics of Uncertainty and Information" }
+              {
+                "id": "HS 123",
+                "code": "HS 123",
+                "name": "Game Theory and Economics"
+              },
+              {
+                "id": "HS 239",
+                "code": "HS 239",
+                "name": "Economics of Uncertainty and Information"
+              }
             ]
           },
           {
             "name": "Behaviour & Policy",
             "children": [
-              { "id": "HS 148", "code": "HS 148", "name": "Consumer Behaviour" },
-              { "id": "HS 200", "code": "HS 200", "name": "Sustainable Development Goals" }
+              {
+                "id": "HS 149",
+                "code": "HS 149",
+                "name": "Consumer Behaviour"
+              },
+              {
+                "id": "HS 200",
+                "code": "HS 200",
+                "name": "Sustainable Development Goals"
+              }
+            ]
+          },
+          {
+            "name": "Public Economics",
+            "children": [
+              {
+                "id": "HS 212",
+                "code": "HS 212",
+                "name": "Public Economics"
+              }
             ]
           }
         ]
@@ -130,150 +385,67 @@
           {
             "name": "Natural Sciences",
             "children": [
-              { "id": "CH 101", "code": "CH 101", "name": "Chemistry" },
-              { "id": "CH 110", "code": "CH 110", "name": "Chemistry Laboratory" },
-              { "id": "BT 101", "code": "BT 101", "name": "Introductory Biology" }
+              {
+                "id": "CH 101",
+                "code": "CH 101",
+                "name": "Chemistry"
+              },
+              {
+                "id": "CH 110",
+                "code": "CH 110",
+                "name": "Chemistry Laboratory"
+              },
+              {
+                "id": "BT 101",
+                "code": "BT 101",
+                "name": "Introduction Biology"
+              }
             ]
           },
           {
             "name": "Professional Skills",
             "children": [
-              { "id": "CCE 101", "code": "CCE 101", "name": "Engineering Drawing I" },
-              { "id": "ME 110", "code": "ME 110", "name": "Workshop" },
-              { "id": "SA 109", "code": "SA 109", "name": "S&G Lawn Tennis" },
-              { "id": "SA 215", "code": "SA 215", "name": "Yoga-2" },
-              { "id": "SA 216", "code": "SA 216", "name": "Yoga-3" }
+              {
+                "id": "CE 101",
+                "code": "CE 101",
+                "name": "Engineering Drawing"
+              },
+              {
+                "id": "ME 101",
+                "code": "ME 101",
+                "name": "Engineering Mechanics"
+              },
+              {
+                "id": "ME 110",
+                "code": "ME 110",
+                "name": "Workshop I"
+              },
+              {
+                "id": "SA 109",
+                "code": "SA 109",
+                "name": "SAG. Lawn Tennis"
+              },
+              {
+                "id": "SA 215",
+                "code": "SA 215",
+                "name": "Yoga-2"
+              },
+              {
+                "id": "SA 216",
+                "code": "SA 216",
+                "name": "Yoga-3"
+              },
+              {
+                "id": "SA 315",
+                "code": "SA 315",
+                "name": "Yoga-4"
+              }
             ]
           }
         ]
       }
     ]
   },
-  "links": [
-    { "source": "MA 101", "target": "PH 201" },
-    { "source": "MA 101", "target": "MA 211M" },
-    { "source": "MA 101", "target": "MA 212M" },
-    { "source": "MA 101", "target": "MA 312M" },
-    { "source": "MA 101", "target": "MA 411M" },
-    { "source": "MA 211M", "target": "MA 312M" },
-    { "source": "MA 211M", "target": "MA 411M" },
-    { "source": "PH 102", "target": "PH 202" },
-    { "source": "PH 102", "target": "PH 203" },
-    { "source": "PH 102", "target": "PH 207" },
-    { "source": "PH 201", "target": "PH 204" },
-    { "source": "PH 201", "target": "PH 301" },
-    { "source": "PH 201", "target": "PH 302" },
-    { "source": "PH 202", "target": "PH 310" },
-    { "source": "PH 203", "target": "PH 204" },
-    { "source": "PH 204", "target": "PH 458" },
-    { "source": "PH 204", "target": "PH 462" },
-    { "source": "PH 204", "target": "PH 551" },
-    { "source": "PH 301", "target": "PH 466" },
-    { "source": "PH 302", "target": "PH 458" },
-    { "source": "PH 302", "target": "PH 309" },
-    { "source": "PH 205", "target": "PH 309" },
-    { "source": "PH 205", "target": "PH 312" },
-    { "source": "PH 209", "target": "PH 309" },
-    { "source": "PH 304", "target": "PH 309" },
-    { "source": "EE 101", "target": "PH 209" },
-    { "source": "EEE 220", "target": "CS 341" },
-    { "source": "CS 101", "target": "CS 341" },
-    { "source": "CS 101", "target": "CS 343" },
-    { "source": "CS 101", "target": "CS 590" },
-    { "source": "CS 101", "target": "DA 671" },
-    { "source": "CS 341", "target": "DA 671" },
-    { "source": "CS 343", "target": "CS 590" },
-    { "source": "CS 343", "target": "DA 671" },
-    { "source": "CS 590", "target": "DA 671" },
-    { "source": "CH 101", "target": "nuclear-science" },
-    { "source": "PH 310", "target": "PH 462" },
-    { "source": "PH 458", "target": "PH 462" },
-    { "source": "PH 312", "target": "adv-physics-lab" }
-  ],
-  "stages": [
-    {
-      "name": "Year 1 Foundations",
-      "description": "Core science, mathematics, and skills taken in the first year.",
-      "courses": [
-        "MA 101",
-        "PH 102",
-        "PH 110",
-        "CH 101",
-        "CH 110",
-        "BT 101",
-        "CS 101",
-        "CS 110",
-        "EE 101",
-        "CCE 101",
-        "ME 110",
-        "SA 109"
-      ]
-    },
-    {
-      "name": "Physics Core",
-      "description": "Intermediate lecture and lab courses building analytical and experimental depth.",
-      "courses": [
-        "PH 201",
-        "PH 202",
-        "PH 203",
-        "PH 205",
-        "PH 206",
-        "PH 207",
-        "PH 209",
-        "PH 304",
-        "PH 305",
-        "PH 309"
-      ]
-    },
-    {
-      "name": "Advanced Physics & Research",
-      "description": "Specialised electives, research labs, and project work in upper years.",
-      "courses": [
-        "PH 301",
-        "PH 302",
-        "PH 307",
-        "PH 310",
-        "PH 312",
-        "PH 458",
-        "PH 462",
-        "PH 464",
-        "PH 466",
-        "PH 551",
-        "adv-physics-lab",
-        "nuclear-science"
-      ]
-    },
-    {
-      "name": "Mathematics Minor",
-      "description": "A focused collection of proof-heavy mathematics courses.",
-      "courses": [
-        "MA 211M",
-        "MA 212M",
-        "MA 312M",
-        "MA 411M"
-      ]
-    },
-    {
-      "name": "Computing & Intelligence",
-      "description": "Systems and machine learning courses taken alongside physics work.",
-      "courses": [
-        "CS 341",
-        "CS 343",
-        "CS 590",
-        "DA 671"
-      ]
-    },
-    {
-      "name": "Economics & Humanities",
-      "description": "Courses that broadened perspectives on economics, policy, and wellbeing.",
-      "courses": [
-        "HS 123",
-        "HS 148",
-        "HS 239",
-        "HS 200",
-        "SA 215",
-        "SA 216"
-      ]
-    }
-  ]
+  "links": [],
+  "stages": []
 }

@@ -183,6 +183,13 @@
     return str;
   }
 
+  function compactCode(code) {
+    if (!code) return null;
+    const digits = String(code).match(/\d+/g);
+    if (!digits) return String(code).trim();
+    return digits.join('');
+  }
+
   function ensureTooltip(parent) {
     const existing = parent.querySelector('.cw-tooltip');
     if (existing) return existing;
@@ -290,14 +297,22 @@
     }
   }
 
-  function wrapTextIntoTspans(textEl, value, width, maxLines, className, startDyEm) {
+  function wrapTextIntoTspans(
+    textEl,
+    value,
+    width,
+    maxLines,
+    className,
+    startDyEm,
+    lineHeightEm = 1.18,
+    allowBreakWord = false,
+  ) {
     const words = String(value || '')
       .split(/\s+/)
       .filter(Boolean);
     if (!words.length) return;
 
     const x = Number(textEl.attr('x')) || 0;
-    const lineHeightEm = 1.18;
     let line = [];
     let lineNumber = 0;
     let tspan = textEl
@@ -317,6 +332,21 @@
 
       line.pop();
       if (line.length === 0) {
+        if (allowBreakWord && maxLines > 1 && lineNumber < maxLines - 1 && word.length > 6) {
+          const mid = Math.ceil(word.length / 2);
+          const first = word.slice(0, mid);
+          const second = word.slice(mid);
+          tspan.text(first);
+          lineNumber += 1;
+          tspan = textEl
+            .append('tspan')
+            .attr('x', x)
+            .attr('dy', `${lineHeightEm}em`)
+            .attr('class', className)
+            .text(second);
+          truncateTspanToWidth(tspan, width, idx < words.length - 1);
+          return;
+        }
         tspan.text(word);
         truncateTspanToWidth(tspan, width, idx < words.length - 1);
         return;
@@ -373,8 +403,21 @@
       usedLines += 1;
     }
 
-    const availableLines = Math.max(1, Math.min(4 - usedLines, Math.floor((height - 28) / 18)));
+    const availableLines = Math.max(1, Math.min(4 - usedLines, Math.floor((height - 24) / 18)));
     wrapTextIntoTspans(textEl, name, width, availableLines, 'cw-tile-name', usedLines ? 1.25 : 0);
+  }
+
+  function renderSubjectLabel(group, node, width) {
+    const text = group
+      .append('text')
+      .attr('class', 'cw-subject-label')
+      .attr('x', node.x0 + 14)
+      .attr('y', node.y0 + 16);
+
+    const maxWidth = Math.max(0, width - 24);
+    if (!maxWidth) return;
+
+    wrapTextIntoTspans(text, node.data.name, maxWidth, 2, 'cw-subject-label-line', 0, 1.1, true);
   }
 
   function flattenToSubjectTreemap(tree, focusedSubject) {
@@ -493,13 +536,13 @@
       .sum((d) => (d.children ? 0 : 1))
       .sort((a, b) => (b.value || 0) - (a.value || 0));
 
-    const subjectHeader = 28;
-    const paddingOuter = 14;
-    const paddingInner = 8;
+    const subjectHeader = 36;
+    const paddingOuter = 10;
+    const paddingInner = 4;
 
     d3
       .treemap()
-      .tile(d3.treemapSquarify.ratio(1.15))
+      .tile(d3.treemapSquarify.ratio(1))
       .size([width, height])
       .paddingOuter(paddingOuter)
       .paddingInner(paddingInner)
@@ -537,15 +580,13 @@
           .attr('rx', 18)
           .attr('fill', blendWithSurface(base, darkMode ? 0.18 : 0.12));
 
-        g.append('text')
-          .attr('class', 'cw-subject-label')
-          .attr('x', d.x0 + 14)
-          .attr('y', d.y0 + 20)
-          .text(d.data.name);
+        renderSubjectLabel(g, d, w);
       });
 
     const leafNodes = root.leaves();
     const clipId = (_, i) => `cw-tile-clip-${i}`;
+    const tileClipInset = 4;
+    const labelInset = 6;
 
     const defs = svg.append('defs');
     defs
@@ -554,10 +595,10 @@
       .join('clipPath')
       .attr('id', clipId)
       .append('rect')
-      .attr('x', (d) => d.x0 + 8)
-      .attr('y', (d) => d.y0 + 8)
-      .attr('width', (d) => Math.max(0, d.x1 - d.x0 - 16))
-      .attr('height', (d) => Math.max(0, d.y1 - d.y0 - 16))
+      .attr('x', (d) => d.x0 + tileClipInset)
+      .attr('y', (d) => d.y0 + tileClipInset)
+      .attr('width', (d) => Math.max(0, d.x1 - d.x0 - tileClipInset * 2))
+      .attr('height', (d) => Math.max(0, d.y1 - d.y0 - tileClipInset * 2))
       .attr('rx', 10);
 
     const tileGroup = svg.append('g').attr('class', 'cw-tiles');
@@ -629,8 +670,8 @@
     tiles
       .append('text')
       .attr('class', 'cw-tile-label')
-      .attr('x', (d) => d.x0 + 12)
-      .attr('y', (d) => d.y0 + 20)
+      .attr('x', (d) => d.x0 + labelInset)
+      .attr('y', (d) => d.y0 + 18)
       .attr('clip-path', (d, i) => `url(#${clipId(d, i)})`)
       .attr('opacity', 0)
       .each(function (d) {
@@ -638,15 +679,23 @@
         const meta = courseMap.get(id);
         if (!meta) return;
 
-        const innerWidth = d.x1 - d.x0 - 24;
-        const innerHeight = d.y1 - d.y0 - 24;
-        if (innerWidth < 36 || innerHeight < 18) return;
-
-        const showName = focused && innerWidth >= 96 && innerHeight >= 64;
-
         const text = d3.select(this);
+        const innerWidth = Math.max(0, d.x1 - d.x0 - labelInset * 2);
+        const innerHeight = Math.max(0, d.y1 - d.y0 - labelInset * 2);
+        if (!innerWidth || !innerHeight) return;
+
+        const showName = focused && innerWidth >= 84 && innerHeight >= 52;
+        const tiny = innerWidth < 48 || innerHeight < 26;
+        const compact = !focused && (innerWidth < 68 || innerHeight < 32);
+        const labelMeta =
+          compact && meta.code
+            ? { ...meta, code: compactCode(meta.code) }
+            : meta;
+
         text.attr('opacity', 1);
-        renderTileLabel(text, meta, innerWidth, innerHeight, showName);
+        text.classed('is-compact', !focused);
+        text.classed('is-tiny', tiny);
+        renderTileLabel(text, labelMeta, innerWidth, innerHeight, showName);
       });
 
     svg.on('click', () => {
