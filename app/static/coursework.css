@@ -232,38 +232,39 @@ html[data-theme="dark"] .cw-tile:hover .cw-tile-rect {
 }
 
 .cw-tile-label {
-  font-size: clamp(0.6rem, 0.2vw + 0.58rem, 0.78rem);
+  font-size: clamp(0.66rem, 0.18vw + 0.62rem, 0.78rem);
   font-weight: 650;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   pointer-events: none;
+  font-variant-numeric: tabular-nums;
 }
 
-.cw-tile-label.is-compact {
-  font-size: clamp(0.54rem, 0.18vw + 0.56rem, 0.7rem);
-}
-
-.cw-tile-label.is-tiny {
-  font-size: 0.5rem;
-}
-
-.cw-tile-label.is-compact tspan.cw-tile-code {
-  letter-spacing: 0;
-}
-
-.cw-tile-label.is-tiny tspan.cw-tile-code {
-  letter-spacing: 0;
+#cw-viz.cw.cw-focused .cw-tile-label {
+  font-size: clamp(0.7rem, 0.22vw + 0.66rem, 0.88rem);
 }
 
 .cw-tile-label tspan.cw-tile-code {
   font-weight: 750;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+#cw-viz.cw.cw-focused .cw-tile-label tspan.cw-tile-code {
+  font-size: 0.8rem;
 }
 
 .cw-tile-label tspan.cw-tile-name {
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  opacity: 0.92;
+  font-weight: 520;
+  letter-spacing: 0.005em;
+  opacity: 0.82;
+  font-size: 0.62rem;
+  text-transform: none;
+}
+
+#cw-viz.cw.cw-focused .cw-tile-label tspan.cw-tile-name {
+  font-size: 0.7rem;
+  opacity: 0.86;
 }
 
 .cw-details {

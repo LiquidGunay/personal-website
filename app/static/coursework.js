@@ -183,13 +183,6 @@
     return str;
   }
 
-  function compactCode(code) {
-    if (!code) return null;
-    const digits = String(code).match(/\d+/g);
-    if (!digits) return String(code).trim();
-    return digits.join('');
-  }
-
   function ensureTooltip(parent) {
     const existing = parent.querySelector('.cw-tooltip');
     if (existing) return existing;
@@ -378,33 +371,62 @@
     const code = meta.code ? String(meta.code) : '';
     const name = meta.name ? String(meta.name) : '';
 
-    if (!showName) {
-      const label = code || name;
-      if (!label) return;
-      const tspan = textEl
-        .append('tspan')
-        .attr('x', x)
-        .attr('dy', 0)
-        .attr('class', code ? 'cw-tile-code' : 'cw-tile-name')
-        .text(label);
-      truncateTspanToWidth(tspan, width, !code);
-      return;
-    }
-
-    let usedLines = 0;
-    if (code) {
-      const codeTspan = textEl
+    const renderCode = () => {
+      if (!code) return 0;
+      const compact = String(code).trim().replace(/\s+/g, ' ');
+      if (!compact) return 0;
+      const single = textEl
         .append('tspan')
         .attr('x', x)
         .attr('dy', 0)
         .attr('class', 'cw-tile-code')
-        .text(code);
-      truncateTspanToWidth(codeTspan, width, false);
-      usedLines += 1;
+        .text(compact);
+      truncateTspanToWidth(single, width, false);
+      if (single.text() === compact) return 1;
+      single.remove();
+
+      const parts = compact.split(/\s+/).filter(Boolean);
+      let lines = 0;
+      for (let idx = 0; idx < parts.length; idx += 1) {
+        const part = parts[idx];
+        const tspan = textEl
+          .append('tspan')
+          .attr('x', x)
+          .attr('dy', lines === 0 ? 0 : '1.02em')
+          .attr('class', 'cw-tile-code')
+          .text(part);
+        truncateTspanToWidth(tspan, width, false);
+        lines += 1;
+      }
+      return lines;
+    };
+
+    if (!showName) {
+      if (code) {
+        renderCode();
+        return;
+      }
+      if (!name) return;
+      const tspan = textEl
+        .append('tspan')
+        .attr('x', x)
+        .attr('dy', 0)
+        .attr('class', 'cw-tile-name')
+        .text(name);
+      truncateTspanToWidth(tspan, width, true);
+      return;
     }
 
-    const availableLines = Math.max(1, Math.min(4 - usedLines, Math.floor((height - 24) / 18)));
-    wrapTextIntoTspans(textEl, name, width, availableLines, 'cw-tile-name', usedLines ? 1.25 : 0);
+    const usedLines = renderCode();
+    const lineHeight = showName ? 12.5 : 11;
+    const gap = 4;
+    const availableLines = Math.min(
+      2,
+      Math.max(0, Math.floor((height - usedLines * lineHeight - gap) / lineHeight)),
+    );
+    if (availableLines <= 0) return;
+    const nameLineHeightEm = showName ? 1.12 : 1.08;
+    wrapTextIntoTspans(textEl, name, width, availableLines, 'cw-tile-name', usedLines ? 1.05 : 0, nameLineHeightEm, true);
   }
 
   function renderSubjectLabel(group, node, width) {
@@ -420,6 +442,80 @@
     wrapTextIntoTspans(text, node.data.name, maxWidth, 2, 'cw-subject-label-line', 0, 1.1, true);
   }
 
+  function layoutSubjectTiles(subjects, subjectHeader, tilePadding) {
+    const focusedView = subjects.length === 1;
+    const minTileWidth = focusedView ? 46 : 42;
+    const minTileHeight = focusedView ? 34 : 28;
+    const maxTileWidth = focusedView ? 92 : 78;
+    const maxTileHeight = focusedView ? 56 : 42;
+    const targetTileWidth = focusedView ? 64 : 52;
+    const targetTileHeight = focusedView ? 44 : 32;
+    const tiles = [];
+
+    for (const subject of subjects) {
+      const allCourses = Array.isArray(subject.data.children) ? subject.data.children : [];
+      const courses = allCourses.filter((course) => !course.__ghost);
+      const count = allCourses.length;
+      if (!count) continue;
+
+      const width = Math.max(0, subject.x1 - subject.x0);
+      const height = Math.max(0, subject.y1 - subject.y0 - subjectHeader);
+      if (!width || !height) continue;
+
+      let best = null;
+      for (let cols = 1; cols <= count; cols += 1) {
+        const rows = Math.ceil(count / cols);
+        const tileWidth = (width - tilePadding * (cols + 1)) / cols;
+        const tileHeight = (height - tilePadding * (rows + 1)) / rows;
+        if (tileWidth <= 4 || tileHeight <= 4) continue;
+        const meetsMin = tileWidth >= minTileWidth && tileHeight >= minTileHeight;
+        const withinMax = tileWidth <= maxTileWidth && tileHeight <= maxTileHeight;
+        const excessWidth = Math.max(0, tileWidth - maxTileWidth);
+        const excessHeight = Math.max(0, tileHeight - maxTileHeight);
+        let penalty =
+          Math.abs(tileWidth - targetTileWidth) * 1.6 +
+          Math.abs(tileHeight - targetTileHeight) * 1.2 +
+          excessWidth * 1.4 +
+          excessHeight * 1.1;
+        if (tileWidth > targetTileWidth) penalty += (tileWidth - targetTileWidth) * 1.5;
+        if (tileWidth < minTileWidth) penalty += (minTileWidth - tileWidth) * 4;
+        if (tileHeight < minTileHeight) penalty += (minTileHeight - tileHeight) * 4;
+        if (tileWidth > maxTileWidth) penalty += (tileWidth - maxTileWidth) * 2;
+        if (tileHeight > maxTileHeight) penalty += (tileHeight - maxTileHeight) * 2;
+        if (
+          !best ||
+          (meetsMin && !best.meetsMin) ||
+          (meetsMin === best.meetsMin && withinMax && !best.withinMax) ||
+          (meetsMin === best.meetsMin && withinMax === best.withinMax && penalty < best.penalty)
+        ) {
+          best = { cols, rows, tileWidth, tileHeight, penalty, meetsMin, withinMax };
+        }
+      }
+
+      if (!best) continue;
+
+      const startX = subject.x0 + tilePadding;
+      const startY = subject.y0 + subjectHeader + tilePadding;
+
+      courses.forEach((course, idx) => {
+        const col = idx % best.cols;
+        const row = Math.floor(idx / best.cols);
+        const x0 = startX + col * (best.tileWidth + tilePadding);
+        const y0 = startY + row * (best.tileHeight + tilePadding);
+        tiles.push({
+          x0,
+          y0,
+          x1: x0 + best.tileWidth,
+          y1: y0 + best.tileHeight,
+          data: course,
+          subject: subject.data.name,
+        });
+      });
+    }
+
+    return tiles;
+  }
+
   function flattenToSubjectTreemap(tree, focusedSubject) {
     const base = structuredCloneSafe(tree);
     const root = { name: base.name || 'Coursework', children: [] };
@@ -429,6 +525,13 @@
       for (const group of subject.children || []) {
         for (const course of group.children || []) {
           children.push(course);
+        }
+      }
+      const minSlots = 8;
+      if (children.length < minSlots) {
+        const missing = minSlots - children.length;
+        for (let i = 0; i < missing; i += 1) {
+          children.push({ __ghost: true, id: `ghost-${subject.name}-${i}` });
         }
       }
       root.children.push({ name: subject.name, children });
@@ -583,15 +686,15 @@
         renderSubjectLabel(g, d, w);
       });
 
-    const leafNodes = root.leaves();
+    const tileNodes = layoutSubjectTiles(subjects, subjectHeader, 6);
     const clipId = (_, i) => `cw-tile-clip-${i}`;
     const tileClipInset = 4;
-    const labelInset = 6;
+    const labelInset = 5;
 
     const defs = svg.append('defs');
     defs
       .selectAll('clipPath')
-      .data(leafNodes)
+      .data(tileNodes)
       .join('clipPath')
       .attr('id', clipId)
       .append('rect')
@@ -605,7 +708,7 @@
 
     const tiles = tileGroup
       .selectAll('g')
-      .data(leafNodes)
+      .data(tileNodes)
       .join('g')
       .attr('class', 'cw-tile')
       .attr('data-cw-id', (d) => d.data.id || d.data.code || d.data.name)
@@ -660,12 +763,14 @@
       .attr('height', (d) => Math.max(0, d.y1 - d.y0 - 6))
       .attr('rx', 12)
       .attr('fill', (d) => {
-        const subject = d.parent ? d.parent.data.name : 'Other';
-        const base = colourFor(subject);
+        const base = colourFor(d.subject);
         return blendWithSurface(base, darkMode ? 0.62 : 0.74);
       });
 
     const focused = Boolean(state.focusedSubject);
+    if (mount) {
+      mount.classList.toggle('cw-focused', focused);
+    }
 
     tiles
       .append('text')
@@ -684,18 +789,10 @@
         const innerHeight = Math.max(0, d.y1 - d.y0 - labelInset * 2);
         if (!innerWidth || !innerHeight) return;
 
-        const showName = focused && innerWidth >= 84 && innerHeight >= 52;
-        const tiny = innerWidth < 48 || innerHeight < 26;
-        const compact = !focused && (innerWidth < 68 || innerHeight < 32);
-        const labelMeta =
-          compact && meta.code
-            ? { ...meta, code: compactCode(meta.code) }
-            : meta;
+        const showName = focused;
 
         text.attr('opacity', 1);
-        text.classed('is-compact', !focused);
-        text.classed('is-tiny', tiny);
-        renderTileLabel(text, labelMeta, innerWidth, innerHeight, showName);
+        renderTileLabel(text, meta, innerWidth, innerHeight, showName);
       });
 
     svg.on('click', () => {
