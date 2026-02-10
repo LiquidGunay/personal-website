@@ -32,6 +32,10 @@ class Post:
     html: str
     wide: bool = False
     extra_css: list[str] = field(default_factory=list)
+    seo_title: str | None = None
+    seo_description: str | None = None
+    og_image: str | None = None
+    canonical_path: str | None = None
 
 
 @dataclass
@@ -41,6 +45,10 @@ class Page:
     featured_slug: str | None = None
     quotes: list[str] | None = None
     meta: dict[str, object] | None = None
+    seo_title: str | None = None
+    seo_description: str | None = None
+    og_image: str | None = None
+    canonical_path: str | None = None
 
 
 def _parse_date(value: str | datetime | None) -> datetime | None:
@@ -65,6 +73,10 @@ def _load_post(path: Path) -> Post | None:
     updated = _parse_date(fm.get("updated"))
     cover_image = fm.get("cover_image")
     wide = bool(fm.get("wide", False))
+    seo_title = fm.get("seo_title")
+    seo_description = fm.get("seo_description")
+    og_image = fm.get("og_image")
+    canonical_path = fm.get("canonical_path")
     extra_css_raw = fm.get("extra_css") or []
     if isinstance(extra_css_raw, str):
         extra_css = [extra_css_raw]
@@ -85,6 +97,10 @@ def _load_post(path: Path) -> Post | None:
         html=html,
         wide=wide,
         extra_css=extra_css,
+        seo_title=seo_title,
+        seo_description=seo_description,
+        og_image=og_image,
+        canonical_path=canonical_path,
     )
 
 
@@ -138,4 +154,8 @@ def get_page(slug: str) -> Page | None:
         featured_slug=featured_slug,
         quotes=quotes,
         meta=metadata,
+        seo_title=fm.get("seo_title"),
+        seo_description=fm.get("seo_description"),
+        og_image=fm.get("og_image"),
+        canonical_path=fm.get("canonical_path"),
     )

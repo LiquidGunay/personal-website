@@ -8,32 +8,37 @@ client = TestClient(app)
 def test_home_about_page():
     r = client.get("/")
     assert r.status_code == 200
-    assert "About" in r.text
+    assert "Gunay Soni" in r.text
+    assert 'rel="canonical" href="https://gunayintheory.com/"' in r.text
+    assert 'application/ld+json' in r.text
 
 
 def test_blog_index():
     r = client.get("/blog")
     assert r.status_code == 200
     assert "Blog" in r.text
+    assert 'rel="canonical" href="https://gunayintheory.com/blog"' in r.text
 
 
 def test_blog_post():
     r = client.get("/blog/hello-world")
     assert r.status_code == 200
     assert "Hello, World" in r.text
+    assert 'property="og:type" content="article"' in r.text
 
 
 def test_blog_post_marimo_embed_present():
     r = client.get("/blog/semantic-entropy-probe-comparison")
     assert r.status_code == 200
     assert 'class="marimo-embed"' in r.text
-    assert 'src="/marimo/semantic-entropy-probe-comparison/"' in r.text
+    assert 'src="/static/marimo/semantic-entropy-probe-comparison/index.html"' in r.text
 
 
 def test_rss_feed():
     r = client.get("/feed.xml")
     assert r.status_code == 200
     assert r.headers["content-type"].startswith("application/rss+xml")
+    assert "https://gunayintheory.com/blog/hello-world" in r.text
 
 
 def test_healthz():
@@ -55,25 +60,40 @@ def test_theme_toggle_present_on_pages():
         assert 'id="theme-toggle"' in r.text
 
 
-def test_about_page_layout_markup():
-    r = client.get("/")
-    assert r.status_code == 200
-    assert 'class="about-layout"' in r.text
-    assert 'class="about-card about-featured"' in r.text
-    assert 'class="about-card about-quotes"' in r.text
-
-
 def test_theme_cookie_toggle_and_html_attr():
     r1 = client.get("/")
     assert r1.status_code == 200
-    # No explicit data-theme attribute when no cookie
     assert 'data-theme="' not in r1.text
 
     r2 = client.get("/toggle-theme", follow_redirects=False)
     assert r2.status_code in (302, 303)
     assert "set-cookie" in {k.lower(): v for k, v in r2.headers.items()}
     cookie = r2.headers["set-cookie"].split(";")[0]
-    # Apply cookie and hit home again
     r3 = client.get("/", headers={"Cookie": cookie})
     assert r3.status_code == 200
     assert 'data-theme="' in r3.text
+
+
+def test_robots_txt():
+    r = client.get("/robots.txt")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/plain")
+    assert "User-agent: GPTBot" in r.text
+    assert "User-agent: OAI-SearchBot" in r.text
+    assert "Sitemap: https://gunayintheory.com/sitemap.xml" in r.text
+
+
+def test_sitemap_xml():
+    r = client.get("/sitemap.xml")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("application/xml")
+    assert "https://gunayintheory.com/blog/hello-world" in r.text
+    assert "https://gunayintheory.com/coursework" in r.text
+
+
+def test_llms_txt():
+    r = client.get("/llms.txt")
+    assert r.status_code == 200
+    assert r.headers["content-type"].startswith("text/plain")
+    assert "https://gunayintheory.com/blog" in r.text
+    assert "Gunay Soni" in r.text

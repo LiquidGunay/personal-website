@@ -11,6 +11,7 @@ from .services.marimo_proxy import (
     proxy_marimo_websocket,
 )
 from .services.rss import render_rss
+from .services.seo import render_llms_txt, render_robots_txt, render_sitemap_xml
 from .views.pages import (
     render_about_page,
     render_blog_index_page,
@@ -78,6 +79,22 @@ def toggle_theme(next: str = "/", theme: str | None = Cookie(default=None, name=
 def feed() -> Response:
     xml = render_rss()
     return Response(content=xml, media_type="application/rss+xml")
+
+
+@app.get("/robots.txt")
+def robots() -> Response:
+    return Response(content=render_robots_txt(), media_type="text/plain")
+
+
+@app.get("/sitemap.xml")
+def sitemap() -> Response:
+    xml = render_sitemap_xml(list_posts())
+    return Response(content=xml, media_type="application/xml")
+
+
+@app.get("/llms.txt")
+def llms_txt() -> Response:
+    return Response(content=render_llms_txt(), media_type="text/plain")
 
 
 @app.get("/healthz")

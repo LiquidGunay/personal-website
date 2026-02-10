@@ -12,5 +12,6 @@ def test_get_post_by_slug():
     assert post is not None
     assert "Hello" in post.title
     assert "Hello" in post.html
-
+    assert post.canonical_path == "/blog/hello-world"
+    assert post.seo_description is not None
 

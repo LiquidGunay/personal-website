@@ -3,6 +3,10 @@ title: Semantic Entropy Probe Comparison (Marimo)
 date: 2025-12-18
 slug: semantic-entropy-probe-comparison
 summary: Embedded Marimo notebook for comparing semantic entropy probes.
+seo_title: Semantic Entropy Probe Comparison
+seo_description: Interactive notebook exploring semantic entropy probes, uncertainty signals, and comparative model behavior.
+canonical_path: /blog/semantic-entropy-probe-comparison
+og_image: /static/about-portrait.png
 tags: [marimo, notebook]
 draft: false
 wide: true

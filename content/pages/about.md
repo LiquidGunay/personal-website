@@ -1,20 +1,40 @@
 ---
-title: About Me
-featured_slug: hello-world
+title: Gunay Soni
+hero_title: Gunay Soni
+hero_tagline: Building and evaluating robust machine learning systems, with a focus on uncertainty and interpretability.
+seo_title: Gunay Soni
+seo_description: Gunay Soni is an ML researcher and engineer focused on uncertainty in language models, semantic entropy analysis, and practical system design.
+canonical_path: /
+og_image: /static/about-portrait.png
+featured_slug: semantic-entropy-probe-comparison
+location: United States
+links:
+  - label: GitHub
+    url: https://github.com/LiquidGunay
+    note: Open-source projects and experiments
+  - label: Website
+    url: https://gunayintheory.com
+    note: Essays, coursework, and technical write-ups
 quotes:
-  - "Make it work, make it right, make it fast."
-  - "Simplicity is prerequisite for reliability."
-  - "Programs must be written for people to read."
+  - "Design for correctness first, then optimize where evidence says it matters."
+  - "Make experiments reproducible before making them flashy."
+  - "Good research engineering is clear, measurable, and iterable."
 ---
 
-Welcome! Swap in your own story here—this is just scaffolding so you can see how the page flows.
+I am Gunay Soni, and I use this site to publish technical writing and research-facing engineering work.
 
-## What I'm focused on
+My current focus is uncertainty-aware ML systems, especially around language-model confidence signals, semantic entropy, probe-based evaluation, and practical analysis tooling.
 
-- Replace this list with the projects, research, or themes you care about right now.
-- Highlight the threads that connect your work.
-- Leave yourself room to expand with writing samples or talks below.
+## Current focus areas
 
-## Elsewhere on the site
+- Building experiments that connect model behavior to measurable reliability signals.
+- Improving notebook and visualization pipelines so results are faster to inspect and easier to trust.
+- Writing implementation notes that are specific enough to reproduce and extend.
 
-Use the featured link on the left to point people to the piece you're most proud of, or surface a new essay when it drops. The quote block is sourced from the front matter list above.
+## What you will find here
+
+- **Blog posts** with experiment notes, implementation details, and tradeoffs.
+- **Coursework** as an interactive map of modules and subjects.
+- **Project-linked writing** where code, analysis, and interpretation stay aligned.
+
+If you are working on similar problems, the easiest way to follow along is through the blog RSS feed and linked repositories.

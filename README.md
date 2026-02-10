@@ -21,13 +21,33 @@
 - Environment:
   - `PYTHON_VERSION=3.12`
   - `ENV=production`
-  - Optional: `BASE_URL=https://yourdomain`
+  - `BASE_URL=https://gunayintheory.com` (canonical host)
+  - Optional: `SITE_TITLE`, `SITE_DESCRIPTION`, `AUTHOR_NAME`, `AUTHOR_ROLE`, `DEFAULT_OG_IMAGE`
 
 ### Content
 - Write posts in `content/posts/<slug>/index.md` with frontmatter.
+- Optional SEO frontmatter keys:
+  - `seo_title`
+  - `seo_description`
+  - `og_image`
+  - `canonical_path`
+
+### SEO + Crawlers
+- Public endpoints:
+  - `/feed.xml`
+  - `/robots.txt`
+  - `/sitemap.xml`
+  - `/llms.txt`
+- Canonical URLs and social metadata are rendered server-side from site config.
 
 ### Tests
 - `uv run pytest`
+
+### Repo-local Skills
+- `./.codex/skills/personal-site-testing`
+  - Functional + visual + responsive QA workflow for this repo
+- `./.codex/skills/marimo-notebook-testing`
+  - marimo notebook + WASM + Vega/Altair performance validation workflow
 
 ### Git hooks (pre-push)
 - Enable repo-local hooks so tests run before pushing:
@@ -36,4 +56,3 @@
 - The pre-push hook:
   - Blocks on `pytest` failures
   - Runs `ruff` and `mypy` in warn-only mode
-
