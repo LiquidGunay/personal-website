@@ -14,6 +14,17 @@
   - `uv run uvicorn scripts.coursework_editor:app --reload --port 8001`
 - Editor URL: `http://127.0.0.1:8001` (writes to `app/static/courses.json`)
 
+### Coursework map behavior (`/coursework`)
+- D3 treemap with subject legend focus, click-to-pin details, and `noscript` fallback.
+- Modern controls:
+  - text search by code/name/topic
+  - year chip filters
+  - live visible-course count summary
+- Responsive and accessible interactions:
+  - keyboard-selectable tiles
+  - focus/hover tooltip parity
+  - explicit empty-state message when filters return no matches
+
 ### Deploy (Railway)
 - Connect the GitHub repo in Railway (Services → New → Deploy from GitHub).
 - Build: Railway auto-detects Python and runs `pip install -r requirements.txt` if present, but we use uv at runtime for local dev. No Docker needed.

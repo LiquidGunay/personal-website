@@ -448,6 +448,14 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
               </div>
               <div class=\"cw-legend\" data-cw-legend aria-label=\"Subject legend\"></div>
             </figcaption>
+            <div class=\"cw-toolbar\" aria-label=\"Coursework filters and summary\">
+              <label class=\"cw-search\" for=\"cw-search-input\">
+                <span>Find a module</span>
+                <input id=\"cw-search-input\" type=\"search\" data-cw-search placeholder=\"Search by code, title, or topic\" autocomplete=\"off\" spellcheck=\"false\" />
+              </label>
+              <div class=\"cw-year-chips\" data-cw-years aria-label=\"Filter by year\"></div>
+              <p class=\"cw-stats\" data-cw-stats>Loading course index…</p>
+            </div>
             <div class=\"viz-canvas\" data-viz=\"treemap\" aria-label=\"Coursework treemap\"></div>
           </figure>
 

@@ -20,6 +20,8 @@
   const state = {
     selectedId: null,
     focusedSubject: null,
+    query: '',
+    yearFilter: null,
   };
 
   fetch('/static/courses.json', { cache: 'no-store' })
@@ -35,6 +37,9 @@
 
     const treemapEl = mount.querySelector('[data-viz="treemap"]');
     const legendEl = mount.querySelector('[data-cw-legend]');
+    const searchEl = mount.querySelector('[data-cw-search]');
+    const yearsEl = mount.querySelector('[data-cw-years]');
+    const statsEl = mount.querySelector('[data-cw-stats]');
     const detailsEl = mount.querySelector('[data-cw-details]');
     const clearBtn = mount.querySelector('[data-cw-clear]');
 
@@ -47,18 +52,47 @@
     const subjects = (data.hierarchy && Array.isArray(data.hierarchy.children) ? data.hierarchy.children : [])
       .map((s) => s && s.name)
       .filter(Boolean);
+    const yearOptions = collectYearOptions(courseMap);
+
+    const normalizeSelection = () => {
+      if (!state.selectedId) return;
+      const selectedMeta = courseMap.get(state.selectedId);
+      if (!selectedMeta || !isMetaVisible(selectedMeta, state)) {
+        state.selectedId = null;
+      }
+    };
 
     if (legendEl) {
-      renderLegend(legendEl, subjects, state, (subject) => {
+      renderLegend(legendEl, subjects, courseMap, state, (subject) => {
         state.focusedSubject = subject;
-        const selectedMeta = state.selectedId ? courseMap.get(state.selectedId) : null;
-        if (selectedMeta && state.focusedSubject && selectedMeta.category !== state.focusedSubject) {
-          state.selectedId = null;
-        }
+        normalizeSelection();
         syncClearButton(clearBtn, state.selectedId);
         renderDetails(detailsEl, state.selectedId ? courseMap.get(state.selectedId) : null);
         render(true);
       });
+    }
+
+    if (yearsEl) {
+      renderYearFilters(yearsEl, yearOptions, state, (yearToken) => {
+        state.yearFilter = yearToken;
+        normalizeSelection();
+        syncClearButton(clearBtn, state.selectedId);
+        renderDetails(detailsEl, state.selectedId ? courseMap.get(state.selectedId) : null);
+        render(true);
+      });
+    }
+
+    if (searchEl) {
+      searchEl.addEventListener(
+        'input',
+        debounce(() => {
+          state.query = searchEl.value.trim().toLowerCase();
+          normalizeSelection();
+          syncClearButton(clearBtn, state.selectedId);
+          renderDetails(detailsEl, state.selectedId ? courseMap.get(state.selectedId) : null);
+          render(true);
+        }, 90),
+      );
     }
 
     if (clearBtn) {
@@ -75,7 +109,7 @@
 
     let lastWidth = 0;
     let lastHeight = 0;
-    let lastFocus = state.focusedSubject;
+    let lastSignature = `${state.focusedSubject || ''}|${state.yearFilter || ''}|${state.query || ''}`;
 
     const measure = () => {
       const rect = treemapEl.getBoundingClientRect();
@@ -87,12 +121,14 @@
     const render = (force = false) => {
       const { width, height } = measure();
       if (!width || !height) return;
-      const focusChanged = state.focusedSubject !== lastFocus;
-      if (!force && !focusChanged && Math.abs(width - lastWidth) < 4 && Math.abs(height - lastHeight) < 4) return;
-      renderTreemap(treemapEl, data.hierarchy, courseMap, detailsEl, clearBtn, width, height);
+      const signature = `${state.focusedSubject || ''}|${state.yearFilter || ''}|${state.query || ''}`;
+      const signatureChanged = signature !== lastSignature;
+      if (!force && !signatureChanged && Math.abs(width - lastWidth) < 4 && Math.abs(height - lastHeight) < 4) return;
+      const summary = renderTreemap(treemapEl, data.hierarchy, courseMap, detailsEl, clearBtn, width, height, state);
+      renderStats(statsEl, summary, courseMap.size, state);
       lastWidth = width;
       lastHeight = height;
-      lastFocus = state.focusedSubject;
+      lastSignature = signature;
     };
 
     render();
@@ -127,14 +163,21 @@
     root.each((node) => {
       if (!node.children) {
         const top = node.ancestors().find((a) => a.depth === 1);
+        const group = node.ancestors().find((a) => a.depth === 2);
         const category = top ? top.data.name : 'Other';
+        const track = group ? group.data.name : '';
         const id = node.data.id || node.data.code || node.data.name;
         const code = node.data.code || null;
         const name = node.data.name;
         const full = code ? `${code} · ${name}` : name;
         const year = formatYear(node.data.year, code);
+        const yearToken = normaliseYearToken(year);
         const description = typeof node.data.description === 'string' ? node.data.description : '';
-        map.set(id, { id, code, name, full, category, year, description });
+        const searchIndex = [code, name, category, track, year, description]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
+        map.set(id, { id, code, name, full, category, track, year, yearToken, description, searchIndex });
       }
     });
     return map;
@@ -181,6 +224,46 @@
     if (!str) return inferYearFromCode(code);
     if (/^\d+$/.test(str) && Number.parseInt(str, 10) <= 12) return `Year ${str}`;
     return str;
+  }
+
+  function normaliseYearToken(value) {
+    if (!value) return null;
+    const text = String(value).trim();
+    if (!text) return null;
+    const match = text.match(/(\d{1,2})/);
+    if (match) return `Year ${Number.parseInt(match[1], 10)}`;
+    return text;
+  }
+
+  function collectYearOptions(courseMap) {
+    const counts = new Map();
+    for (const meta of courseMap.values()) {
+      if (!meta.yearToken) continue;
+      counts.set(meta.yearToken, (counts.get(meta.yearToken) || 0) + 1);
+    }
+
+    return [...counts.entries()]
+      .map(([token, count]) => ({ token, count }))
+      .sort((a, b) => {
+        const aMatch = a.token.match(/(\d{1,2})/);
+        const bMatch = b.token.match(/(\d{1,2})/);
+        if (aMatch && bMatch) return Number.parseInt(aMatch[1], 10) - Number.parseInt(bMatch[1], 10);
+        if (aMatch) return -1;
+        if (bMatch) return 1;
+        return a.token.localeCompare(b.token);
+      });
+  }
+
+  function hasActiveFilter(localState) {
+    return Boolean(localState.focusedSubject || localState.yearFilter || localState.query);
+  }
+
+  function isMetaVisible(meta, localState) {
+    if (!meta) return false;
+    if (localState.focusedSubject && meta.category !== localState.focusedSubject) return false;
+    if (localState.yearFilter && meta.yearToken !== localState.yearFilter) return false;
+    if (localState.query && !meta.searchIndex.includes(localState.query)) return false;
+    return true;
   }
 
   function ensureTooltip(parent) {
@@ -243,6 +326,7 @@
     const metaChips = [];
     if (meta.code) metaChips.push(`<span>${escapeHtml(meta.code)}</span>`);
     metaChips.push(`<span>${escapeHtml(meta.category)}</span>`);
+    if (meta.track) metaChips.push(`<span>${escapeHtml(meta.track)}</span>`);
     if (meta.year) metaChips.push(`<span>${escapeHtml(meta.year)}</span>`);
     parts.push(`<div class="cw-tip-meta">${metaChips.join('')}</div>`);
     if (meta.description) {
@@ -250,7 +334,7 @@
     } else {
       parts.push('<p class="cw-tip-empty">Description coming soon.</p>');
     }
-    parts.push('<p class="cw-tip-empty">Click to pin details →</p>');
+    parts.push('<p class="cw-tip-empty">Click or press Enter to pin details →</p>');
     return parts.join('');
   }
 
@@ -516,19 +600,25 @@
     return tiles;
   }
 
-  function flattenToSubjectTreemap(tree, focusedSubject) {
+  function flattenToSubjectTreemap(tree, courseMap, localState) {
     const base = structuredCloneSafe(tree);
     const root = { name: base.name || 'Coursework', children: [] };
+    const padWithGhosts = !localState.query && !localState.yearFilter;
     for (const subject of base.children || []) {
-      if (focusedSubject && subject.name !== focusedSubject) continue;
+      if (localState.focusedSubject && subject.name !== localState.focusedSubject) continue;
       const children = [];
       for (const group of subject.children || []) {
         for (const course of group.children || []) {
+          const id = course.id || course.code || course.name;
+          const meta = courseMap.get(id);
+          if (!isMetaVisible(meta, localState)) continue;
           children.push(course);
         }
       }
+      if (!children.length) continue;
+
       const minSlots = 8;
-      if (children.length < minSlots) {
+      if (padWithGhosts && children.length < minSlots) {
         const missing = minSlots - children.length;
         for (let i = 0; i < missing; i += 1) {
           children.push({ __ghost: true, id: `ghost-${subject.name}-${i}` });
@@ -544,10 +634,15 @@
     if (svg) svg.remove();
   }
 
-  function renderLegend(container, subjects, localState, onFocusChange) {
+  function renderLegend(container, subjects, courseMap, localState, onFocusChange) {
     container.innerHTML = '';
+    const subjectCounts = new Map();
+    for (const meta of courseMap.values()) {
+      subjectCounts.set(meta.category, (subjectCounts.get(meta.category) || 0) + 1);
+    }
+    const totalCount = courseMap.size;
 
-    const makeButton = (label, subject, swatch) => {
+    const makeButton = (label, subject, swatch, count) => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'cw-legend-btn';
@@ -561,7 +656,16 @@
         btn.appendChild(sw);
       }
 
-      btn.appendChild(document.createTextNode(label));
+      const text = document.createElement('span');
+      text.className = 'cw-legend-label';
+      text.textContent = label;
+      btn.appendChild(text);
+      if (typeof count === 'number') {
+        const badge = document.createElement('span');
+        badge.className = 'cw-legend-count';
+        badge.textContent = String(count);
+        btn.appendChild(badge);
+      }
       btn.addEventListener('click', () => {
         const next = subject == null ? null : subject;
         if (localState.focusedSubject === next) {
@@ -578,10 +682,64 @@
       return btn;
     };
 
-    container.appendChild(makeButton('All', null, null));
+    container.appendChild(makeButton('All', null, null, totalCount));
     for (const subject of subjects) {
-      container.appendChild(makeButton(subject, subject, colourFor(subject)));
+      container.appendChild(makeButton(subject, subject, colourFor(subject), subjectCounts.get(subject) || 0));
     }
+  }
+
+  function renderYearFilters(container, options, localState, onYearChange) {
+    container.innerHTML = '';
+
+    const makeButton = (token, label, count) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'cw-year-chip';
+      btn.dataset.cwYear = token || '';
+      btn.setAttribute('aria-pressed', String(localState.yearFilter === token));
+
+      const text = document.createElement('span');
+      text.className = 'cw-year-label';
+      text.textContent = label;
+      btn.appendChild(text);
+
+      if (typeof count === 'number') {
+        const badge = document.createElement('span');
+        badge.className = 'cw-year-count';
+        badge.textContent = String(count);
+        btn.appendChild(badge);
+      }
+
+      btn.addEventListener('click', () => {
+        const next = localState.yearFilter === token ? null : token;
+        onYearChange(next);
+        for (const other of container.querySelectorAll('.cw-year-chip')) {
+          const value = other.dataset.cwYear || null;
+          other.setAttribute('aria-pressed', String(localState.yearFilter === value));
+        }
+      });
+      return btn;
+    };
+
+    const total = options.reduce((acc, entry) => acc + entry.count, 0);
+    container.appendChild(makeButton(null, 'All years', total));
+
+    for (const option of options) {
+      container.appendChild(makeButton(option.token, option.token, option.count));
+    }
+  }
+
+  function renderStats(statsEl, summary, totalCount, localState) {
+    if (!statsEl) return;
+    const visible = summary && typeof summary.visibleCount === 'number' ? summary.visibleCount : totalCount;
+    const subjectCount = summary && typeof summary.subjectCount === 'number' ? summary.subjectCount : 0;
+    const filters = [];
+    if (localState.focusedSubject) filters.push(localState.focusedSubject);
+    if (localState.yearFilter) filters.push(localState.yearFilter);
+    if (localState.query) filters.push(`"${localState.query}"`);
+    const filterText = filters.length ? ` Filters: ${filters.join(' · ')}.` : '';
+    const subjectText = subjectCount ? ` Across ${subjectCount} subject${subjectCount === 1 ? '' : 's'}.` : '';
+    statsEl.textContent = `${visible} of ${totalCount} courses visible.${subjectText}${filterText}`;
   }
 
   function syncClearButton(button, selectedId) {
@@ -599,13 +757,18 @@
 
     const title = escapeHtml(meta.code ? `${meta.code} · ${meta.name}` : meta.name);
     const subtitle = escapeHtml(meta.category);
+    const track = meta.track ? escapeHtml(meta.track) : null;
     const year = meta.year ? escapeHtml(meta.year) : '—';
     const description = meta.description ? escapeHtml(meta.description) : 'Description coming soon.';
+    const chips = [`<span>${escapeHtml(meta.category)}</span>`];
+    if (track) chips.push(`<span>${track}</span>`);
+    if (meta.year) chips.push(`<span>${escapeHtml(meta.year)}</span>`);
 
     detailsEl.innerHTML = `
       <div>
         <p class="cw-detail-title">${title}</p>
-        <p class="cw-detail-subtitle">${subtitle}</p>
+        <p class="cw-detail-subtitle">${subtitle}${track ? ` · ${track}` : ''}</p>
+        <div class="cw-detail-chips">${chips.join('')}</div>
       </div>
       <div class="cw-detail-section">
         <h3>Year</h3>
@@ -627,12 +790,38 @@
     }
   }
 
-  function renderTreemap(container, hierarchyData, courseMap, detailsEl, clearBtn, width, height) {
+  function clearEmptyState(container) {
+    const empty = container.querySelector('.cw-empty-state');
+    if (empty) empty.remove();
+  }
+
+  function renderEmptyState(container, localState) {
+    clearEmptyState(container);
+    const empty = document.createElement('div');
+    empty.className = 'cw-empty-state';
+    empty.innerHTML = `
+      <p>No matching courses found.</p>
+      <p>Try clearing subject, year, or text filters.</p>
+      ${localState.query ? `<p class="cw-empty-query">Query: "${escapeHtml(localState.query)}"</p>` : ''}
+    `;
+    container.appendChild(empty);
+  }
+
+  function renderTreemap(container, hierarchyData, courseMap, detailsEl, clearBtn, width, height, localState) {
     clearSvg(container);
+    clearEmptyState(container);
     const tooltip = ensureTooltip(container);
     hideTooltip(tooltip);
 
-    const flat = flattenToSubjectTreemap(hierarchyData, state.focusedSubject);
+    const flat = flattenToSubjectTreemap(hierarchyData, courseMap, localState);
+    if (!flat.children.length) {
+      renderEmptyState(container, localState);
+      if (mount) {
+        mount.classList.toggle('cw-focused', Boolean(localState.focusedSubject));
+        mount.classList.toggle('cw-filtering', hasActiveFilter(localState));
+      }
+      return { visibleCount: 0, subjectCount: 0 };
+    }
 
     const root = d3
       .hierarchy(flat)
@@ -662,7 +851,7 @@
 
     const subjects = root.children || [];
 
-    svg
+    const subjectLayer = svg
       .append('g')
       .attr('class', 'cw-subjects')
       .selectAll('g')
@@ -685,6 +874,11 @@
 
         renderSubjectLabel(g, d, w);
       });
+    subjectLayer
+      .attr('opacity', 0)
+      .transition()
+      .duration(240)
+      .attr('opacity', 1);
 
     const tileNodes = layoutSubjectTiles(subjects, subjectHeader, 6);
     const clipId = (_, i) => `cw-tile-clip-${i}`;
@@ -721,7 +915,7 @@
       })
       .classed('is-selected', (d) => {
         const id = d.data.id || d.data.code || d.data.name;
-        return Boolean(state.selectedId && id === state.selectedId);
+        return Boolean(localState.selectedId && id === localState.selectedId);
       })
       .on('mouseenter', (event, d) => {
         const id = d.data.id || d.data.code || d.data.name;
@@ -732,27 +926,54 @@
         showTooltip(tooltip, event.currentTarget.getBoundingClientRect(), html, align);
       })
       .on('mouseleave', () => hideTooltip(tooltip))
+      .on('focus', (event, d) => {
+        const id = d.data.id || d.data.code || d.data.name;
+        const meta = courseMap.get(id);
+        const html = formatCourseTooltip(meta);
+        if (!html) return;
+        const align = tooltipAlignment(event.currentTarget, svg.node());
+        showTooltip(tooltip, event.currentTarget.getBoundingClientRect(), html, align);
+      })
+      .on('blur', () => hideTooltip(tooltip))
       .on('click', (event, d) => {
         event.stopPropagation();
         hideTooltip(tooltip);
         const id = d.data.id || d.data.code || d.data.name;
-        state.selectedId = id;
-        syncClearButton(clearBtn, state.selectedId);
-        updateSelection(container, state.selectedId);
+        localState.selectedId = id;
+        syncClearButton(clearBtn, localState.selectedId);
+        updateSelection(container, localState.selectedId);
         renderDetails(detailsEl, courseMap.get(id));
       })
       .on('keydown', (event, d) => {
         const key = event.key;
+        if (key === 'Escape') {
+          localState.selectedId = null;
+          syncClearButton(clearBtn, localState.selectedId);
+          updateSelection(container, localState.selectedId);
+          renderDetails(detailsEl, null);
+          hideTooltip(tooltip);
+          return;
+        }
         if (key !== 'Enter' && key !== ' ') return;
         event.preventDefault();
         event.stopPropagation();
         hideTooltip(tooltip);
         const id = d.data.id || d.data.code || d.data.name;
-        state.selectedId = id;
-        syncClearButton(clearBtn, state.selectedId);
-        updateSelection(container, state.selectedId);
+        localState.selectedId = id;
+        syncClearButton(clearBtn, localState.selectedId);
+        updateSelection(container, localState.selectedId);
         renderDetails(detailsEl, courseMap.get(id));
       });
+
+    tiles
+      .attr('opacity', 0)
+      .attr('transform', 'translate(0, 10)')
+      .transition()
+      .duration(380)
+      .delay((_, i) => Math.min(i * 7, 220))
+      .ease(d3.easeCubicOut)
+      .attr('opacity', 1)
+      .attr('transform', 'translate(0, 0)');
 
     tiles
       .append('rect')
@@ -767,9 +988,10 @@
         return blendWithSurface(base, darkMode ? 0.62 : 0.74);
       });
 
-    const focused = Boolean(state.focusedSubject);
+    const focused = Boolean(localState.focusedSubject);
     if (mount) {
       mount.classList.toggle('cw-focused', focused);
+      mount.classList.toggle('cw-filtering', hasActiveFilter(localState));
     }
 
     tiles
@@ -797,11 +1019,16 @@
 
     svg.on('click', () => {
       hideTooltip(tooltip);
-      state.selectedId = null;
-      syncClearButton(clearBtn, state.selectedId);
-      updateSelection(container, state.selectedId);
+      localState.selectedId = null;
+      syncClearButton(clearBtn, localState.selectedId);
+      updateSelection(container, localState.selectedId);
       renderDetails(detailsEl, null);
     });
+
+    return {
+      visibleCount: tileNodes.length,
+      subjectCount: subjects.length,
+    };
   }
 
   function buildFallbackList(tree) {

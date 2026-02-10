@@ -18,6 +18,8 @@ After this change, `https://gunayintheory.com` will present a redesigned, respon
 - [x] (2026-02-10 17:05Z) Created and validated repo-local + global skills (`personal-site-testing`, `marimo-notebook-testing`).
 - [x] (2026-02-10 17:20Z) Implemented sibling notebook optimization milestones and benchmark script.
 - [x] (2026-02-10 17:25Z) Ran validation (`pytest`, screenshots, marimo run/export, benchmark) and captured evidence.
+- [x] (2026-02-10 18:10Z) Modernized `/coursework` treemap UX with search, year filters, live stats, richer detail metadata, and keyboard/focus interaction improvements.
+- [x] (2026-02-10 18:20Z) Re-ran personal-site validation after coursework changes (`uv run pytest -q`, `scripts/ui_screenshots.sh`).
 - [ ] Complete SEO operations checklist (Search Console/Bing steps and indexing requests).
 
 ## Surprises & Discoveries
@@ -34,6 +36,8 @@ After this change, `https://gunayintheory.com` will present a redesigned, respon
   Evidence: `marimo run notebooks/probe_analysis.py` reported `multiple-definitions` diagnostics.
 - Observation: sibling repo default environment did not include pytest as an installed tool.
   Evidence: `uv run python -m pytest -q` failed with `No module named pytest`; resolved via `uv run --with pytest ...`.
+- Observation: filtering coursework by text/year can produce zero matches and looked like a broken canvas without explicit UI feedback.
+  Evidence: manual filter pass during `/coursework` redesign.
 
 ## Decision Log
 
@@ -52,6 +56,12 @@ After this change, `https://gunayintheory.com` will present a redesigned, respon
 - Decision: Prioritize robust dataset-shaping optimizations for marimo/WASM; treat VegaFusion as feasibility-checked enhancement.
   Rationale: compatibility and reliability across both server and WASM execution.
   Date/Author: 2026-02-10 / User + Codex.
+- Decision: Keep the coursework visualization as a D3 treemap while adding modern controls (search + year chips + live counts) instead of replacing the chart type.
+  Rationale: preserves existing IA and data model while improving discoverability and usability.
+  Date/Author: 2026-02-10 / User + Codex.
+- Decision: Derive coursework year filters from explicit `year` metadata with course-code inference fallback.
+  Rationale: keeps filtering consistent across mixed-quality course records.
+  Date/Author: 2026-02-10 / Codex.
 
 ## Outcomes & Retrospective
 
@@ -62,6 +72,8 @@ Current implementation outcomes:
 - Screenshot regression set regenerated for all required routes and viewports.
 - Two testing skills were created locally and mirrored globally; both pass quick validation.
 - Sibling notebook workflow now emits split chart/detail datasets and a benchmark report.
+- Coursework map now includes modern controls and interaction polish:
+  search, year chips, live visible-course stats, zero-result empty-state messaging, and improved keyboard/focus behavior.
 
 Remaining outcomes:
 
@@ -158,3 +170,4 @@ Implementation evidence to capture during completion:
 ## Change Note
 
 2026-02-10: Created `PLANS.md` as authoritative execution plan, migrated active tracking from `PLAN.md`, and began implementation aligned with this plan.
+2026-02-10: Added coursework modernization updates and validation evidence so future agents can continue from in-repo plan context without external handoff.
