@@ -1,3 +1,13 @@
+# AGENTS
+
+Guidance for future work in this repository. Keep this file short, factual, and updated with important instructions, pitfalls, and external references that are useful to revisit.
+
+## Working agreements
+
+- Follow `ExecPLANS.md` and keep `PLANS.md` up to date with progress, decisions, surprises, and outcomes.
+- Keep the repository structure minimal within the current folder layout. Add new code under the existing subpackages instead of creating new top-level folders.
+- Keep `README.md` updated so the repo stays easy to understand and run. Update it whenever you add or move major features, tools, or workflows.
+
 # Personal Site – Agent Guidelines
 
 These rules exist to keep the site **responsive**, **accessible**, and **easy to verify** after changes.

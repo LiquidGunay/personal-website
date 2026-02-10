@@ -1,3 +1,5 @@
+> **Legacy Note (2026-02-10):** Active execution tracking moved to `PLANS.md` in accordance with `AGENTS.md` and `ExecPLANS.md`. Keep this file for historical context only.
+
 ## Personal Site and Blog – Architecture and Delivery Plan
 
 ### Goals
