@@ -7,7 +7,6 @@ seo_description: Gunay Soni is an ML researcher and engineer focused on uncertai
 canonical_path: /
 og_image: /static/about-portrait.png
 featured_slug: semantic-entropy-probe-comparison
-location: United States
 links:
   - label: GitHub
     url: https://github.com/LiquidGunay
