@@ -1,0 +1,4 @@
+interface:
+  display_name: "Personal Site Testing"
+  short_description: "Run personal-site QA loops across tests and screenshots."
+  default_prompt: "Validate personal-site changes with pytest, screenshot captures, SEO endpoint checks, and responsive review."

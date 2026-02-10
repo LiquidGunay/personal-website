@@ -1,0 +1,4 @@
+interface:
+  display_name: "Marimo Notebook Testing"
+  short_description: "Validate marimo notebooks, WASM exports, and chart performance."
+  default_prompt: "Test marimo notebooks for correctness, WASM export behavior, and Altair/Vega performance constraints."
