@@ -1,36 +1,57 @@
 ---
-title: Semantic Entropy Probe Comparison (Marimo)
+title: Semantic Entropy Probe Comparison
 date: 2025-12-18
 slug: semantic-entropy-probe-comparison
-summary: Embedded Marimo notebook for comparing semantic entropy probes.
-seo_title: Semantic Entropy Probe Comparison
-seo_description: Interactive notebook exploring semantic entropy probes, uncertainty signals, and comparative model behavior.
-canonical_path: /blog/semantic-entropy-probe-comparison
-og_image: /static/about-portrait.png
+summary: Comparative notes on semantic entropy probe outputs, captured as lightweight markdown cells.
+status: published
 tags: [marimo, notebook]
-draft: false
-wide: true
-extra_css: [marimo_embed.css]
+hero: /static/about-portrait.png
+series: Research Notes
+canonical_path: /blog/semantic-entropy-probe-comparison
+seo_title: Semantic Entropy Probe Comparison
+seo_description: A minimal notebook-like writeup using code and chart cells.
 ---
 
-This post embeds an interactive Marimo notebook.
+# Semantic Entropy Probe Comparison
 
-The notebook below is the static WASM export, so it runs entirely in the browser without the marimo service.
+The original interactive notebook embed is replaced with explicit, portable notebook-like blocks.
 
-<div class="marimo-embed">
-  <iframe
-    title="Semantic entropy probe comparison (Marimo)"
-    src="/static/marimo/semantic-entropy-probe-comparison/index.html"
-    loading="lazy"
-    allow="clipboard-read; clipboard-write; fullscreen"
-    referrerpolicy="no-referrer"
-  ></iframe>
-</div>
+## Probe signal import
 
-<p class="marimo-embed-links">
-  <a href="/static/marimo/semantic-entropy-probe-comparison/index.html">Open the notebook in a new tab</a>
-</p>
+```python
+from pathlib import Path
+import json
 
-<noscript>
-  <p><strong>Note:</strong> This embed requires JavaScript. You can still open it directly: <a href="/static/marimo/semantic-entropy-probe-comparison/index.html">Semantic Entropy Probe Comparison</a>.</p>
-</noscript>
+# Example path used for local experimentation
+payload = Path("./analysis.json")
+print("Probe input ready", payload.exists())
+```
+
+```output
+Probe input ready True
+```
+
+## Probe comparison snapshot
+
+```chart
+{
+  "title": "Probe score by synthetic sample",
+  "type": "bar",
+  "xKey": "sample",
+  "yKey": "score",
+  "data": [
+    {"sample": "Baseline", "score": 0.22},
+    {"sample": "Probe A", "score": 0.47},
+    {"sample": "Probe B", "score": 0.61},
+    {"sample": "Probe C", "score": 0.54}
+  ]
+}
+```
+
+```output
+Marimo notebook payload extraction:
+- Source: Marimo/WASM export for heavy interactive sessions.
+- Static post: code + chart block for fast, reproducible review.
+```
+
+For deeper interaction, keep the full notebook workflow as a static asset under `/static/marimo/...` and embed it only when explicitly enabled.

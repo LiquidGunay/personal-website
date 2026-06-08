@@ -14,7 +14,7 @@ def _rss_item_xml(post: Post) -> str:
     canonical_path = post.canonical_path or f"/blog/{post.slug}"
     link = cfg.canonical_url(canonical_path)
     title = escape(post.title)
-    description = escape(post.seo_description or post.summary or post.title)
+    description = escape(post.summary or post.title)
     return (
         f"<item>"
         f"<title>{title}</title>"
@@ -44,4 +44,3 @@ def render_rss() -> str:
         "</rss>"
     )
     return xml
-
