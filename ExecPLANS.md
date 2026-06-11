@@ -15,14 +15,16 @@ Move the site from runtime Python template rendering to a static/build-time Reac
 - [x] Add static artifact serving in FastAPI (`/` and known routes) and keep SEO/feeds on Python.
 - [x] Preserve coursework treemap behavior using copied assets (`app/static/coursework.{css,js}` + `courses.json`) under `frontend/public/static`.
 - [x] Update runbook and developer docs for new workflow.
-- [ ] Run `npm --prefix frontend run parser:test` in a clean environment and confirm pass.
-- [ ] Run `npm --prefix frontend run build` and generate screenshots via `scripts/ui_screenshots.sh`.
-- [ ] Close any remaining responsive/overflow exceptions from the new layout.
+- [x] Run `npm --prefix frontend run parser:test` in a clean environment and confirm pass.
+- [x] Run `npm --prefix frontend run build` and generate screenshots via `scripts/ui_screenshots.sh`.
+- [x] Close any remaining responsive/overflow exceptions from the new layout.
 
 ## Surprises & discoveries
 
 - The old Python templating route layer depended on old `Post` and `Page` attributes; a minimal compatibility layer in `app/services/content.py` was required to keep existing imports safe.
 - Next.js route snapshots are now file-system based at build time, so content changes are best validated with parser fixtures plus screenshot loops.
+- The deployed coursework page was paying for CDN D3 and could take several seconds to draw the treemap; vendoring D3 under `/static/vendor/d3.v7.min.js` made local render checks consistently sub-second.
+- Very small windows exposed tap-target regressions that normal screenshots missed; the custom Playwright matrix now checks overflow, treemap completion, local D3 usage, headline sizing, and mobile tap-target dimensions.
 
 ## Decision log
 
@@ -35,7 +37,7 @@ Move the site from runtime Python template rendering to a static/build-time Reac
 
 ## Outcomes & retrospective
 
-The migration foundation is now in place. The biggest remaining risk is operational validation in CI (parser checks, frontend build, and visual checks), not architectural correctness. The code path is now clear: content changes happen in `content/posts`, parser transforms happen in `frontend/lib/content.ts`, and rendering stays in React components.
+The migration foundation and redesign validation are now in place. Parser checks, frontend build, backend tests, screenshot generation, and expanded Playwright responsive checks have passed locally; the remaining operational risk is watching the Railway deployment after each push. The code path is clear: content changes happen in `content/posts`, parser transforms happen in `frontend/lib/content.ts`, and rendering stays in React components.
 
 ## Validation instructions
 

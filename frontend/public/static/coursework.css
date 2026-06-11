@@ -75,7 +75,7 @@ html[data-theme="dark"] .cw-caption-text p {
   border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 14%, transparent 86%);
   background: color-mix(in oklab, var(--bg, #fff) 88%, transparent 12%);
   color: inherit;
-  min-height: 2.65rem;
+  min-height: 2.75rem;
   padding: 0.45rem 0.78rem;
   font-size: 0.83rem;
   line-height: 1;
@@ -220,7 +220,7 @@ html[data-theme="dark"] .cw-search input::placeholder {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  min-height: 2.65rem;
+  min-height: 2.75rem;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--fg, #0f172a) 14%, transparent 86%);
   background: color-mix(in oklab, var(--bg, #fff) 90%, transparent 10%);
@@ -941,13 +941,13 @@ html[data-theme="dark"] .cw-empty-state {
 
 .cw-legend-btn,
 .cw-year-chip {
-  min-height: 2.35rem;
-  padding: 0.38rem 0.58rem;
+  min-height: 2.75rem;
+  padding: 0.46rem 0.64rem;
   font-size: 0.76rem;
 }
 
 .cw-search input {
-  min-height: 2.45rem;
+  min-height: 2.75rem;
   font-size: 0.88rem;
 }
 

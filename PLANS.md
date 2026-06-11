@@ -24,3 +24,6 @@ Reference mockups generated during planning and copied into the repo:
 - Updated the homepage toward the Editorial Field Notes direction with restrained garden-style annotation, no coursework module, and a text-first latest-writing list.
 - Updated `/coursework` toward the Editorial Coursework Atlas direction with summary stats, interactive treemap framing, selected-course details, and a server-rendered chronological course index.
 - Updated global and coursework-specific styles toward a sharper editorial paper system with thin rules, less rounded card styling, stronger typography, and responsive list layouts.
+- Hardened `/coursework` for odd and very narrow windows: local D3 vendor asset, capped hero type, responsive treemap height, horizontally scrollable filters on tiny screens, and 44px tap targets for skip/filter/search controls.
+- Verified the final pass with a 64-combination Playwright matrix across `/`, `/blog`, `/coursework`, and `/about` in light/dark at 280, 320, 390, landscape, tablet, desktop, and wide desktop widths; no overflow or tap-target failures remained locally.
+- Re-ran `npm --prefix frontend run typecheck`, `TMPDIR=/tmp uv run pytest -q`, and `TMPDIR=/tmp scripts/ui_screenshots.sh`; all passed.

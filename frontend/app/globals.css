@@ -89,6 +89,9 @@ a:hover {
   position: absolute;
   left: -9999px;
   top: auto;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .skip-link:focus {
