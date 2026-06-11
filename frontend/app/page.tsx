@@ -18,30 +18,45 @@ export default function HomePage() {
 
   return (
     <section className="home-shell">
-      <section className="hero">
-        <p className="eyebrow">Technical notes · Research notes · Design notes</p>
-        <h1>{heroTitle}</h1>
-        {heroTagline ? <p>{heroTagline}</p> : null}
-        <p>
-          I publish practical technical writing focused on machine learning systems, uncertainty, and reproducible
-          research workflows.
-        </p>
-        <div className="hero-actions">
-          <Link href="/about">Read about me</Link>
-          <Link href="/blog">Browse blog</Link>
+      <section className="home-hero" aria-labelledby="home-title">
+        <div className="home-hero__intro">
+          <p className="eyebrow">Technical notes / research engineering / systems</p>
+          <h1 id="home-title">{heroTitle}</h1>
+          {heroTagline ? <p className="home-hero__tagline">{heroTagline}</p> : null}
+        </div>
+        <div className="home-hero__note" aria-label="Current focus">
+          <span>Now</span>
+          <p>
+            Writing about uncertainty-aware ML systems, semantic entropy analysis, and practical tooling for
+            reproducible experiments.
+          </p>
+        </div>
+        <div className="hero-actions" aria-label="Primary links">
+          <Link href="/blog">Read the blog</Link>
+          <Link href="/about">About</Link>
         </div>
       </section>
 
-      <section className="home-recent">
-        <h2>Latest writing</h2>
+      <section className="home-recent" aria-labelledby="latest-writing">
+        <div className="section-heading">
+          <p className="eyebrow">Latest</p>
+          <h2 id="latest-writing">Writing and experiment notes</h2>
+        </div>
         {featuredPosts.length ? (
-          <div className="post-grid">
-            {featuredPosts.map((post) => (
-              <Link href={`/blog/${post.slug}`} className="post-card" key={post.slug}>
-                <h3>{post.title}</h3>
-                <p>{post.summary ?? "Post"}</p>
+          <div className="essay-list">
+            {featuredPosts.map((post, index) => (
+              <article className="essay-row" key={post.slug}>
+                <div className="essay-row__marker" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+                <div className="essay-row__body">
+                  <h3>
+                    <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                  </h3>
+                  <p>{post.summary ?? "Post"}</p>
+                </div>
                 <time dateTime={post.date}>{new Date(post.date).toISOString().slice(0, 10)}</time>
-              </Link>
+              </article>
             ))}
           </div>
         ) : (
@@ -51,4 +66,3 @@ export default function HomePage() {
     </section>
   );
 }
-

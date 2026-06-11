@@ -1,12 +1,117 @@
+import fs from "node:fs";
+import path from "node:path";
 import Script from "next/script";
 
+interface CourseNode {
+  id?: string;
+  code?: string;
+  name: string;
+  year?: string | number;
+  description?: string;
+  children?: CourseNode[];
+}
+
+interface CourseItem {
+  id: string;
+  code: string;
+  name: string;
+  subject: string;
+  track: string;
+  year: string;
+  description?: string;
+}
+
+function courseDataPath() {
+  return path.join(process.cwd(), "..", "app", "static", "courses.json");
+}
+
+function inferYear(code: string) {
+  const match = code.match(/(\d{3})/);
+  if (!match) return "Unsorted";
+  return `Year ${Math.floor(Number.parseInt(match[1], 10) / 100)}`;
+}
+
+function formatYear(value: CourseNode["year"], code: string) {
+  if (value === undefined || value === null || value === "") return inferYear(code);
+  if (typeof value === "number") return `Year ${value}`;
+  const trimmed = value.trim();
+  if (!trimmed) return inferYear(code);
+  if (/^\d+$/.test(trimmed) && Number.parseInt(trimmed, 10) <= 12) return `Year ${trimmed}`;
+  return trimmed;
+}
+
+function flattenCourses() {
+  const raw = fs.readFileSync(courseDataPath(), "utf8");
+  const parsed = JSON.parse(raw) as { hierarchy?: CourseNode };
+  const root = parsed.hierarchy;
+  const courses: CourseItem[] = [];
+
+  root?.children?.forEach((subject) => {
+    subject.children?.forEach((track) => {
+      track.children?.forEach((course) => {
+        const code = course.code || course.id || course.name;
+        courses.push({
+          id: course.id || code,
+          code,
+          name: course.name,
+          subject: subject.name,
+          track: track.name,
+          year: formatYear(course.year, code),
+          description: course.description,
+        });
+      });
+    });
+  });
+
+  return courses;
+}
+
+function groupedByYear(courses: CourseItem[]) {
+  const groups = new Map<string, CourseItem[]>();
+  courses.forEach((course) => {
+    const existing = groups.get(course.year) ?? [];
+    existing.push(course);
+    groups.set(course.year, existing);
+  });
+
+  return Array.from(groups.entries()).sort(([a], [b]) => {
+    const aNum = Number.parseInt(a.replace(/\D+/g, ""), 10);
+    const bNum = Number.parseInt(b.replace(/\D+/g, ""), 10);
+    if (Number.isFinite(aNum) && Number.isFinite(bNum)) return aNum - bNum;
+    return a.localeCompare(b);
+  });
+}
+
 export default function CourseworkPage() {
+  const courses = flattenCourses();
+  const yearGroups = groupedByYear(courses);
+  const subjectCount = new Set(courses.map((course) => course.subject)).size;
+
   return (
     <section className="coursework-shell">
-      <header>
-        <p className="eyebrow">Academic map</p>
-        <h1>Coursework</h1>
-        <p>An interactive treemap of modules and tracks with progressive filters and details.</p>
+      <header className="coursework-hero">
+        <div>
+          <p className="eyebrow">Academic atlas</p>
+          <h1>Coursework</h1>
+          <p>
+            A subject map for classes, tracks, and descriptions. Filter the treemap by subject or year, then pin a
+            course to read the details without crowding the chart.
+          </p>
+        </div>
+        <dl className="coursework-summary" aria-label="Coursework summary">
+          <div>
+            <dt>Courses</dt>
+            <dd>{courses.length}</dd>
+          </div>
+          <div>
+            <dt>Subjects</dt>
+            <dd>{subjectCount}</dd>
+          </div>
+          <div>
+            <dt>View</dt>
+            <dd>Treemap</dd>
+          </div>
+        </dl>
       </header>
 
       <div id="cw-viz" className="cw">
@@ -14,14 +119,15 @@ export default function CourseworkPage() {
           <figure className="cw-figure">
             <figcaption className="cw-caption">
               <div className="cw-caption-text">
+                <p className="eyebrow">Interactive map</p>
                 <h2>Course map</h2>
-                <p>Subjects, tracks, and years update together while filtering.</p>
+                <p>Short labels keep the chart readable; full names, years, tracks, and descriptions live in details.</p>
               </div>
               <div className="cw-legend" data-cw-legend aria-label="Subject legend" />
             </figcaption>
             <div className="cw-toolbar" aria-label="Coursework controls">
               <label className="cw-search" htmlFor="cw-search-input">
-                <span>Find a module</span>
+                <span>Find a course</span>
                 <input
                   id="cw-search-input"
                   type="search"
@@ -33,7 +139,7 @@ export default function CourseworkPage() {
               </label>
               <div className="cw-year-chips" data-cw-years aria-label="Year filters" />
               <p className="cw-stats" data-cw-stats>
-                Loading course index…
+                Loading course index...
               </p>
             </div>
             <div className="viz-canvas" data-viz="treemap" aria-label="Coursework treemap" />
@@ -42,24 +148,46 @@ export default function CourseworkPage() {
           <aside className="cw-details" aria-label="Course details">
             <div className="cw-details-card">
               <div className="cw-details-header">
-                <h2>Details</h2>
+                <p className="eyebrow">Selected course</p>
                 <button type="button" className="cw-details-clear" data-cw-clear hidden>
                   Clear
                 </button>
               </div>
               <div className="cw-details-body" data-cw-details>
-                <p className="cw-details-empty">Select a tile to see year and details.</p>
+                <p className="cw-details-empty">Select a tile to see year, track, and description.</p>
               </div>
             </div>
           </aside>
         </div>
       </div>
 
+      <section className="course-index" aria-labelledby="course-index-title">
+        <div className="section-heading">
+          <p className="eyebrow">Chronology</p>
+          <h2 id="course-index-title">Course index</h2>
+        </div>
+        <div className="course-year-list">
+          {yearGroups.map(([year, items]) => (
+            <section className="course-year" key={year}>
+              <h3>{year}</h3>
+              <ul>
+                {items.map((course) => (
+                  <li key={course.id}>
+                    <span>{course.code}</span>
+                    <strong>{course.name}</strong>
+                    <em>{course.subject}</em>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+
       <noscript>
         <p>
-          <strong>Note:</strong> This visualization requires JavaScript. A plain list fallback appears below.
+          <strong>Note:</strong> The treemap requires JavaScript. The course index above remains available without it.
         </p>
-        <div id="cw-fallback" />
       </noscript>
 
       <link rel="stylesheet" href="/static/coursework.css" />
@@ -68,4 +196,3 @@ export default function CourseworkPage() {
     </section>
   );
 }
-

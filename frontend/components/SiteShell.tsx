@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 
 const navItems = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
   { href: "/coursework", label: "Coursework" },
+  { href: "/about", label: "About" },
 ];
 
 export function SiteShell({ children }: { children: ReactNode }) {

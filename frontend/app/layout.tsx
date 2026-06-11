@@ -5,7 +5,7 @@ import { SiteShell } from "@/components/SiteShell";
 
 export const metadata: Metadata = {
   title: "Gunay Soni",
-  description: "Minimalist technical blog and persona site.",
+  description: "Technical writing and research notes on uncertainty-aware machine learning systems.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
