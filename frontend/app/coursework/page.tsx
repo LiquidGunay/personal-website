@@ -191,7 +191,7 @@ export default function CourseworkPage() {
       </noscript>
 
       <link rel="stylesheet" href="/static/coursework.css" />
-      <Script src="https://cdn.jsdelivr.net/npm/d3@7" strategy="beforeInteractive" />
+      <Script src="/static/vendor/d3.v7.min.js" strategy="beforeInteractive" />
       <Script src="/static/coursework.js" strategy="afterInteractive" />
     </section>
   );

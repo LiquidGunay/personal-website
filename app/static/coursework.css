@@ -904,3 +904,168 @@ html[data-theme="dark"] .cw-empty-state {
     min-height: clamp(320px, 82vw, 560px);
   }
 }
+
+/* Performance/responsive hardening pass: keep the atlas usable at odd window sizes. */
+.cw-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 320px);
+}
+
+.cw-figure,
+.cw-details-card {
+  padding: clamp(0.8rem, 1.6vw, 1.35rem);
+}
+
+.cw-caption {
+  gap: 0.75rem 1rem;
+}
+
+.cw-caption-text h2 {
+  font-size: clamp(1.35rem, 1.2vw + 1rem, 2rem);
+}
+
+.cw-caption-text p,
+.cw-stats,
+.cw-details-body {
+  font-size: clamp(0.88rem, 0.25vw + 0.82rem, 0.98rem);
+}
+
+.cw-toolbar {
+  grid-template-columns: minmax(12rem, 0.85fr) minmax(0, 1.15fr);
+  gap: 0.7rem 0.85rem;
+}
+
+.cw-legend,
+.cw-year-chips {
+  gap: 0.45rem;
+}
+
+.cw-legend-btn,
+.cw-year-chip {
+  min-height: 2.35rem;
+  padding: 0.38rem 0.58rem;
+  font-size: 0.76rem;
+}
+
+.cw-search input {
+  min-height: 2.45rem;
+  font-size: 0.88rem;
+}
+
+.cw .viz-canvas {
+  aspect-ratio: auto;
+  height: clamp(340px, 58vh, 620px);
+  min-height: 0;
+  max-height: none;
+}
+
+.cw-subject-label,
+.cw-subject-label-line {
+  font-size: 0.66rem;
+}
+
+.cw-tile-label,
+.cw-tile-label tspan.cw-tile-code {
+  font-size: clamp(0.56rem, 0.12vw + 0.54rem, 0.68rem);
+}
+
+.cw-tile-label tspan.cw-tile-name {
+  font-size: 0.58rem;
+}
+
+.cw-detail-title {
+  font-size: clamp(1.05rem, 0.7vw + 0.95rem, 1.28rem);
+}
+
+@media (max-width: 1120px) {
+  .cw-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cw-details {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .cw-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .cw .viz-canvas {
+    height: clamp(300px, 62vh, 500px);
+  }
+
+  .cw-caption,
+  .cw-details-header {
+    gap: 0.6rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .cw-figure,
+  .cw-details-card {
+    padding: 0.72rem;
+  }
+
+  .cw .viz-canvas {
+    height: clamp(280px, 58vh, 440px);
+  }
+
+  .cw-legend,
+  .cw-year-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.15rem;
+    scrollbar-width: none;
+  }
+
+  .cw-legend::-webkit-scrollbar,
+  .cw-year-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cw-legend-btn,
+  .cw-year-chip {
+    flex: 0 0 auto;
+  }
+}
+
+/* Keep filter rows from widening the document on very narrow devices. */
+.cw-caption,
+.cw-caption-text,
+.cw-legend,
+.cw-toolbar,
+.cw-year-chips,
+.cw-search,
+.cw-details,
+.cw-details-card {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.cw-caption-text {
+  overflow-wrap: anywhere;
+}
+
+.cw-legend,
+.cw-year-chips {
+  width: 100%;
+  max-inline-size: 100%;
+}
+
+.cw-legend-btn,
+.cw-year-chip {
+  white-space: nowrap;
+}
+
+@media (max-width: 420px) {
+  .cw-caption {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cw-legend,
+  .cw-year-chips {
+    overscroll-behavior-inline: contain;
+  }
+}
