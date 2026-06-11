@@ -2,6 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import Script from "next/script";
 
+const COURSEWORK_ASSET_VERSION = "20260611-3";
+
 interface CourseNode {
   id?: string;
   code?: string;
@@ -190,9 +192,9 @@ export default function CourseworkPage() {
         </p>
       </noscript>
 
-      <link rel="stylesheet" href="/static/coursework.css" />
-      <Script src="/static/vendor/d3.v7.min.js" strategy="beforeInteractive" />
-      <Script src="/static/coursework.js" strategy="afterInteractive" />
+      <link rel="stylesheet" href={`/static/coursework.css?v=${COURSEWORK_ASSET_VERSION}`} />
+      <Script src={`/static/vendor/d3.v7.min.js?v=${COURSEWORK_ASSET_VERSION}`} strategy="beforeInteractive" />
+      <Script src={`/static/coursework.js?v=${COURSEWORK_ASSET_VERSION}`} strategy="afterInteractive" />
     </section>
   );
 }
