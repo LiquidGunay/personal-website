@@ -1069,3 +1069,12 @@ html[data-theme="dark"] .cw-empty-state {
     overscroll-behavior-inline: contain;
   }
 }
+
+.cw,
+.cw *,
+.course-index,
+.course-index * {
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: manual;
+}

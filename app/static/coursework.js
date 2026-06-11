@@ -1,7 +1,18 @@
 // Coursework treemap visualisation powered by D3
 (function () {
-  const mount = document.getElementById('cw-viz');
-  if (!mount || typeof d3 === 'undefined') return;
+  let bootAttempts = 0;
+
+  function boot() {
+    const mount = document.getElementById('cw-viz');
+    if (!mount || typeof window.d3 === 'undefined') {
+      bootAttempts += 1;
+      if (bootAttempts < 120) window.setTimeout(boot, 100);
+      return;
+    }
+
+    if (mount.dataset.cwInitialised === 'true') return;
+    mount.dataset.cwInitialised = 'true';
+
 
   const palette = new Map([
     ['Physics', '#2563eb'],
@@ -1047,5 +1058,13 @@
       }
     }
     return lines.join('');
+  }
+
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', boot, { once: true });
+  } else {
+    boot();
   }
 })();

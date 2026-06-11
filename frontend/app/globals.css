@@ -46,7 +46,8 @@ body {
   background-size: 36px 36px, 36px 36px, auto;
   font-family: var(--font-sans);
   line-height: 1.55;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -171,6 +172,25 @@ a:hover {
 .site-main {
   display: grid;
   gap: clamp(1.6rem, 3vw, 3rem);
+}
+
+/* Keep prose resilient without splitting ordinary UI/coursework words letter-by-letter. */
+.post-content,
+.post-sidebar,
+.prose-proxy,
+.article-cell,
+pre,
+code {
+  overflow-wrap: anywhere;
+}
+
+.coursework-shell,
+.coursework-shell *,
+.course-index,
+.course-index * {
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: manual;
 }
 
 .site-footer {
