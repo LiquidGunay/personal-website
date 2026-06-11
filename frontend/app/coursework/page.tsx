@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import Script from "next/script";
 
-const COURSEWORK_ASSET_VERSION = "20260611-3";
+const COURSEWORK_ASSET_VERSION = "20260611-4";
 
 interface CourseNode {
   id?: string;

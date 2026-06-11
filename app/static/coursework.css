@@ -1078,3 +1078,389 @@ html[data-theme="dark"] .cw-empty-state {
   overflow-wrap: normal;
   hyphens: manual;
 }
+
+/* Editorial ledger chart skin: final concept implementation. */
+#cw-viz.cw {
+  --cw-ink: var(--text, #171512);
+  --cw-muted: var(--muted, #676056);
+  --cw-paper: var(--surface, #fffdf7);
+  --cw-paper-soft: color-mix(in srgb, var(--surface-2, #efeee5) 58%, var(--surface, #fffdf7) 42%);
+  --cw-rule: var(--border, #d8d0bf);
+  --cw-accent: var(--accent, #1f6f5f);
+  max-width: none;
+  margin: 0;
+}
+
+.cw-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 320px);
+  gap: clamp(1rem, 2.6vw, 2.15rem);
+  align-items: start;
+}
+
+.cw-figure {
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--cw-rule);
+  border-bottom: 1px solid var(--cw-rule);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  gap: 0;
+}
+
+.cw-caption {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(280px, 1.35fr);
+  align-items: start;
+  gap: clamp(1rem, 2.4vw, 2rem);
+  padding: clamp(0.95rem, 1.6vw, 1.35rem) 0;
+  border-bottom: 1px solid var(--cw-rule);
+}
+
+.cw-caption-text h2 {
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: clamp(1.5rem, 2.2vw, 2.2rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.cw-caption-text p {
+  max-width: 54ch;
+  color: var(--cw-muted);
+  overflow-wrap: normal;
+}
+
+.cw-legend {
+  width: auto;
+  justify-content: flex-end;
+  gap: 0.25rem 0.65rem;
+}
+
+.cw-legend-btn,
+.cw-year-chip {
+  position: relative;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.45rem 0.1rem 0.42rem;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--cw-rule) 78%, transparent 22%);
+  border-radius: 0;
+  background: transparent;
+  color: var(--cw-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  gap: 0.38rem;
+  transition: color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.cw-legend-btn:hover,
+.cw-year-chip:hover {
+  transform: translateY(-1px);
+  color: var(--cw-ink);
+  background: transparent;
+  border-color: var(--cw-accent);
+}
+
+.cw-legend-btn[aria-pressed="true"],
+.cw-year-chip[aria-pressed="true"] {
+  color: var(--cw-ink);
+  background: transparent;
+  border-color: var(--cw-accent);
+}
+
+.cw-legend-btn[aria-pressed="true"]::after,
+.cw-year-chip[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--cw-accent);
+}
+
+.cw-legend-swatch {
+  width: 0.62rem;
+  height: 1.05rem;
+  border-radius: 0;
+  box-shadow: none;
+  border: 0;
+}
+
+.cw-legend-label,
+.cw-year-label {
+  font-weight: 560;
+}
+
+.cw-legend-count,
+.cw-year-count {
+  min-width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: color-mix(in srgb, var(--cw-muted) 72%, transparent 28%);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+}
+
+.cw-toolbar {
+  grid-template-columns: minmax(12rem, 0.8fr) minmax(0, 1.2fr);
+  gap: 0.85rem 1rem;
+  padding: clamp(0.9rem, 1.5vw, 1.2rem) 0;
+  border-bottom: 1px solid var(--cw-rule);
+}
+
+.cw-search span,
+.cw-details-header .eyebrow,
+.cw-detail-section h3 {
+  font-family: var(--font-mono, monospace);
+  letter-spacing: 0.08em;
+}
+
+.cw-search input {
+  min-height: 44px;
+  border: 0;
+  border-bottom: 1px solid var(--cw-rule);
+  border-radius: 0;
+  background: transparent;
+  padding: 0.55rem 0;
+  color: var(--cw-ink);
+}
+
+.cw-search input:focus-visible {
+  box-shadow: none;
+  border-color: var(--cw-accent);
+}
+
+.cw-stats {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.76rem;
+  color: var(--cw-muted);
+}
+
+.cw .viz-canvas {
+  height: clamp(400px, 62vh, 690px);
+  min-height: 0;
+  max-height: none;
+  margin: clamp(0.9rem, 1.8vw, 1.35rem) 0;
+  border: 1px solid var(--cw-rule);
+  border-radius: 0;
+  background:
+    linear-gradient(rgba(23, 21, 18, 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 21, 18, 0.024) 1px, transparent 1px),
+    var(--cw-paper-soft);
+  background-size: 30px 30px, 30px 30px, auto;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--cw-ink) 4%, transparent 96%);
+  overflow: hidden;
+}
+
+.cw .viz-canvas::after {
+  inset: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+.cw .viz-canvas svg text {
+  font-family: var(--font-mono, monospace);
+  fill: color-mix(in srgb, var(--cw-ink) 88%, transparent 12%);
+}
+
+.cw-subject-bg {
+  stroke: color-mix(in srgb, var(--cw-rule) 74%, transparent 26%);
+  stroke-width: 1;
+}
+
+.cw-subject-rule {
+  opacity: 0.86;
+  pointer-events: none;
+}
+
+.cw-subject-label,
+.cw-subject-label-line {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.66rem;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  fill: color-mix(in srgb, var(--cw-ink) 72%, transparent 28%);
+}
+
+.cw-tile-rect {
+  stroke: color-mix(in srgb, var(--cw-ink) 12%, transparent 88%);
+  stroke-width: 1;
+  filter: none;
+}
+
+.cw-tile-rule {
+  opacity: 0.82;
+  pointer-events: none;
+  transition: opacity 0.18s ease, width 0.18s ease;
+}
+
+.cw-tile:hover .cw-tile-rect,
+.cw-tile:focus-visible .cw-tile-rect {
+  filter: none;
+  stroke: color-mix(in srgb, var(--cw-ink) 42%, transparent 58%);
+  stroke-width: 1.25;
+}
+
+.cw-tile:hover .cw-tile-rule,
+.cw-tile:focus-visible .cw-tile-rule {
+  opacity: 1;
+  width: 5px;
+}
+
+.cw-tile.is-selected .cw-tile-rect {
+  filter: none;
+  stroke: var(--accent-2, #b9472f);
+  stroke-width: 2;
+}
+
+.cw-tile.is-selected .cw-tile-rule {
+  opacity: 1;
+  width: 6px;
+}
+
+.cw-tile-label,
+.cw-tile-label tspan.cw-tile-code,
+#cw-viz.cw.cw-focused .cw-tile-label,
+#cw-viz.cw.cw-focused .cw-tile-label tspan.cw-tile-code {
+  font-family: var(--font-mono, monospace);
+  font-size: clamp(0.56rem, 0.16vw + 0.54rem, 0.74rem);
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.cw-details {
+  top: 5rem;
+}
+
+.cw-details-card {
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--cw-rule);
+  border-bottom: 1px solid var(--cw-rule);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cw-details-header {
+  margin: 0;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--cw-rule);
+}
+
+.cw-details-clear {
+  min-height: 44px;
+  padding: 0.35rem 0;
+  border: 0;
+  border-bottom: 1px solid var(--cw-rule);
+  border-radius: 0;
+  background: transparent;
+  color: var(--cw-muted);
+}
+
+.cw-details-clear:hover,
+.cw-details-clear:focus-visible {
+  background: transparent;
+  color: var(--cw-ink);
+  border-color: var(--cw-accent);
+  box-shadow: none;
+}
+
+.cw-details-body {
+  padding: 1rem 0 0;
+  gap: 1rem;
+}
+
+.cw-details-empty {
+  color: var(--cw-muted);
+}
+
+.cw-detail-title {
+  font-family: var(--font-serif, Georgia, serif);
+  font-size: clamp(1.2rem, 1vw + 1rem, 1.55rem);
+  line-height: 1.08;
+  font-weight: 650;
+}
+
+.cw-detail-subtitle,
+.cw-detail-section p {
+  color: var(--cw-muted);
+}
+
+.cw-detail-chips {
+  border-top: 1px solid var(--cw-rule);
+  padding-top: 0.75rem;
+}
+
+.cw-detail-chips span,
+.cw-tooltip .cw-tip-meta span {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--cw-muted);
+  font-family: var(--font-mono, monospace);
+}
+
+.cw-detail-section {
+  border-top: 1px solid var(--cw-rule);
+  padding-top: 0.85rem;
+}
+
+.cw-tooltip {
+  border-radius: 0;
+  background: color-mix(in srgb, var(--cw-ink) 95%, transparent 5%);
+  box-shadow: 0 12px 28px rgba(23, 21, 18, 0.18);
+}
+
+@media (prefers-color-scheme: dark) {
+  #cw-viz.cw {
+    --cw-paper-soft: color-mix(in srgb, var(--surface-2, #20231d) 70%, var(--surface, #191b16) 30%);
+  }
+
+  .cw .viz-canvas {
+    background:
+      linear-gradient(rgba(236, 232, 220, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(236, 232, 220, 0.026) 1px, transparent 1px),
+      var(--cw-paper-soft);
+    background-size: 30px 30px, 30px 30px, auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .cw-caption,
+  .cw-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .cw-legend,
+  .cw-year-chips {
+    justify-content: flex-start;
+  }
+
+  .cw .viz-canvas {
+    height: clamp(330px, 68vh, 560px);
+  }
+}
+
+@media (max-width: 420px) {
+  .cw .viz-canvas {
+    height: clamp(300px, 60vh, 460px);
+  }
+}
+
+/* Keep the ledger layout usable when the detail panel stacks below the chart. */
+@media (max-width: 1120px) {
+  .cw-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cw-details {
+    position: static;
+  }
+}

@@ -30,3 +30,4 @@ Reference mockups generated during planning and copied into the repo:
 - Fixed production coursework regressions: removed global arbitrary word splitting from normal UI text and made the coursework D3 bootstrap retry until both the mount node and local D3 are available.
 - Verified the fix with targeted Playwright delayed-D3 checks plus the 64-combination local route matrix; coursework rendered with no failures and max local ready time of 444ms.
 - Added versioned coursework static asset URLs so production does not keep using cached `/static/coursework.js` or `/static/coursework.css` after chart/CSS fixes.
+- Implemented the chosen Editorial Ledger plus Annotated Atlas chart direction: muted subject rules, paper-tone tiles, course-code-only SVG labels, flatter controls, and field-note details styling.

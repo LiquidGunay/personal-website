@@ -15,12 +15,12 @@
 
 
   const palette = new Map([
-    ['Physics', '#2563eb'],
-    ['Electronics', '#f97316'],
-    ['Mathematics', '#16a34a'],
-    ['Computer Science', '#8b5cf6'],
-    ['Economics', '#b45309'],
-    ['Other', '#64748b'],
+    ['Physics', '#285ca8'],
+    ['Electronics', '#b9472f'],
+    ['Mathematics', '#1f6f5f'],
+    ['Computer Science', '#5e6f83'],
+    ['Economics', '#9a6b22'],
+    ['Other', '#676056'],
   ]);
 
   const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -205,6 +205,11 @@
 
   function blendWithSurface(color, weight) {
     return d3.interpolateLab(surfaceColour, color)(weight);
+  }
+
+  function ledgerTileFill(category) {
+    const base = colourFor(category);
+    return blendWithSurface(base, darkMode ? 0.14 : 0.075);
   }
 
   function escapeHtml(value) {
@@ -458,6 +463,19 @@
     }
   }
 
+  function subjectLabelForWidth(name, width) {
+    if (width >= 92) return name;
+    const short = new Map([
+      ['Computer Science', 'CS'],
+      ['Mathematics', 'Math'],
+      ['Electronics', 'EE'],
+      ['Economics', 'Econ'],
+      ['Physics', 'Physics'],
+      ['Other', 'Other'],
+    ]);
+    return short.get(name) || name;
+  }
+
   function renderTileLabel(textEl, meta, width, height, showName) {
     if (!meta) return;
     textEl.selectAll('tspan').remove();
@@ -496,32 +514,18 @@
       return lines;
     };
 
-    if (!showName) {
-      if (code) {
-        renderCode();
-        return;
-      }
-      if (!name) return;
-      const tspan = textEl
-        .append('tspan')
-        .attr('x', x)
-        .attr('dy', 0)
-        .attr('class', 'cw-tile-name')
-        .text(name);
-      truncateTspanToWidth(tspan, width, true);
+    if (code) {
+      renderCode();
       return;
     }
-
-    const usedLines = renderCode();
-    const lineHeight = showName ? 12.5 : 11;
-    const gap = 4;
-    const availableLines = Math.min(
-      2,
-      Math.max(0, Math.floor((height - usedLines * lineHeight - gap) / lineHeight)),
-    );
-    if (availableLines <= 0) return;
-    const nameLineHeightEm = showName ? 1.12 : 1.08;
-    wrapTextIntoTspans(textEl, name, width, availableLines, 'cw-tile-name', usedLines ? 1.05 : 0, nameLineHeightEm, true);
+    if (!name) return;
+    const tspan = textEl
+      .append('tspan')
+      .attr('x', x)
+      .attr('dy', 0)
+      .attr('class', 'cw-tile-name')
+      .text(name);
+    truncateTspanToWidth(tspan, width, true);
   }
 
   function renderSubjectLabel(group, node, width) {
@@ -534,7 +538,8 @@
     const maxWidth = Math.max(0, width - 24);
     if (!maxWidth) return;
 
-    wrapTextIntoTspans(text, node.data.name, maxWidth, 2, 'cw-subject-label-line', 0, 1.1, true);
+    const label = subjectLabelForWidth(node.data.name, maxWidth);
+    wrapTextIntoTspans(text, label, maxWidth, 1, 'cw-subject-label-line', 0, 1.1, false);
   }
 
   function layoutSubjectTiles(subjects, subjectHeader, tilePadding) {
@@ -880,8 +885,16 @@
           .attr('y', d.y0)
           .attr('width', w)
           .attr('height', h)
-          .attr('rx', 18)
-          .attr('fill', blendWithSurface(base, darkMode ? 0.18 : 0.12));
+          .attr('rx', 0)
+          .attr('fill', blendWithSurface(base, darkMode ? 0.08 : 0.035));
+
+        g.append('rect')
+          .attr('class', 'cw-subject-rule')
+          .attr('x', d.x0)
+          .attr('y', d.y0)
+          .attr('width', w)
+          .attr('height', 3)
+          .attr('fill', base);
 
         renderSubjectLabel(g, d, w);
       });
@@ -894,7 +907,7 @@
     const tileNodes = layoutSubjectTiles(subjects, subjectHeader, 6);
     const clipId = (_, i) => `cw-tile-clip-${i}`;
     const tileClipInset = 4;
-    const labelInset = 5;
+    const labelInset = 10;
 
     const defs = svg.append('defs');
     defs
@@ -907,7 +920,7 @@
       .attr('y', (d) => d.y0 + tileClipInset)
       .attr('width', (d) => Math.max(0, d.x1 - d.x0 - tileClipInset * 2))
       .attr('height', (d) => Math.max(0, d.y1 - d.y0 - tileClipInset * 2))
-      .attr('rx', 10);
+      .attr('rx', 0);
 
     const tileGroup = svg.append('g').attr('class', 'cw-tiles');
 
@@ -993,11 +1006,17 @@
       .attr('y', (d) => d.y0 + 3)
       .attr('width', (d) => Math.max(0, d.x1 - d.x0 - 6))
       .attr('height', (d) => Math.max(0, d.y1 - d.y0 - 6))
-      .attr('rx', 12)
-      .attr('fill', (d) => {
-        const base = colourFor(d.subject);
-        return blendWithSurface(base, darkMode ? 0.62 : 0.74);
-      });
+      .attr('rx', 0)
+      .attr('fill', (d) => ledgerTileFill(d.subject));
+
+    tiles
+      .append('rect')
+      .attr('class', 'cw-tile-rule')
+      .attr('x', (d) => d.x0 + 3)
+      .attr('y', (d) => d.y0 + 3)
+      .attr('width', 3)
+      .attr('height', (d) => Math.max(0, d.y1 - d.y0 - 6))
+      .attr('fill', (d) => colourFor(d.subject));
 
     const focused = Boolean(localState.focusedSubject);
     if (mount) {
@@ -1022,10 +1041,8 @@
         const innerHeight = Math.max(0, d.y1 - d.y0 - labelInset * 2);
         if (!innerWidth || !innerHeight) return;
 
-        const showName = focused;
-
         text.attr('opacity', 1);
-        renderTileLabel(text, meta, innerWidth, innerHeight, showName);
+        renderTileLabel(text, meta, innerWidth, innerHeight, false);
       });
 
     svg.on('click', () => {
