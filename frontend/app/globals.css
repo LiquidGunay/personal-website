@@ -34,6 +34,36 @@
   }
 }
 
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f5ee;
+  --surface: #fffdf7;
+  --surface-2: #efeee5;
+  --text: #171512;
+  --muted: #676056;
+  --border: #d8d0bf;
+  --accent: #1f6f5f;
+  --accent-2: #b9472f;
+  --accent-3: #285ca8;
+  --accent-soft: #e4eee8;
+  --paper-shadow: 0 1px 0 rgba(23, 21, 18, 0.06), 0 24px 60px rgba(44, 37, 26, 0.08);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #11130f;
+  --surface: #191b16;
+  --surface-2: #20231d;
+  --text: #ece8dc;
+  --muted: #b2aa9a;
+  --border: #3b3a31;
+  --accent: #7bc4af;
+  --accent-2: #df8169;
+  --accent-3: #8fb4ed;
+  --accent-soft: #1d3029;
+  --paper-shadow: 0 1px 0 rgba(255, 255, 255, 0.03), 0 28px 70px rgba(0, 0, 0, 0.34);
+}
+
 html,
 body {
   margin: 0;
@@ -59,6 +89,24 @@ body {
       var(--bg);
     background-size: 36px 36px, 36px 36px, auto;
   }
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body {
+  background:
+    linear-gradient(rgba(23, 21, 18, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 21, 18, 0.022) 1px, transparent 1px),
+    var(--bg);
+  background-size: 36px 36px, 36px 36px, auto;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background:
+    linear-gradient(rgba(236, 232, 220, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 232, 220, 0.026) 1px, transparent 1px),
+    var(--bg);
+  background-size: 36px 36px, 36px 36px, auto;
 }
 
 * {
@@ -151,6 +199,14 @@ a:hover {
   min-width: 0;
 }
 
+.site-header__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
 .site-header a {
   min-height: 44px;
   display: inline-flex;
@@ -167,6 +223,44 @@ a:hover {
 .site-header nav a:hover {
   background: var(--accent-soft);
   color: var(--text);
+}
+
+.theme-toggle {
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(44px, auto));
+  align-items: stretch;
+  min-height: 44px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 72%, transparent 28%);
+}
+
+.theme-toggle button {
+  min-width: 44px;
+  min-height: 42px;
+  border: 0;
+  border-right: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  padding: 0.35rem 0.58rem;
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.theme-toggle button:last-child {
+  border-right: 0;
+}
+
+.theme-toggle button:hover,
+.theme-toggle button:focus-visible {
+  color: var(--text);
+  background: var(--accent-soft);
+}
+
+.theme-toggle button[aria-pressed="true"] {
+  color: var(--bg);
+  background: var(--text);
 }
 
 .site-main {
@@ -225,7 +319,7 @@ code {
 
 .home-shell {
   display: grid;
-  gap: clamp(1.8rem, 4vw, 4rem);
+  gap: clamp(1.4rem, 3vw, 2.8rem);
 }
 
 .home-hero {
@@ -282,24 +376,15 @@ code {
 .home-hero__note {
   position: relative;
   min-width: 0;
-  border-left: 2px solid var(--accent-2);
-  padding: 0.2rem 0 0.2rem 1rem;
+  border-top: 2px solid var(--accent-2);
+  padding: 0.95rem 0 0;
   align-self: center;
-}
-
-.home-hero__note span {
-  display: block;
-  margin-bottom: 0.35rem;
-  font-size: 0.76rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  font-weight: 700;
-  color: var(--accent-2);
 }
 
 .home-hero__note p {
   margin: 0;
   color: var(--muted);
+  font-size: clamp(1rem, 0.8vw + 0.9rem, 1.2rem);
 }
 
 .hero-actions {
@@ -332,6 +417,124 @@ code {
   background: var(--accent);
   border-color: var(--accent);
   color: var(--bg);
+}
+
+.home-background {
+  max-width: 72ch;
+  padding: clamp(1.1rem, 2.4vw, 1.8rem) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.home-background p {
+  margin: 0;
+  color: color-mix(in srgb, var(--text) 84%, transparent 16%);
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 1.2vw + 1rem, 1.95rem);
+  line-height: 1.35;
+}
+
+.home-hero__tagline p,
+.home-hero__note p,
+.home-background p,
+.home-question p {
+  margin: 0;
+}
+
+.home-hero__tagline strong,
+.home-hero__note strong,
+.home-background strong,
+.home-question strong {
+  color: var(--text);
+  font-weight: 750;
+}
+
+.home-hero__tagline em,
+.home-hero__note em,
+.home-background em,
+.home-question em {
+  color: var(--accent);
+  font-style: italic;
+}
+
+.home-section {
+  display: grid;
+  gap: clamp(0.85rem, 1.8vw, 1.25rem);
+}
+
+.home-section h2 {
+  margin: 0;
+  max-width: 20ch;
+  font-family: var(--font-serif);
+  font-size: clamp(1.65rem, 3vw, 2.65rem);
+  line-height: 1.05;
+}
+
+.home-questions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border-block: 1px solid var(--border);
+}
+
+.home-question {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: clamp(1.8rem, 6vw, 5rem);
+  min-height: clamp(13rem, 22vw, 18rem);
+  padding: clamp(0.95rem, 2vw, 1.35rem);
+  border-right: 1px solid var(--border);
+}
+
+.home-question:last-child {
+  border-right: 0;
+}
+
+.home-question span {
+  color: var(--accent-2);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.home-question p {
+  margin: 0;
+  color: color-mix(in srgb, var(--text) 88%, transparent 12%);
+  font-size: clamp(1rem, 0.55vw + 0.92rem, 1.18rem);
+  line-height: 1.45;
+}
+
+.home-quotes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.8rem, 1.8vw, 1.2rem);
+}
+
+.home-quotes blockquote {
+  min-width: 0;
+  margin: 0;
+  padding-top: 0.9rem;
+  border-top: 2px solid var(--accent);
+}
+
+.home-quotes p {
+  margin: 0;
+  color: var(--muted);
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 0.45vw + 0.92rem, 1.15rem);
+  line-height: 1.42;
+}
+
+.home-contact {
+  margin: 0;
+  padding-top: clamp(0.9rem, 1.6vw, 1.2rem);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: clamp(0.98rem, 0.4vw + 0.9rem, 1.08rem);
+}
+
+.home-contact a {
+  color: var(--text);
+  font-weight: 650;
 }
 
 .home-recent,
@@ -398,6 +601,13 @@ code {
 .prose-proxy,
 .about-page {
   max-width: 78ch;
+}
+
+.blog-paused {
+  min-height: 42vh;
+  align-content: center;
+  border-block: 1px solid var(--border);
+  padding: clamp(2rem, 7vw, 5rem) 0;
 }
 
 .blog-index > header h1,
@@ -565,12 +775,16 @@ code {
   gap: clamp(1.4rem, 3vw, 2.6rem);
 }
 
+.coursework-shell > header {
+  max-width: none;
+}
+
 .coursework-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 360px);
-  gap: clamp(1rem, 4vw, 4rem);
-  align-items: end;
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(0.9rem, 2vw, 1.4rem);
+  align-items: start;
   padding: clamp(1.4rem, 4vw, 3.25rem) 0 clamp(1rem, 2.2vw, 1.8rem);
   border-bottom: 1px solid var(--border);
 }
@@ -590,6 +804,7 @@ code {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.7rem;
   margin: 0;
+  width: min(100%, 34rem);
 }
 
 .coursework-summary div {
@@ -681,13 +896,26 @@ code {
   .coursework-hero,
   .post-layout,
   .cw-layout,
-  .course-year-list {
+  .course-year-list,
+  .home-questions,
+  .home-quotes {
     grid-template-columns: 1fr;
   }
 
   .home-hero h1,
   .coursework-hero h1 {
     max-width: 100%;
+  }
+
+  .home-question {
+    min-height: 0;
+    gap: 1rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .home-question:last-child {
+    border-bottom: 0;
   }
 
   .post-sidebar {
@@ -793,4 +1021,64 @@ code {
   min-width: 44px;
   display: inline-flex;
   align-items: center;
+}
+
+/* Theme toggle responsive layout. */
+@media (max-width: 780px) {
+  .site-header__actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .site-header__actions nav {
+    width: auto;
+    flex: 1 1 auto;
+  }
+
+  .theme-toggle {
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 520px) {
+  .theme-toggle button {
+    padding-inline: 0.45rem;
+    font-size: 0.68rem;
+  }
+}
+
+/* Coursework first-viewport tightening after audit. */
+.coursework-shell {
+  gap: clamp(1rem, 2.2vw, 1.65rem);
+}
+
+.coursework-hero {
+  padding: clamp(0.9rem, 2.6vw, 2.1rem) 0 clamp(0.7rem, 1.6vw, 1.15rem);
+  gap: clamp(0.65rem, 1.4vw, 1rem);
+}
+
+.coursework-hero h1 {
+  font-size: clamp(2.5rem, 5.4vw, 5rem);
+}
+
+.coursework-summary div {
+  padding-top: 0.42rem;
+}
+
+.coursework-summary dd {
+  margin-top: 0.12rem;
+}
+
+.course-index {
+  padding-top: 0.25rem;
+}
+
+@media (max-width: 520px) {
+  .coursework-shell {
+    gap: 1rem;
+  }
+
+  .coursework-hero {
+    padding-top: 0.7rem;
+  }
 }

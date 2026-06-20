@@ -1,12 +1,45 @@
 // Coursework treemap visualisation powered by D3
 (function () {
   let bootAttempts = 0;
+  let d3LoadStarted = false;
+
+  function showLoadFailure(mount) {
+    const target = mount && (mount.querySelector('[data-viz="treemap"]') || mount);
+    if (target) target.textContent = 'Failed to load visualization.';
+  }
+
+  function ensureD3(mount) {
+    if (typeof window.d3 !== 'undefined' || d3LoadStarted) return;
+    d3LoadStarted = true;
+
+    const existing = document.querySelector('script[src*="/static/vendor/d3.v7.min.js"]');
+    if (existing) {
+      existing.addEventListener('load', () => window.setTimeout(boot, 0), { once: true });
+      existing.addEventListener('error', () => showLoadFailure(mount), { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = '/static/vendor/d3.v7.min.js';
+    script.async = true;
+    script.onload = () => window.setTimeout(boot, 0);
+    script.onerror = () => showLoadFailure(mount);
+    document.head.appendChild(script);
+  }
 
   function boot() {
     const mount = document.getElementById('cw-viz');
-    if (!mount || typeof window.d3 === 'undefined') {
+    if (!mount) {
       bootAttempts += 1;
       if (bootAttempts < 120) window.setTimeout(boot, 100);
+      return;
+    }
+
+    if (typeof window.d3 === 'undefined') {
+      ensureD3(mount);
+      bootAttempts += 1;
+      if (bootAttempts < 120) window.setTimeout(boot, 100);
+      else showLoadFailure(mount);
       return;
     }
 
@@ -23,10 +56,15 @@
     ['Other', '#676056'],
   ]);
 
-  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const explicitTheme = document.documentElement.dataset.theme;
-  const darkMode = explicitTheme === 'dark' || (!explicitTheme && prefersDark);
-  const surfaceColour = darkMode ? '#0f172a' : '#f8fafc';
+  function isDarkMode() {
+    const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const explicitTheme = document.documentElement.dataset.theme;
+    return explicitTheme === 'dark' || (!explicitTheme && prefersDark);
+  }
+
+  function surfaceColour() {
+    return isDarkMode() ? '#11130f' : '#f7f5ee';
+  }
 
   const state = {
     selectedId: null,
@@ -156,6 +194,10 @@
       );
     }
 
+    window.addEventListener('personal-site:theme-change', () => {
+      window.requestAnimationFrame(() => render(true));
+    });
+
     const fallbackEl = document.getElementById('cw-fallback');
     if (fallbackEl) fallbackEl.innerHTML = buildFallbackList(data.hierarchy);
   }
@@ -183,12 +225,13 @@
         const full = code ? `${code} · ${name}` : name;
         const year = formatYear(node.data.year, code);
         const yearToken = normaliseYearToken(year);
+        const credits = Number.isFinite(Number(node.data.credits)) ? Number(node.data.credits) : null;
         const description = typeof node.data.description === 'string' ? node.data.description : '';
-        const searchIndex = [code, name, category, track, year, description]
+        const searchIndex = [code, name, category, track, year, credits != null ? `${credits} credits` : null, description]
           .filter(Boolean)
           .join(' ')
           .toLowerCase();
-        map.set(id, { id, code, name, full, category, track, year, yearToken, description, searchIndex });
+        map.set(id, { id, code, name, full, category, track, year, yearToken, credits, description, searchIndex });
       }
     });
     return map;
@@ -204,12 +247,12 @@
   }
 
   function blendWithSurface(color, weight) {
-    return d3.interpolateLab(surfaceColour, color)(weight);
+    return d3.interpolateLab(surfaceColour(), color)(weight);
   }
 
   function ledgerTileFill(category) {
     const base = colourFor(category);
-    return blendWithSurface(base, darkMode ? 0.14 : 0.075);
+    return blendWithSurface(base, isDarkMode() ? 0.42 : 0.26);
   }
 
   function escapeHtml(value) {
@@ -247,8 +290,16 @@
     const text = String(value).trim();
     if (!text) return null;
     const match = text.match(/(\d{1,2})/);
-    if (match) return `Year ${Number.parseInt(match[1], 10)}`;
+    if (/^semester\b/i.test(text) && match) return `Semester ${Number.parseInt(match[1], 10)}`;
+    if (/^year\b/i.test(text) && match) return `Year ${Number.parseInt(match[1], 10)}`;
+    if (/^\d{1,2}$/.test(text)) return `Year ${Number.parseInt(text, 10)}`;
     return text;
+  }
+
+  function formatCredits(value) {
+    if (value == null || !Number.isFinite(Number(value))) return null;
+    const credits = Number(value);
+    return `${credits} credit${credits === 1 ? '' : 's'}`;
   }
 
   function collectYearOptions(courseMap) {
@@ -261,6 +312,9 @@
     return [...counts.entries()]
       .map(([token, count]) => ({ token, count }))
       .sort((a, b) => {
+        const rank = (token) => (/^semester\b/i.test(token) ? 0 : /^year\b/i.test(token) ? 1 : 2);
+        const rankDiff = rank(a.token) - rank(b.token);
+        if (rankDiff !== 0) return rankDiff;
         const aMatch = a.token.match(/(\d{1,2})/);
         const bMatch = b.token.match(/(\d{1,2})/);
         if (aMatch && bMatch) return Number.parseInt(aMatch[1], 10) - Number.parseInt(bMatch[1], 10);
@@ -344,6 +398,8 @@
     metaChips.push(`<span>${escapeHtml(meta.category)}</span>`);
     if (meta.track) metaChips.push(`<span>${escapeHtml(meta.track)}</span>`);
     if (meta.year) metaChips.push(`<span>${escapeHtml(meta.year)}</span>`);
+    const credits = formatCredits(meta.credits);
+    if (credits) metaChips.push(`<span>${escapeHtml(credits)}</span>`);
     parts.push(`<div class="cw-tip-meta">${metaChips.join('')}</div>`);
     if (meta.description) {
       parts.push(`<p class="cw-tip-desc">${escapeHtml(meta.description)}</p>`);
@@ -542,84 +598,9 @@
     wrapTextIntoTspans(text, label, maxWidth, 1, 'cw-subject-label-line', 0, 1.1, false);
   }
 
-  function layoutSubjectTiles(subjects, subjectHeader, tilePadding) {
-    const focusedView = subjects.length === 1;
-    const minTileWidth = focusedView ? 46 : 42;
-    const minTileHeight = focusedView ? 34 : 28;
-    const maxTileWidth = focusedView ? 92 : 78;
-    const maxTileHeight = focusedView ? 56 : 42;
-    const targetTileWidth = focusedView ? 64 : 52;
-    const targetTileHeight = focusedView ? 44 : 32;
-    const tiles = [];
-
-    for (const subject of subjects) {
-      const allCourses = Array.isArray(subject.data.children) ? subject.data.children : [];
-      const courses = allCourses.filter((course) => !course.__ghost);
-      const count = allCourses.length;
-      if (!count) continue;
-
-      const width = Math.max(0, subject.x1 - subject.x0);
-      const height = Math.max(0, subject.y1 - subject.y0 - subjectHeader);
-      if (!width || !height) continue;
-
-      let best = null;
-      for (let cols = 1; cols <= count; cols += 1) {
-        const rows = Math.ceil(count / cols);
-        const tileWidth = (width - tilePadding * (cols + 1)) / cols;
-        const tileHeight = (height - tilePadding * (rows + 1)) / rows;
-        if (tileWidth <= 4 || tileHeight <= 4) continue;
-        const meetsMin = tileWidth >= minTileWidth && tileHeight >= minTileHeight;
-        const withinMax = tileWidth <= maxTileWidth && tileHeight <= maxTileHeight;
-        const excessWidth = Math.max(0, tileWidth - maxTileWidth);
-        const excessHeight = Math.max(0, tileHeight - maxTileHeight);
-        let penalty =
-          Math.abs(tileWidth - targetTileWidth) * 1.6 +
-          Math.abs(tileHeight - targetTileHeight) * 1.2 +
-          excessWidth * 1.4 +
-          excessHeight * 1.1;
-        if (tileWidth > targetTileWidth) penalty += (tileWidth - targetTileWidth) * 1.5;
-        if (tileWidth < minTileWidth) penalty += (minTileWidth - tileWidth) * 4;
-        if (tileHeight < minTileHeight) penalty += (minTileHeight - tileHeight) * 4;
-        if (tileWidth > maxTileWidth) penalty += (tileWidth - maxTileWidth) * 2;
-        if (tileHeight > maxTileHeight) penalty += (tileHeight - maxTileHeight) * 2;
-        if (
-          !best ||
-          (meetsMin && !best.meetsMin) ||
-          (meetsMin === best.meetsMin && withinMax && !best.withinMax) ||
-          (meetsMin === best.meetsMin && withinMax === best.withinMax && penalty < best.penalty)
-        ) {
-          best = { cols, rows, tileWidth, tileHeight, penalty, meetsMin, withinMax };
-        }
-      }
-
-      if (!best) continue;
-
-      const startX = subject.x0 + tilePadding;
-      const startY = subject.y0 + subjectHeader + tilePadding;
-
-      courses.forEach((course, idx) => {
-        const col = idx % best.cols;
-        const row = Math.floor(idx / best.cols);
-        const x0 = startX + col * (best.tileWidth + tilePadding);
-        const y0 = startY + row * (best.tileHeight + tilePadding);
-        tiles.push({
-          x0,
-          y0,
-          x1: x0 + best.tileWidth,
-          y1: y0 + best.tileHeight,
-          data: course,
-          subject: subject.data.name,
-        });
-      });
-    }
-
-    return tiles;
-  }
-
   function flattenToSubjectTreemap(tree, courseMap, localState) {
     const base = structuredCloneSafe(tree);
     const root = { name: base.name || 'Coursework', children: [] };
-    const padWithGhosts = !localState.query && !localState.yearFilter;
     for (const subject of base.children || []) {
       if (localState.focusedSubject && subject.name !== localState.focusedSubject) continue;
       const children = [];
@@ -633,13 +614,6 @@
       }
       if (!children.length) continue;
 
-      const minSlots = 8;
-      if (padWithGhosts && children.length < minSlots) {
-        const missing = minSlots - children.length;
-        for (let i = 0; i < missing; i += 1) {
-          children.push({ __ghost: true, id: `ghost-${subject.name}-${i}` });
-        }
-      }
       root.children.push({ name: subject.name, children });
     }
     return root;
@@ -738,7 +712,7 @@
     };
 
     const total = options.reduce((acc, entry) => acc + entry.count, 0);
-    container.appendChild(makeButton(null, 'All years', total));
+    container.appendChild(makeButton(null, 'All semesters', total));
 
     for (const option of options) {
       container.appendChild(makeButton(option.token, option.token, option.count));
@@ -763,22 +737,35 @@
     button.hidden = !selectedId;
   }
 
+  function revealDetailsOnStackedLayout(detailsEl) {
+    if (!detailsEl || !window.matchMedia('(max-width: 1120px)').matches) return;
+    const target = detailsEl.closest('.cw-details') || detailsEl;
+    window.requestAnimationFrame(() => {
+      const rect = target.getBoundingClientRect();
+      if (rect.top < 0 || rect.top > window.innerHeight * 0.72) {
+        target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+      }
+    });
+  }
+
   function renderDetails(detailsEl, meta) {
     if (!detailsEl) return;
     if (!meta) {
       detailsEl.innerHTML =
-        '<p class="cw-details-empty">Select a course tile to see its year and description.</p>';
+        '<p class="cw-details-empty">Select a course tile to see its semester and description.</p>';
       return;
     }
 
     const title = escapeHtml(meta.code ? `${meta.code} · ${meta.name}` : meta.name);
     const subtitle = escapeHtml(meta.category);
     const track = meta.track ? escapeHtml(meta.track) : null;
-    const year = meta.year ? escapeHtml(meta.year) : '—';
+    const year = meta.year ? escapeHtml(meta.year) : '&mdash;';
+    const credits = formatCredits(meta.credits);
     const description = meta.description ? escapeHtml(meta.description) : 'Description coming soon.';
     const chips = [`<span>${escapeHtml(meta.category)}</span>`];
     if (track) chips.push(`<span>${track}</span>`);
     if (meta.year) chips.push(`<span>${escapeHtml(meta.year)}</span>`);
+    if (credits) chips.push(`<span>${escapeHtml(credits)}</span>`);
 
     detailsEl.innerHTML = `
       <div>
@@ -787,9 +774,10 @@
         <div class="cw-detail-chips">${chips.join('')}</div>
       </div>
       <div class="cw-detail-section">
-        <h3>Year</h3>
+        <h3>Semester</h3>
         <p>${year}</p>
       </div>
+      ${credits ? `<div class="cw-detail-section"><h3>Credits</h3><p>${escapeHtml(credits)}</p></div>` : ''}
       <div class="cw-detail-section">
         <h3>Description</h3>
         <p>${description}</p>
@@ -817,7 +805,7 @@
     empty.className = 'cw-empty-state';
     empty.innerHTML = `
       <p>No matching courses found.</p>
-      <p>Try clearing subject, year, or text filters.</p>
+      <p>Try clearing subject, semester, or text filters.</p>
       ${localState.query ? `<p class="cw-empty-query">Query: "${escapeHtml(localState.query)}"</p>` : ''}
     `;
     container.appendChild(empty);
@@ -844,9 +832,9 @@
       .sum((d) => (d.children ? 0 : 1))
       .sort((a, b) => (b.value || 0) - (a.value || 0));
 
-    const subjectHeader = 36;
-    const paddingOuter = 10;
-    const paddingInner = 4;
+    const subjectHeader = width < 520 ? 28 : 34;
+    const paddingOuter = 0;
+    const paddingInner = width < 520 ? 3 : 5;
 
     d3
       .treemap()
@@ -886,7 +874,7 @@
           .attr('width', w)
           .attr('height', h)
           .attr('rx', 0)
-          .attr('fill', blendWithSurface(base, darkMode ? 0.08 : 0.035));
+          .attr('fill', blendWithSurface(base, isDarkMode() ? 0.22 : 0.1));
 
         g.append('rect')
           .attr('class', 'cw-subject-rule')
@@ -898,16 +886,16 @@
 
         renderSubjectLabel(g, d, w);
       });
-    subjectLayer
-      .attr('opacity', 0)
-      .transition()
-      .duration(240)
-      .attr('opacity', 1);
+    subjectLayer.attr('opacity', 1);
 
-    const tileNodes = layoutSubjectTiles(subjects, subjectHeader, 6);
+    const tileNodes = root.leaves().map((node) => {
+      const subject = node.ancestors().find((ancestor) => ancestor.depth === 1);
+      node.subject = subject ? subject.data.name : 'Other';
+      return node;
+    });
     const clipId = (_, i) => `cw-tile-clip-${i}`;
-    const tileClipInset = 4;
-    const labelInset = 10;
+    const tileClipInset = width < 520 ? 3 : 4;
+    const labelInset = width < 520 ? 8 : 10;
 
     const defs = svg.append('defs');
     defs
@@ -967,6 +955,7 @@
         syncClearButton(clearBtn, localState.selectedId);
         updateSelection(container, localState.selectedId);
         renderDetails(detailsEl, courseMap.get(id));
+        revealDetailsOnStackedLayout(detailsEl);
       })
       .on('keydown', (event, d) => {
         const key = event.key;
@@ -987,17 +976,10 @@
         syncClearButton(clearBtn, localState.selectedId);
         updateSelection(container, localState.selectedId);
         renderDetails(detailsEl, courseMap.get(id));
+        revealDetailsOnStackedLayout(detailsEl);
       });
 
-    tiles
-      .attr('opacity', 0)
-      .attr('transform', 'translate(0, 10)')
-      .transition()
-      .duration(380)
-      .delay((_, i) => Math.min(i * 7, 220))
-      .ease(d3.easeCubicOut)
-      .attr('opacity', 1)
-      .attr('transform', 'translate(0, 0)');
+    tiles.attr('opacity', 1).attr('transform', 'translate(0, 0)');
 
     tiles
       .append('rect')
@@ -1039,7 +1021,9 @@
         const text = d3.select(this);
         const innerWidth = Math.max(0, d.x1 - d.x0 - labelInset * 2);
         const innerHeight = Math.max(0, d.y1 - d.y0 - labelInset * 2);
-        if (!innerWidth || !innerHeight) return;
+        const minLabelWidth = width < 520 ? 22 : 24;
+        const minLabelHeight = width < 520 ? 16 : 18;
+        if (innerWidth < minLabelWidth || innerHeight < minLabelHeight) return;
 
         text.attr('opacity', 1);
         renderTileLabel(text, meta, innerWidth, innerHeight, false);

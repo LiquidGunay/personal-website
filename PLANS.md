@@ -31,3 +31,28 @@ Reference mockups generated during planning and copied into the repo:
 - Verified the fix with targeted Playwright delayed-D3 checks plus the 64-combination local route matrix; coursework rendered with no failures and max local ready time of 444ms.
 - Added versioned coursework static asset URLs so production does not keep using cached `/static/coursework.js` or `/static/coursework.css` after chart/CSS fixes.
 - Implemented the chosen Editorial Ledger plus Annotated Atlas chart direction: muted subject rules, paper-tone tiles, course-code-only SVG labels, flatter controls, and field-note details styling.
+- Confirmed the `55201af` Railway auto-deploy initially failed on a transient-looking pip wheel hash mismatch during Nixpacks setup; retried with `railway redeploy --service web -y`, which succeeded with build cache skipped.
+- Verified production now serves `coursework.css?v=20260611-4` and `coursework.js?v=20260611-4`; Playwright production smoke checks passed for `/`, `/blog`, and `/coursework/` across desktop, tablet, mobile, and 280px narrow viewports in light and dark modes.
+
+## Homepage polish pass - 2026-06-20
+
+- Started a polish pass to make the current site feel less unfinished while keeping copy editable by hand.
+- Added `content/pages/home.md` as the single homepage copy surface with placeholder fields for the hero tagline, background paragraph, current questions, four quotes, blog holding note, and coursework intro.
+- Removed blog links from the visible navigation/homepage/footer and changed `/blog` into a quiet holding page while preserving the route.
+- Reduced blog discoverability in sitemap/LLM text while keeping coursework visible.
+
+## Coursework transcript pass - 2026-06-20
+
+- Updated coursework data from the provided transcript images rather than OCR alone: 63 courses across semesters 1-8, with the minor courses placed one each in semesters 3-7.
+- Used official IITG public sources for course names, credits, minor semester sequence, and syllabus-derived descriptions where available; DA 671 uses a concise standard reinforcement-learning summary because a public IITG syllabus page was not found.
+- Changed coursework filters/details from inferred year labels to explicit semester labels, and added credit metadata to the details panel.
+- Verified with `npm --prefix frontend run typecheck`, `TMPDIR=/tmp /home/ubuntu/.local/bin/uv run pytest -q`, `npm --prefix frontend run build`, `PATH=/home/ubuntu/.local/bin:$PATH TMPDIR=/tmp scripts/ui_screenshots.sh`, and a mobile Playwright tile-click smoke test.
+- Replaced DA 671 with the user-provided reinforcement-learning description.
+- Removed the explicit homepage coursework CTA while keeping coursework in the normal navigation/footer.
+- Added a persistent light/dark theme toggle in the shared Next shell and a pre-paint theme init script.
+- Reworked the coursework chart away from the old uniform tile helper into a filled D3 treemap with stronger light/dark contrast, immediate no-fade rendering, and cache-busted assets at `20260620-5`.
+- Re-verified with `npm --prefix frontend run typecheck`, `TMPDIR=/tmp /home/ubuntu/.local/bin/uv run pytest -q`, `npm --prefix frontend run build`, focused Playwright checks for theme persistence/DA671/mobile overflow/63 tiles, and refreshed coursework screenshots.
+- Integrated the subagent audit: moved the treemap above search/semester controls, tightened coursework hero spacing, added mobile scroll-to-details after tile selection, loosened small mobile labels, bumped coursework assets to `20260620-6`, and confirmed the chart now starts at about 478px on desktop and 427px on mobile.
+- Deployed to Railway production `web` as deployment `1981bf77-f58c-4886-9f4e-83572ec22bfd`; production verification on `https://gunayintheory.com` confirmed `coursework.js?v=20260620-6`, 63 coursework tiles, no home CTA, no horizontal overflow, theme persistence, and DA 671 detail text.
+- Fixed live coursework map loading by replacing Next Script queue usage with direct deferred D3/coursework scripts, adding a local D3 fallback loader, and bumping coursework assets to `20260620-7`; local build, typecheck, pytest, and Playwright tile wait passed before deploy.
+- Deployed the coursework map loading fix to Railway production as deployment `5350df8f-6f0b-4680-be77-b65de6cacca5`; live verification on `https://gunayintheory.com/coursework/` confirmed direct deferred `d3.v7.min.js?v=20260620-7` and `coursework.js?v=20260620-7`, 63 rendered tiles, no horizontal overflow, no browser console/page errors, and 200 OK static asset responses.

@@ -71,4 +71,5 @@ def test_robots_txt():
 def test_llms_txt():
     r = client.get("/llms.txt")
     assert r.status_code == 200
-    assert "https://gunayintheory.com/blog" in r.text
+    assert "https://gunayintheory.com/coursework" in r.text
+    assert "https://gunayintheory.com/blog" not in r.text

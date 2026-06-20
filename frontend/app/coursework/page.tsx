@@ -1,14 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
-import Script from "next/script";
+import { loadPage } from "@/lib/content";
 
-const COURSEWORK_ASSET_VERSION = "20260611-4";
+const COURSEWORK_ASSET_VERSION = "20260620-7";
 
 interface CourseNode {
   id?: string;
   code?: string;
   name: string;
   year?: string | number;
+  semester?: number;
+  credits?: number;
   description?: string;
   children?: CourseNode[];
 }
@@ -20,6 +22,7 @@ interface CourseItem {
   subject: string;
   track: string;
   year: string;
+  credits?: number;
   description?: string;
 }
 
@@ -59,6 +62,7 @@ function flattenCourses() {
           subject: subject.name,
           track: track.name,
           year: formatYear(course.year, code),
+          credits: typeof course.credits === "number" ? course.credits : undefined,
           description: course.description,
         });
       });
@@ -84,21 +88,26 @@ function groupedByYear(courses: CourseItem[]) {
   });
 }
 
+function optionalString(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (!trimmed || /^TODO\b/i.test(trimmed)) return null;
+  return trimmed;
+}
+
 export default function CourseworkPage() {
   const courses = flattenCourses();
   const yearGroups = groupedByYear(courses);
   const subjectCount = new Set(courses.map((course) => course.subject)).size;
+  const home = loadPage("home");
+  const intro = optionalString(home?.meta.coursework_intro);
 
   return (
     <section className="coursework-shell">
       <header className="coursework-hero">
         <div>
-          <p className="eyebrow">Academic atlas</p>
           <h1>Coursework</h1>
-          <p>
-            A subject map for classes, tracks, and descriptions. Filter the treemap by subject or year, then pin a
-            course to read the details without crowding the chart.
-          </p>
+          {intro ? <p>{intro}</p> : null}
         </div>
         <dl className="coursework-summary" aria-label="Coursework summary">
           <div>
@@ -121,12 +130,11 @@ export default function CourseworkPage() {
           <figure className="cw-figure">
             <figcaption className="cw-caption">
               <div className="cw-caption-text">
-                <p className="eyebrow">Interactive map</p>
                 <h2>Course map</h2>
-                <p>Short labels keep the chart readable; full names, years, tracks, and descriptions live in details.</p>
               </div>
               <div className="cw-legend" data-cw-legend aria-label="Subject legend" />
             </figcaption>
+            <div className="viz-canvas" data-viz="treemap" aria-label="Coursework treemap" />
             <div className="cw-toolbar" aria-label="Coursework controls">
               <label className="cw-search" htmlFor="cw-search-input">
                 <span>Find a course</span>
@@ -139,12 +147,11 @@ export default function CourseworkPage() {
                   spellCheck={false}
                 />
               </label>
-              <div className="cw-year-chips" data-cw-years aria-label="Year filters" />
+              <div className="cw-year-chips" data-cw-years aria-label="Semester filters" />
               <p className="cw-stats" data-cw-stats>
-                Loading course index...
+                Loading...
               </p>
             </div>
-            <div className="viz-canvas" data-viz="treemap" aria-label="Coursework treemap" />
           </figure>
 
           <aside className="cw-details" aria-label="Course details">
@@ -156,7 +163,7 @@ export default function CourseworkPage() {
                 </button>
               </div>
               <div className="cw-details-body" data-cw-details>
-                <p className="cw-details-empty">Select a tile to see year, track, and description.</p>
+                <p className="cw-details-empty">Select a tile.</p>
               </div>
             </div>
           </aside>
@@ -193,8 +200,8 @@ export default function CourseworkPage() {
       </noscript>
 
       <link rel="stylesheet" href={`/static/coursework.css?v=${COURSEWORK_ASSET_VERSION}`} />
-      <Script src={`/static/vendor/d3.v7.min.js?v=${COURSEWORK_ASSET_VERSION}`} strategy="beforeInteractive" />
-      <Script src={`/static/coursework.js?v=${COURSEWORK_ASSET_VERSION}`} strategy="afterInteractive" />
+      <script defer src={`/static/vendor/d3.v7.min.js?v=${COURSEWORK_ASSET_VERSION}`} />
+      <script defer src={`/static/coursework.js?v=${COURSEWORK_ASSET_VERSION}`} />
     </section>
   );
 }

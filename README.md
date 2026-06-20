@@ -10,6 +10,9 @@ This repository now uses a React + Next.js frontend with a Python/FastAPI backen
 
 ## Content model
 
+Homepage placeholder copy lives in `content/pages/home.md`; edit that file to replace the hero tagline,
+background paragraph, current questions, four quotes, blog holding note, and coursework intro.
+
 Posts use markdown frontmatter plus custom cell fences:
 
 - `title`

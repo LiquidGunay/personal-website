@@ -435,7 +435,7 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
       <header class=\"cw-intro\">
         <p class=\"about-eyebrow\">Academic map</p>
         <h1>Coursework</h1>
-        <p>An interactive map of modules by subject. Select tiles to inspect year and details.</p>
+        <p>An interactive map of modules by subject. Select tiles to inspect semester and details.</p>
       </header>
 
       <div id=\"cw-viz\" class=\"cw\" aria-label=\"Interactive coursework map\">
@@ -453,7 +453,7 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
                 <span>Find a module</span>
                 <input id=\"cw-search-input\" type=\"search\" data-cw-search placeholder=\"Search by code, title, or topic\" autocomplete=\"off\" spellcheck=\"false\" />
               </label>
-              <div class=\"cw-year-chips\" data-cw-years aria-label=\"Filter by year\"></div>
+              <div class=\"cw-year-chips\" data-cw-years aria-label=\"Filter by semester\"></div>
               <p class=\"cw-stats\" data-cw-stats>Loading course index…</p>
             </div>
             <div class=\"viz-canvas\" data-viz=\"treemap\" aria-label=\"Coursework treemap\"></div>
@@ -466,7 +466,7 @@ def render_coursework_page(theme: str | None = None, current_path: str = "/") ->
                 <button type=\"button\" class=\"cw-details-clear\" data-cw-clear hidden>Clear</button>
               </div>
               <div class=\"cw-details-body\" data-cw-details>
-                <p class=\"cw-details-empty\">Select a course tile to see year and description.</p>
+                <p class=\"cw-details-empty\">Select a course tile to see semester and description.</p>
               </div>
             </div>
           </aside>

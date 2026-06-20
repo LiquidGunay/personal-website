@@ -1,11 +1,11 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 const navItems = [
   { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" },
   { href: "/coursework", label: "Coursework" },
-  { href: "/about", label: "About" },
 ];
 
 export function SiteShell({ children }: { children: ReactNode }) {
@@ -18,20 +18,23 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <Link href="/" className="site-brand">
           Gunay Soni
         </Link>
-        <nav aria-label="Primary">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="site-header__actions">
+          <nav aria-label="Primary">
+            {navItems.map((item) => (
+              <Link key={item.href} href={item.href}>
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <ThemeToggle />
+        </div>
       </header>
       <main id="content" className="site-main">
         {children}
       </main>
       <footer className="site-footer">
         <small>© {new Date().getFullYear()} Gunay Soni</small>
-        <a href="/feed.xml">RSS</a>
+        <Link href="/coursework">Coursework</Link>
       </footer>
     </div>
   );

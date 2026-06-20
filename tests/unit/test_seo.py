@@ -18,11 +18,12 @@ def test_render_robots_has_sitemap_and_ai_bots():
 def test_render_sitemap_has_core_urls():
     xml = render_sitemap_xml(list_posts())
     assert "https://gunayintheory.com/" in xml
-    assert "https://gunayintheory.com/blog/hello-world" in xml
+    assert "https://gunayintheory.com/coursework" in xml
+    assert "https://gunayintheory.com/blog/hello-world" not in xml
     assert "<urlset" in xml
 
 
 def test_render_llms_txt_mentions_core_pages():
     text = render_llms_txt()
-    assert "https://gunayintheory.com/blog" in text
-    assert "https://gunayintheory.com/feed.xml" in text
+    assert "https://gunayintheory.com/coursework" in text
+    assert "https://gunayintheory.com/blog" not in text

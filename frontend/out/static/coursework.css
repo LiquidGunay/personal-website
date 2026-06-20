@@ -1464,3 +1464,215 @@ html[data-theme="dark"] .cw-empty-state {
     position: static;
   }
 }
+
+/* Coursework chart polish: filled treemap, sharper controls, stronger tile contrast. */
+#cw-viz.cw {
+  --cw-chart-bg: color-mix(in srgb, var(--surface-2) 48%, var(--surface) 52%);
+  --cw-chart-line: color-mix(in srgb, var(--border) 70%, transparent 30%);
+}
+
+.cw .viz-canvas {
+  height: clamp(420px, 62vh, 720px);
+  background:
+    linear-gradient(rgba(23, 21, 18, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(23, 21, 18, 0.02) 1px, transparent 1px),
+    var(--cw-chart-bg);
+  background-size: 24px 24px, 24px 24px, auto;
+  border-color: var(--cw-rule);
+  box-shadow: none;
+}
+
+.cw .viz-canvas::after {
+  display: none;
+}
+
+.cw-subject-bg {
+  stroke: var(--cw-chart-line);
+  stroke-width: 1;
+}
+
+.cw-subject-rule {
+  opacity: 0.92;
+}
+
+.cw-subject-label,
+.cw-subject-label-line {
+  fill: color-mix(in srgb, var(--text) 76%, transparent 24%);
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.cw-tile-rect {
+  stroke: color-mix(in srgb, var(--text) 24%, transparent 76%);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  shape-rendering: crispEdges;
+}
+
+.cw-tile-rule {
+  opacity: 0.95;
+}
+
+.cw-tile:hover .cw-tile-rect,
+.cw-tile.is-selected .cw-tile-rect,
+.cw-tile:focus-visible .cw-tile-rect {
+  stroke: var(--accent-2);
+  stroke-width: 2;
+}
+
+.cw-tile-label {
+  fill: color-mix(in srgb, var(--text) 88%, transparent 12%);
+  paint-order: stroke;
+  stroke: color-mix(in srgb, var(--surface) 74%, transparent 26%);
+  stroke-width: 2px;
+  stroke-linejoin: round;
+}
+
+.cw-tile-label tspan.cw-tile-code {
+  font-size: clamp(0.6rem, 0.18vw + 0.56rem, 0.74rem);
+  font-weight: 800;
+}
+
+.cw-legend-btn,
+.cw-year-chip {
+  min-height: 44px;
+}
+
+html[data-theme="dark"] #cw-viz.cw {
+  --cw-chart-bg: color-mix(in srgb, var(--surface-2) 62%, var(--surface) 38%);
+  --cw-chart-line: color-mix(in srgb, var(--border) 82%, transparent 18%);
+}
+
+html[data-theme="dark"] .cw .viz-canvas {
+  background:
+    linear-gradient(rgba(236, 232, 220, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(236, 232, 220, 0.022) 1px, transparent 1px),
+    var(--cw-chart-bg);
+  background-size: 24px 24px, 24px 24px, auto;
+}
+
+html[data-theme="dark"] .cw-tile-label {
+  fill: color-mix(in srgb, var(--text) 90%, transparent 10%);
+  stroke: color-mix(in srgb, var(--bg) 70%, transparent 30%);
+}
+
+@media (max-width: 760px) {
+  .cw .viz-canvas {
+    height: clamp(340px, 58vh, 520px);
+  }
+}
+
+@media (max-width: 420px) {
+  .cw .viz-canvas {
+    height: clamp(320px, 54vh, 460px);
+  }
+}
+
+/* Coursework contrast pass: match explicit and system dark mode. */
+#cw-viz.cw {
+  --cw-chart-grid-a: rgba(23, 21, 18, 0.03);
+  --cw-chart-grid-b: rgba(23, 21, 18, 0.022);
+  --cw-label-stroke: color-mix(in srgb, var(--surface) 86%, transparent 14%);
+}
+
+.cw .viz-canvas {
+  background:
+    linear-gradient(var(--cw-chart-grid-a) 1px, transparent 1px),
+    linear-gradient(90deg, var(--cw-chart-grid-b) 1px, transparent 1px),
+    var(--cw-chart-bg);
+}
+
+.cw-subject-label,
+.cw-subject-label-line {
+  fill: var(--text);
+  opacity: 0.9;
+}
+
+.cw-tile-label {
+  fill: var(--text);
+  stroke: var(--cw-label-stroke);
+  stroke-width: 2.4px;
+}
+
+.cw-tile-label tspan.cw-tile-code {
+  font-size: clamp(0.62rem, 0.2vw + 0.58rem, 0.78rem);
+}
+
+html[data-theme="dark"] #cw-viz.cw {
+  --cw-chart-bg: color-mix(in srgb, var(--surface) 74%, var(--bg) 26%);
+  --cw-chart-line: color-mix(in srgb, var(--border) 88%, transparent 12%);
+  --cw-chart-grid-a: rgba(236, 232, 220, 0.038);
+  --cw-chart-grid-b: rgba(236, 232, 220, 0.028);
+  --cw-label-stroke: color-mix(in srgb, var(--bg) 88%, transparent 12%);
+}
+
+html[data-theme="dark"] .cw-subject-label,
+html[data-theme="dark"] .cw-subject-label-line,
+html[data-theme="dark"] .cw-tile-label {
+  fill: color-mix(in srgb, var(--text) 96%, white 4%);
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) #cw-viz.cw {
+    --cw-chart-bg: color-mix(in srgb, var(--surface) 74%, var(--bg) 26%);
+    --cw-chart-line: color-mix(in srgb, var(--border) 88%, transparent 12%);
+    --cw-chart-grid-a: rgba(236, 232, 220, 0.038);
+    --cw-chart-grid-b: rgba(236, 232, 220, 0.028);
+    --cw-label-stroke: color-mix(in srgb, var(--bg) 88%, transparent 12%);
+  }
+
+  html:not([data-theme="light"]) .cw-subject-label,
+  html:not([data-theme="light"]) .cw-subject-label-line,
+  html:not([data-theme="light"]) .cw-tile-label {
+    fill: color-mix(in srgb, var(--text) 96%, white 4%);
+  }
+}
+
+/* Coursework first-viewport tightening after audit. */
+.cw-caption {
+  align-items: center;
+  padding: clamp(0.62rem, 1.15vw, 0.95rem) 0;
+}
+
+.cw-legend {
+  gap: 0.16rem 0.55rem;
+}
+
+.cw .viz-canvas {
+  height: clamp(380px, 56vh, 660px);
+  margin: clamp(0.55rem, 1.1vw, 0.85rem) 0;
+}
+
+.cw-toolbar {
+  padding: clamp(0.62rem, 1vw, 0.85rem) 0 0;
+  border-top: 1px solid var(--cw-rule);
+  border-bottom: 0;
+  align-items: start;
+}
+
+.cw-stats {
+  margin-top: -0.2rem;
+}
+
+@media (max-width: 760px) {
+  .cw-caption {
+    padding: 0.55rem 0 0.65rem;
+  }
+
+  .cw .viz-canvas {
+    height: clamp(315px, 50vh, 440px);
+    margin: 0.45rem 0 0.65rem;
+  }
+
+  .cw-toolbar {
+    padding-top: 0.58rem;
+    gap: 0.62rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .cw .viz-canvas {
+    height: clamp(300px, 48vh, 405px);
+  }
+}

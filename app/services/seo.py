@@ -51,14 +51,8 @@ def render_sitemap_xml(posts: Iterable[Post]) -> str:
 
     entries: list[tuple[str, str]] = [
         ("/", now_date),
-        ("/blog", now_date),
         ("/coursework", now_date),
-        ("/feed.xml", now_date),
     ]
-    for post in posts:
-        path = post.canonical_path or f"/blog/{post.slug}"
-        lastmod = _iso_date(post.updated or post.date)
-        entries.append((path, lastmod))
 
     url_nodes = "".join(
         (
@@ -88,10 +82,8 @@ def render_llms_txt() -> str:
         f"- {cfg.base_url}",
         "",
         "## Key URLs",
-        f"- {cfg.canonical_url('/')} : About and profile",
-        f"- {cfg.canonical_url('/blog')} : Blog index",
-        f"- {cfg.canonical_url('/coursework')} : Coursework visualization",
-        f"- {cfg.canonical_url('/feed.xml')} : RSS feed",
+        f"- {cfg.canonical_url('/')} : Home",
+        f"- {cfg.canonical_url('/coursework')} : Coursework",
         f"- {cfg.canonical_url('/sitemap.xml')} : XML sitemap",
         "",
         "## Author",

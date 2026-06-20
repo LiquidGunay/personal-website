@@ -11,47 +11,74 @@
               {
                 "id": "PH 101",
                 "code": "PH 101",
-                "name": "Physics I"
+                "name": "Physics I",
+                "semester": 1,
+                "year": "Semester 1",
+                "credits": 6,
+                "description": "Classical and modern physics foundations: variational principles, Lagrangian and Hamiltonian mechanics, special relativity, quantum-mechanical wave behavior, Schrodinger equation, expectation values, and one-dimensional quantum systems."
               },
               {
                 "id": "PH 102",
                 "code": "PH 102",
-                "name": "Physics II"
+                "name": "Physics II",
+                "semester": 2,
+                "year": "Semester 2",
+                "credits": 6,
+                "description": "Vector calculus and electromagnetism: electrostatics, magnetostatics, boundary-value methods, dielectric and magnetic media, Faraday induction, Maxwell equations, electromagnetic waves, polarization, reflection, and transmission."
               },
               {
                 "id": "PH 110",
                 "code": "PH 110",
-                "name": "Physics Lab."
+                "name": "Physics Lab.",
+                "semester": 2,
+                "year": "Semester 2",
+                "credits": 3,
+                "description": "Laboratory work in first-year physics, emphasizing experimental setup, measurement practice, uncertainty estimation, data analysis, and written reporting across mechanics, electricity, magnetism, optics, and thermal physics modules."
               },
               {
                 "id": "PH 201",
                 "code": "PH 201",
                 "name": "Mathematical Physics",
-                "description": "Complex Analysis: Functions, Derivatives, Cauchy-Riemann conditions, Analytic and harmonic functions, Contour integrals, Cauchy-Goursat Theorem, Cauchy integral formula, Taylor series, Laurent series, Singularities, Residue theorem and applications, conformal mapping and application. Partial Differential Equations: Method of separation of variables, Laplace equation, Heat Equation, Wave equations in Cartesian and curvilinear coordinates, Green's function and its applications Integral transformations: Laplace transformations and applications to differential equations, Fourier series, Fourier integrals; Fourier transforms, sine and cosine transforms; solution of PDE by Fourier transform. Group Theory: Groups, subgroups, conjugacy classes, cosets, invariant subgroups, factor groups, kernels, continuous groups, Lie groups, generators, SO(2) and SO(3), SU(2), crystallographic point groups."
+                "semester": 3,
+                "year": "Semester 3",
+                "credits": 8,
+                "description": "Mathematical methods for physics: complex analysis, contour integration and residues, partial differential equations, Green functions, Fourier and Laplace transforms, and introductory group theory including SO(2), SO(3), SU(2), and crystallographic point groups."
               },
               {
                 "id": "PH 202",
                 "code": "PH 202",
                 "name": "Electromagnetics",
-                "description": "Electrostatics: Gauss's law, potential, Poisson/Laplace equations, boundary value problems and method of images. Magnetostatics: Biot-Savart law, Ampere's law, vector potential, magnetic materials. Maxwell's equations: differential/integral forms, displacement current, energy and momentum (Poynting vector). Electromagnetic waves: wave equation, plane waves in vacuum and media, polarization, reflection and refraction, waveguides basics, radiation from accelerating charges (intro)."
+                "semester": 4,
+                "year": "Semester 4",
+                "credits": 8,
+                "description": "Advanced electromagnetism: electrostatics and boundary-value problems, magnetostatics, magnetic materials, Maxwell equations, electromagnetic energy and momentum, plane waves in media, polarization, reflection and refraction, and waveguide basics."
               },
               {
                 "id": "PH 203",
                 "code": "PH 203",
                 "name": "Classical Mechanics",
-                "description": "Principle of least action: Hamilton's principle, Generalised coordinate, Lagrange's equations. Symmetry and conservation laws: cyclic coordinate, energy and momentum conservation, Noether's theorem and symmetry transformations. Two body central force problem: conservation theorems, equation of motion for inverse square law; Kepler's laws, scattering in a central potential. Rigid Body Dynamics: rigid body rotation about a fixed axis, moment of Inertia tensor, Eigen values and principal axis transformations; Euler angles, Euler equations of a rigid body, precession of heavy symmetrical top. Hamiltonian dynamics: Hamilton's equation of motion, Phase space diagram, Poison brackets, Infinitesimal transformations and symmetry generators, Hamilton-Jacobi equation and associated problems. Small oscillations: dynamical matrix, normal modes."
+                "semester": 3,
+                "year": "Semester 3",
+                "credits": 6,
+                "description": "Analytical mechanics through Hamilton principle, generalized coordinates, Lagrange equations, symmetry and conservation laws, central-force motion, rigid-body dynamics, Hamiltonian methods, Poisson brackets, Hamilton-Jacobi theory, and small oscillations."
               },
               {
                 "id": "PH 206",
                 "code": "PH 206",
                 "name": "Computational Physics",
-                "description": "Introduction to scientific computing; numerical errors and stability. Root finding, interpolation, numerical differentiation/integration. Solving linear systems and eigenvalue problems. Numerical solution of ODEs (Euler/Runge-Kutta) and PDEs (finite difference methods). Monte Carlo methods and random number generation; examples from physics simulations and data analysis."
+                "semester": 4,
+                "year": "Semester 4",
+                "credits": 6,
+                "description": "Scientific computing for physical systems: numerical error and stability, root finding, interpolation, differentiation and integration, linear systems and eigenproblems, ODE and PDE solvers, Monte Carlo methods, and computational modeling examples."
               },
               {
                 "id": "PH 207",
                 "code": "PH 207",
                 "name": "Heat and Thermodynamics",
-                "description": "Basic Concepts: Temperature, Thermodynamic variables, state functions, processes, equation of state. Zeroth law, temperature scales. First law: heat and work, internal energy, enthalpy, specific heats; adiabatic processes. Second law: Kelvin-Planck and Clausius statements; Carnot cycle; entropy and its properties; Maxwell relations. Thermodynamic potentials: Helmholtz and Gibbs free energies; chemical potential; phase transitions and Clausius-Clapeyron equation. Kinetic theory: distribution functions, mean free path; transport phenomena basics."
+                "semester": 3,
+                "year": "Semester 3",
+                "credits": 6,
+                "description": "Thermodynamics and kinetic theory: state variables, equations of state, first and second laws, thermodynamic potentials, Maxwell relations, entropy, phase transitions, Clausius-Clapeyron relation, transport phenomena, and distribution functions."
               }
             ]
           },
@@ -62,79 +89,127 @@
                 "id": "PH 204",
                 "code": "PH 204",
                 "name": "Quantum Mechanics I",
-                "description": "Postulates of quantum mechanics; wave functions, operators and measurement; Schrodinger equation in 1D; probability current and continuity equation. Exactly solvable problems: particle in a box, step/barrier potentials, harmonic oscillator, angular momentum basics. 3D problems and central potentials (intro): hydrogen atom basics, degeneracy and quantum numbers. Formalism: commutators, uncertainty principle, Dirac notation (intro)."
+                "semester": 4,
+                "year": "Semester 4",
+                "credits": 6,
+                "description": "Foundations of quantum mechanics: wave functions, operators, measurement, the Schrodinger equation, probability current, one-dimensional potentials, harmonic oscillator, angular momentum, and introductory three-dimensional central-potential problems."
               },
               {
                 "id": "PH 303",
                 "code": "PH 303",
                 "name": "Quantum Mechanics II",
-                "description": "Approximation methods for stationary states: time-independent perturbation theory, the variation method and the Wentzel-Kramers-Brillouin (WKB) method. Time Dependent Perturbation Theory: the Schrodinger and the Heisenberg pictures, Heisenberg equations of motion, the interaction picture; two-level systems, sinusoidal perturbation, Fermi's Golden Rule; the adiabatic and sudden approximation. Special topics in radiation theory: semi-classical treatment of interaction of radiation with matter, Einstein's coefficients, spontaneous and stimulated emission and absorption, application to lasers. Scattering Theory: Born approximation, scattering cross-section, partial wave analysis, phase shifts. Foundations of Quantum mechanics: EPR paradox; Bell's theorem, the no-clone theorem, Schrodinger's Cat."
+                "semester": 5,
+                "year": "Semester 5",
+                "credits": 6,
+                "description": "Advanced quantum mechanics: time-independent and time-dependent perturbation theory, variation and WKB methods, Heisenberg and interaction pictures, two-level systems, Fermi golden rule, semi-classical radiation theory, scattering theory, and foundational questions."
               },
               {
                 "id": "PH 301",
                 "code": "PH 301",
                 "name": "Statistical Mechanics",
-                "description": "Probability concept: One dimensional random walk problem and relevant examples; Different probability distributions: Binomial, Gaussian and Poisson distributions; Central limit theorem; Stirling's approximation. Classical statistical mechanics: microcanonical, canonical and grand canonical ensembles; partition function and thermodynamic quantities; classical ideal gas; equipartition theorem. Quantum statistics: Bose-Einstein and Fermi-Dirac distributions; ideal quantum gases; black-body radiation and phonons (intro). Phase transitions and fluctuations (intro)."
+                "semester": 5,
+                "year": "Semester 5",
+                "credits": 8,
+                "description": "Probability and statistical mechanics: random walks, binomial, Gaussian and Poisson distributions, central limit theorem, classical ensembles, partition functions, thermodynamic quantities, ideal gases, quantum statistics, black-body radiation, phonons, and fluctuations."
               },
               {
                 "id": "PH 302",
                 "code": "PH 302",
                 "name": "Solid State Physics",
-                "description": "Crystal structure and reciprocal lattice; diffraction and Bragg's law. Lattice vibrations and phonons; thermal properties. Free electron theory and band theory; semiconductors and metals; density of states. Electrical conductivity and transport; Hall effect. Magnetism and magnetic materials (intro)."
+                "semester": 6,
+                "year": "Semester 6",
+                "credits": 6,
+                "description": "Solid-state physics: crystal structures, reciprocal lattice, diffraction, lattice vibrations and phonons, free-electron and band theories, semiconductors and metals, density of states, transport, Hall effect, and introductory magnetism."
               },
               {
                 "id": "PH 307",
                 "code": "PH 307",
                 "name": "Atomic and Molecular Spectroscopy",
-                "description": "Atomic structure and spectra: hydrogen atom basics, fine structure, Zeeman and Stark effects, selection rules. Many-electron atoms and coupling schemes; term symbols. Molecular structure: rotational/vibrational spectra, diatomic molecules, electronic transitions, Franck-Condon principle. Spectroscopic techniques and applications."
+                "semester": 5,
+                "year": "Semester 5",
+                "credits": 6,
+                "description": "Atomic and molecular spectra: hydrogenic atoms, fine structure, Zeeman and Stark effects, selection rules, many-electron atoms, term symbols, rotational and vibrational spectra, electronic transitions, Franck-Condon principle, and spectroscopy applications."
               },
               {
                 "id": "PH 306",
                 "code": "PH 306",
                 "name": "Lasers and Ultrafast Optics",
-                "description": "Laser fundamentals: Einstein coefficients, population inversion, gain, optical resonators and modes; laser types and characteristics. Q-switching and mode-locking; pulse generation; ultrafast optics basics. Nonlinear optical effects (intro): second-harmonic generation and related phenomena; applications in spectroscopy and communications (intro)."
+                "semester": 6,
+                "year": "Semester 6",
+                "credits": 6,
+                "description": "Laser and ultrafast optics: Einstein coefficients, population inversion, gain media, optical resonators, modes, Q-switching, mode locking, pulse generation, nonlinear optical effects, second-harmonic generation, and applications in spectroscopy and communications."
               },
               {
                 "id": "PH 308",
                 "code": "PH 308",
                 "name": "Nuclear Science and Engineering",
-                "description": "Nuclear structure and radioactive decay; nuclear reactions and cross-sections. Neutron physics and moderation; reactor basics: criticality, neutron diffusion, reactor kinetics (intro). Radiation detection and dosimetry (intro). Applications in energy, medicine and industry; safety basics."
+                "semester": 6,
+                "year": "Semester 6",
+                "credits": 6,
+                "description": "Nuclear science and engineering: nuclear structure, radioactive decay, nuclear reactions and cross sections, neutron physics, moderation, reactor criticality, diffusion and kinetics basics, radiation detection, dosimetry, applications, and safety."
               },
               {
                 "id": "PH 415",
                 "code": "PH 415",
                 "name": "Simulation Techniques in Physical Systems",
-                "description": "Introduction to simulation methods, necessity of simulation, numerical errors. Random number generation, tests for random numbers, sampling methods. Monte Carlo integration and applications. Stochastic processes: averages of physical quantities, fluctuations; Markov process and Markov chain; Random walk. Metropolis algorithm. Statistical analysis of data, correlation, autocorrelation. Molecular dynamics basics and numerical integration schemes. Applications in physics simulations."
+                "semester": 7,
+                "year": "Semester 7",
+                "credits": 6,
+                "description": "Simulation techniques for physical systems: random number generation and testing, sampling, Monte Carlo integration, stochastic processes, Markov chains, random walks, Metropolis algorithm, data correlation and autocorrelation, and molecular dynamics basics."
               },
               {
                 "id": "PH 458",
                 "code": "PH 458",
-                "name": "Applied superconductivity II"
+                "name": "Applied Superconductivity",
+                "semester": 8,
+                "year": "Semester 8",
+                "credits": 6,
+                "description": "Applied superconductivity: superconducting materials, London model, flux quantization, type-II behavior, critical fields, pinning, microwave electrodynamics, Josephson junctions, SQUIDs, superconducting electronics, quantum circuits, magnets, and magnetic levitation."
               },
               {
                 "id": "PH 462",
                 "code": "PH 462",
-                "name": "Quant. Tech. and Phenom. in Macro. sys."
+                "name": "Quantum Technology and Phenomena in Macroscopic Systems",
+                "semester": 8,
+                "year": "Semester 8",
+                "credits": 6,
+                "description": "Quantum technologies in engineered macroscopic systems: harmonic oscillators, two-level systems, ladder operators, coherent states, Bloch vectors, circuit QED, dissipation and Lindblad master equations, multi-qubit architectures, entanglement, and cavity optomechanics."
               },
               {
                 "id": "PH 464",
                 "code": "PH 464",
-                "name": "Fundamentals of cosmology"
+                "name": "Fundamentals of Cosmology",
+                "semester": 8,
+                "year": "Semester 8",
+                "credits": 6,
+                "description": "Cosmology fundamentals: general relativity review, FLRW metric, Friedmann equations, thermal history, CMB formation, relic abundance, dark matter and dark energy, baryogenesis, structure formation, density perturbations, CMB anisotropies, and inflation."
               },
               {
                 "id": "PH 466",
                 "code": "PH 466",
-                "name": "Advanced Statistical Mechanics"
+                "name": "Advanced Statistical Mechanics",
+                "semester": 8,
+                "year": "Semester 8",
+                "credits": 6,
+                "description": "Advanced statistical mechanics: phase transitions, critical phenomena, critical exponents, scaling and universality, ensemble methods, Ising, Potts, XY and Heisenberg models, mean-field and Landau theories, transfer matrices, series expansions, and renormalization group ideas."
               },
               {
                 "id": "PH 551",
                 "code": "PH 551",
-                "name": "Nonlinear Dynamics and Chaos"
+                "name": "Nonlinear Dynamics and Chaos",
+                "semester": 6,
+                "year": "Semester 6",
+                "credits": 6,
+                "description": "Nonlinear dynamics and chaos: dynamical systems and state spaces, fixed-point stability, one- and two-dimensional flows, nonlinear oscillators, Poincare-Bendixson theorem, Lorenz-type systems, bifurcations, maps, Lyapunov exponents, routes to chaos, fractals, and attractors."
               },
               {
                 "id": "PH 460",
                 "code": "PH 460",
-                "name": "Electroceramics"
+                "name": "Electroceramics",
+                "semester": 7,
+                "year": "Semester 7",
+                "credits": 6,
+                "description": "Electroceramic materials for electrical and electronic applications: ionic structure, defects, polarization, phase transitions, conduction, charge displacement, ceramic processing, sintering, dielectric, ferroelectric, piezoelectric, pyroelectric, electro-optic, and magnetic ceramics."
               }
             ]
           },
@@ -145,30 +220,46 @@
                 "id": "PH 210",
                 "code": "PH 210",
                 "name": "General Physics Lab",
-                "description": "General physics laboratory experiments covering mechanics, heat, electricity & magnetism, optics, and basic data analysis including uncertainty estimation and report writing."
+                "semester": 4,
+                "year": "Semester 4",
+                "credits": 6,
+                "description": "General physics laboratory experiments covering mechanics, heat, electricity and magnetism, optics, data acquisition, uncertainty analysis, and clear experimental reporting."
               },
               {
                 "id": "PH 310",
                 "code": "PH 310",
                 "name": "Advanced Physics Laboratory",
-                "description": "Experiments based on modern optics, lasers, solid state physics, electronics, microwave, nuclear physics and advanced measurement techniques."
+                "semester": 6,
+                "year": "Semester 6",
+                "credits": 6,
+                "description": "Advanced laboratory experiments in modern physics, optics, lasers, solid state physics, nuclear physics, microwave or electronics methods, with emphasis on instrument use, analysis, calibration, and research-style reporting."
               },
               {
                 "id": "PH 312",
                 "code": "PH 312",
-                "name": "Mini Project"
+                "name": "Mini Project",
+                "semester": 6,
+                "year": "Semester 6",
+                "credits": 6,
+                "description": "Independent or small-team project work in engineering physics, requiring problem definition, literature or design review, implementation or experimentation, analysis, presentation, and a written technical report."
               },
               {
                 "id": "PH 304",
                 "code": "PH 304",
                 "name": "Measurement Techniques",
-                "description": "Measurement basics: accuracy, precision, errors and statistical analysis. Transducers and sensors; signal conditioning and amplification. Electrical measurement instruments (oscilloscope, multimeters, bridges); noise and filtering. Data acquisition concepts; experimental methods and calibration practices."
+                "semester": 6,
+                "year": "Semester 6",
+                "credits": 6,
+                "description": "Experimental measurement methods: accuracy and precision, error analysis, sensors and transducers, signal conditioning, electrical instruments, noise and filtering, data acquisition, calibration, and practical measurement design."
               },
               {
                 "id": "PH 305",
                 "code": "PH 305",
                 "name": "Engineering Optics",
-                "description": "Geometrical optics: Matrix formulation for lens, mirrors and their combination; stop and pupil; cardinal points; chromatic and monochromatic aberrations. Wave optics: interference, diffraction and polarization; coherence and interference devices; diffraction gratings and resolving power; introduction to primary monochromatic aberrations and chromatic aberrations."
+                "semester": 5,
+                "year": "Semester 5",
+                "credits": 6,
+                "description": "Optical systems and wave optics: matrix formulation for lenses and mirrors, stops and pupils, cardinal points, chromatic and monochromatic aberrations, interference, diffraction, polarization, coherence, gratings, and resolving power."
               }
             ]
           }
@@ -183,17 +274,29 @@
               {
                 "id": "EE 101",
                 "code": "EE 101",
-                "name": "Basic Electronics"
+                "name": "Basic Electronics",
+                "semester": 1,
+                "year": "Semester 1",
+                "credits": 8,
+                "description": "Introductory electrical and electronics foundations: circuit laws, network theorems, DC and AC circuit analysis, semiconductor devices, diodes, transistors, amplifiers, operational amplifiers, instrumentation basics, and simple electronic systems."
               },
               {
                 "id": "EE 102",
                 "code": "EE 102",
-                "name": "Basic Electronics laboratory"
+                "name": "Basic Electronics Laboratory",
+                "semester": 2,
+                "year": "Semester 2",
+                "credits": 3,
+                "description": "Laboratory experiments for basic electronics, including circuit measurement, diode and transistor characteristics, amplifier and op-amp circuits, logic circuits, instrumentation practice, breadboarding, debugging, and technical reporting."
               },
               {
                 "id": "EE 220",
                 "code": "EE 220",
-                "name": "Signals and Systems"
+                "name": "Signals and Systems",
+                "semester": 3,
+                "year": "Semester 3",
+                "credits": 8,
+                "description": "Signals and systems: continuous- and discrete-time signals, linear time-invariant systems, convolution, impulse response, Fourier series and transforms, Laplace and Z transforms, sampling, filtering, frequency response, and system stability."
               }
             ]
           },
@@ -204,19 +307,28 @@
                 "id": "PH 205",
                 "code": "PH 205",
                 "name": "Semiconductor Devices",
-                "description": "Basics: Energy bands; semiconductors; doping; drift and diffusion currents; Einstein relation; quasi-Fermi levels. p-n Junction: diode equation; depletion region; capacitance; breakdown; junction temperature effects. Diode circuits: rectifier; filter; clippers and clampers. Bipolar Junction Transistor: transistor action; Ebers-Moll model; DC characteristics; transistor as amplifier; biasing and stability. Small-signal model and frequency response. Field Effect Transistors: JFET and MOSFET; I-V characteristics; MOS capacitance; threshold voltage; small signal model. Operational Amplifier: basics; ideal op-amp; op-amp circuits; non-idealities and applications."
+                "semester": 3,
+                "year": "Semester 3",
+                "credits": 6,
+                "description": "Semiconductor device physics and circuits: energy bands, doping, drift and diffusion, p-n junctions, diode equation and breakdown, rectifiers, BJTs, biasing, small-signal models, FETs, MOS capacitors, threshold voltage, and op-amp basics."
               },
               {
                 "id": "PH 208",
                 "code": "PH 208",
-                "name": "Digital electronics and microprocessors",
-                "description": "Digital system basics: number systems, Boolean algebra, combinational and sequential logic, minimization (K-map), flip-flops, counters, registers. Memory and interfacing basics. Microprocessor architecture (intro): instruction set, addressing modes, assembly language programming basics, interrupts, I/O interfacing, timers and serial communication concepts."
+                "name": "Digital Electronics and Microprocessors",
+                "semester": 4,
+                "year": "Semester 4",
+                "credits": 6,
+                "description": "Digital electronics and microprocessors: number systems, Boolean algebra, logic minimization, combinational and sequential circuits, flip-flops, counters, registers, memory, microprocessor architecture, instruction sets, addressing modes, assembly programming, interrupts, and I/O interfacing."
               },
               {
                 "id": "PH 209",
                 "code": "PH 209",
                 "name": "Analog Electronics",
-                "description": "Semiconductor diodes: rectifiers, clippers and clampers. Bipolar junction transistor (BJT): operation, characteristics, biasing and stability, small signal model, amplifiers and frequency response. Field effect transistors (FET): JFET and MOSFET characteristics, biasing, small signal model and amplifiers. Feedback and oscillators: feedback principles, stability, RC/LC oscillators. Operational amplifiers: ideal/non-ideal op-amp, basic configurations (inverting/non-inverting), applications (filters, integrators, differentiators)."
+                "semester": 3,
+                "year": "Semester 3",
+                "credits": 6,
+                "description": "Analog electronics: diode circuits, BJT and FET operation, biasing, amplifier models and frequency response, feedback, oscillators, operational amplifier configurations, filters, integrators, differentiators, and circuit applications."
               }
             ]
           },
@@ -227,13 +339,19 @@
                 "id": "PH 211",
                 "code": "PH 211",
                 "name": "Electronics Laboratory - I",
-                "description": "Laboratory experiments on analog and digital electronics such as diode and transistor characteristics, amplifier circuits, op-amp circuits, filters/oscillators, logic gates and flip-flops, and basic instrumentation/measurement practices."
+                "semester": 4,
+                "year": "Semester 4",
+                "credits": 4,
+                "description": "Laboratory experiments in analog and digital electronics, including diode and transistor characteristics, amplifiers, op-amp circuits, filters, oscillators, logic gates, flip-flops, and measurement instrumentation."
               },
               {
                 "id": "PH 309",
                 "code": "PH 309",
                 "name": "Electronics Lab-II",
-                "description": "Laboratory experiments on advanced analog/digital electronics and instrumentation, including amplifier design, op-amp applications, filters/oscillators, and microprocessor/digital interfacing experiments (as per department lab modules)."
+                "semester": 5,
+                "year": "Semester 5",
+                "credits": 4,
+                "description": "Advanced electronics laboratory work covering amplifier design, op-amp applications, filters, oscillators, digital circuits, microprocessor or interfacing modules, instrumentation, circuit debugging, and structured experimental reporting."
               }
             ]
           }
@@ -248,12 +366,20 @@
               {
                 "id": "MA 101",
                 "code": "MA 101",
-                "name": "Mathematics I"
+                "name": "Mathematics I",
+                "semester": 1,
+                "year": "Semester 1",
+                "credits": 8,
+                "description": "First mathematics core: single-variable and multivariable calculus, sequences and series, differential calculus, integral calculus, vector spaces and linear algebra foundations, and mathematical tools used across engineering and science courses."
               },
               {
                 "id": "MA 102",
                 "code": "MA 102",
-                "name": "Mathematics II"
+                "name": "Mathematics II",
+                "semester": 2,
+                "year": "Semester 2",
+                "credits": 8,
+                "description": "Second mathematics core: linear algebra, ordinary differential equations, multivariable calculus, transforms, complex variables or probability-oriented mathematical tools, with emphasis on engineering applications and problem solving."
               }
             ]
           },
@@ -263,27 +389,47 @@
               {
                 "id": "MA 211M",
                 "code": "MA 211M",
-                "name": "Real Analysis"
+                "name": "Real Analysis",
+                "semester": 3,
+                "year": "Semester 3",
+                "credits": 6,
+                "description": "Mathematics minor course in analysis: metric and normed vector spaces, convergence and completeness, pointwise and uniform convergence of function sequences, differentiability of functions of several variables, inverse and implicit function theorems, and introductory Lebesgue measure and integration."
               },
               {
                 "id": "MA 212M",
                 "code": "MA 212M",
-                "name": "Mathematical Statistics"
+                "name": "Mathematical Statistics",
+                "semester": 4,
+                "year": "Semester 4",
+                "credits": 6,
+                "description": "Mathematics minor course in statistics: probability spaces, random variables and vectors, distributions, expectations, convergence, sampling distributions, estimation, sufficiency, maximum likelihood, interval estimation, hypothesis testing, likelihood ratio tests, correlation, and regression."
               },
               {
                 "id": "MA 311M",
                 "code": "MA 311M",
-                "name": "Scientific Computing"
+                "name": "Scientific Computing",
+                "semester": 5,
+                "year": "Semester 5",
+                "credits": 8,
+                "description": "Mathematics minor course in scientific computing: numerical errors, nonlinear equation solvers, interpolation and splines, numerical integration, Gaussian quadrature, ODE initial-value methods, multistep and predictor-corrector schemes, finite-difference PDE methods, stability, and convergence."
               },
               {
                 "id": "MA 312M",
                 "code": "MA 312M",
-                "name": "Modern Algebra"
+                "name": "Modern Algebra",
+                "semester": 6,
+                "year": "Semester 6",
+                "credits": 6,
+                "description": "Mathematics minor course in algebra: integers, equivalence and congruence, rings, homomorphisms, ideals, domains, fields, groups, cosets, Lagrange theorem, normal subgroups, quotient and permutation groups, group actions, Sylow theorems, PIDs, UFDs, polynomial rings, and field extensions."
               },
               {
                 "id": "MA 411M",
                 "code": "MA 411M",
-                "name": "Differential Geometry"
+                "name": "Differential Geometry",
+                "semester": 7,
+                "year": "Semester 7",
+                "credits": 6,
+                "description": "Mathematics minor course in geometry: local theory of plane and space curves, curvature and torsion, Serret-Frenet formulas, regular surfaces, tangent planes, first and second fundamental forms, Gauss map, principal curvatures, isometries, geodesics, and Gauss-Bonnet theorem."
               }
             ]
           }
@@ -298,22 +444,38 @@
               {
                 "id": "CS 101",
                 "code": "CS 101",
-                "name": "Introduction to Computing"
+                "name": "Introduction to Computing",
+                "semester": 2,
+                "year": "Semester 2",
+                "credits": 6,
+                "description": "Introductory computing and programming: algorithmic thinking, variables, control flow, functions, arrays and data structures, recursion basics, numerical problem solving, debugging, and writing programs for engineering and science applications."
               },
               {
                 "id": "CS 110",
                 "code": "CS 110",
-                "name": "Computing Lab"
+                "name": "Computing Lab",
+                "semester": 2,
+                "year": "Semester 2",
+                "credits": 3,
+                "description": "Hands-on programming laboratory accompanying introductory computing, focused on implementing algorithms, debugging, testing, working with input and output, and building confidence with computational problem solving."
               },
               {
                 "id": "CS 341",
                 "code": "CS 341",
-                "name": "Computer Networks"
+                "name": "Computer Networks",
+                "semester": 7,
+                "year": "Semester 7",
+                "credits": 6,
+                "description": "Computer networks: network evolution, data-link framing and sliding-window protocols, medium access control, virtual-circuit switching, IP addressing, ARP, ICMP, CIDR, routing algorithms and protocols, UDP, TCP, flow and congestion control, quality of service, DNS, web, email, authentication, and encryption."
               },
               {
                 "id": "CS 343",
                 "code": "CS 343",
-                "name": "Operating Systems"
+                "name": "Operating Systems",
+                "semester": 7,
+                "year": "Semester 7",
+                "credits": 6,
+                "description": "Operating systems: processes, threads and scheduling, mutual exclusion, synchronization, semaphores and deadlocks, memory allocation and protection, paging and segmentation, virtual memory, file operations and file-system implementation, free-space and directory management, mounting, device drivers, and disk scheduling."
               }
             ]
           },
@@ -323,12 +485,20 @@
               {
                 "id": "CS 590",
                 "code": "CS 590",
-                "name": "Deep Learning"
+                "name": "Deep Learning",
+                "semester": 7,
+                "year": "Semester 7",
+                "credits": 6,
+                "description": "Deep learning: machine-learning fundamentals, perceptrons, backpropagation, regularization, deep networks, PCA, restricted Boltzmann machines, sparse autoencoders, deep belief networks, hidden Markov models, CNN architectures, activation and pooling layers, vanishing-gradient mitigation, dropout, batch normalization, sequence models, RNNs, LSTMs, GANs, zero-shot learning, and applications."
               },
               {
                 "id": "DA 671",
                 "code": "DA 671",
-                "name": "Introduction to Reinforcement Learning"
+                "name": "Introduction to Reinforcement Learning",
+                "semester": 8,
+                "year": "Semester 8",
+                "credits": 6,
+                "description": "Introduction to Reinforcement Learning (RL); Markov Chains: Discrete-time Markov chains, Stationary Distribution, Continuous-time Markov Chains. Markov Decision Process (MDP): Terminologies & Fundamentals; Finite Horizon MDP: Dynamic Programming (DP), Bellman Equation; Infinite Horizon Discounted Cost Problems: DP Equation, Fixed Point & Contraction Mapping, Value Iteration (VI), Policy Iteration (PI), Linear Programming formulation; RL Techniques: Multi-armed Bandit; Exploration & Exploitation, Optimism in the Face of Uncertainty, Upper Confidence Bound, Thompson Sampling; Monte-Carlo Methods: First-visit and Every-visit, Monte-Carlo Control, Off-policy Monte Carlo Control; Temporal Difference Learning: TD Prediction, Optimality of TD(0), SARSA, Q-learning, n-step TD Prediction, TD (lambda) algorithm, Linear Function Approximation, Linear TD (lambda); Policy Search Methods: Policy Gradient (PG) Theorem, REINFORCE, Variance Reduction in PG Methods, Actor-critic Methods, Batch RL."
               }
             ]
           }
@@ -343,12 +513,20 @@
               {
                 "id": "HS 123",
                 "code": "HS 123",
-                "name": "Game Theory and Economics"
+                "name": "Game Theory and Economics",
+                "semester": 4,
+                "year": "Semester 4",
+                "credits": 6,
+                "description": "Economic game theory: strategic-form games, best responses, Nash equilibrium, mixed strategies, dynamic games, sequential rationality, information structures, repeated games, bargaining or auctions, and applications to economic decision making."
               },
               {
                 "id": "HS 239",
                 "code": "HS 239",
-                "name": "Economics of Uncertainty and Information"
+                "name": "Economics of Uncertainty and Information",
+                "semester": 8,
+                "year": "Semester 8",
+                "credits": 6,
+                "description": "Economics under uncertainty and information constraints: risk, expected utility, insurance, asymmetric information, adverse selection, moral hazard, signaling, screening, principal-agent problems, and applications to markets and contracts."
               }
             ]
           },
@@ -358,12 +536,20 @@
               {
                 "id": "HS 149",
                 "code": "HS 149",
-                "name": "Consumer Behaviour"
+                "name": "Consumer Behaviour",
+                "semester": 5,
+                "year": "Semester 5",
+                "credits": 6,
+                "description": "Consumer behaviour: decision processes, motivation, perception, learning, attitudes, social and cultural influences, market segmentation, persuasion, behavioural insights, and how consumers evaluate products, information, and choices."
               },
               {
                 "id": "HS 200",
                 "code": "HS 200",
-                "name": "Sustainable Development Goals"
+                "name": "Sustainable Development Goals",
+                "semester": 3,
+                "year": "Semester 3",
+                "credits": 0,
+                "description": "Sustainable development goals: transition from MDGs to SDGs, Agenda 2030, circular economy, inclusive society, sustainable cities, transport, digital revolution, innovation, infrastructure, sustainable production and consumption, SDG financing, governance, accountability, participation, and policy coherence."
               }
             ]
           },
@@ -373,7 +559,11 @@
               {
                 "id": "HS 212",
                 "code": "HS 212",
-                "name": "Public Economics"
+                "name": "Public Economics",
+                "semester": 7,
+                "year": "Semester 7",
+                "credits": 6,
+                "description": "Public economics: public goods, externalities, taxation, redistribution, social insurance, public expenditure, welfare analysis, market failures, government intervention, fiscal policy, and efficiency-equity tradeoffs in public decision making."
               }
             ]
           }
@@ -388,17 +578,29 @@
               {
                 "id": "CH 101",
                 "code": "CH 101",
-                "name": "Chemistry"
+                "name": "Chemistry",
+                "semester": 1,
+                "year": "Semester 1",
+                "credits": 8,
+                "description": "First-year chemistry for engineers: chemical bonding, molecular structure, thermodynamics, kinetics, electrochemistry, spectroscopy, organic and inorganic chemistry foundations, materials chemistry, and quantitative problem solving."
               },
               {
                 "id": "CH 110",
                 "code": "CH 110",
-                "name": "Chemistry Laboratory"
+                "name": "Chemistry Laboratory",
+                "semester": 1,
+                "year": "Semester 1",
+                "credits": 3,
+                "description": "Chemistry laboratory practice: quantitative analysis, synthesis or preparation, titration and instrumental methods, kinetics or electrochemistry experiments, safe handling of chemicals, observation, data recording, and technical reporting."
               },
               {
                 "id": "BT 101",
                 "code": "BT 101",
-                "name": "Introduction Biology"
+                "name": "Introductory Biology",
+                "semester": 2,
+                "year": "Semester 2",
+                "credits": 6,
+                "description": "Introductory biology for engineers: biomolecules, cell structure and function, genetics, molecular biology, metabolism, evolution, physiology or systems biology basics, and biological thinking for technology and engineering contexts."
               }
             ]
           },
@@ -408,37 +610,65 @@
               {
                 "id": "CE 101",
                 "code": "CE 101",
-                "name": "Engineering Drawing"
+                "name": "Engineering Drawing",
+                "semester": 1,
+                "year": "Semester 1",
+                "credits": 7,
+                "description": "Engineering graphics and drawing: orthographic and isometric projections, sections, dimensioning, visualization of solids, engineering conventions, manual drawing practice, and computer-aided drafting or sketching foundations."
               },
               {
                 "id": "ME 101",
                 "code": "ME 101",
-                "name": "Engineering Mechanics"
+                "name": "Engineering Mechanics",
+                "semester": 2,
+                "year": "Semester 2",
+                "credits": 8,
+                "description": "Engineering mechanics: vector statics, force systems, equilibrium, free-body diagrams, friction, trusses and frames, centroids and moments of inertia, kinematics and kinetics of particles and rigid bodies, work-energy, impulse-momentum, and engineering applications."
               },
               {
                 "id": "ME 110",
                 "code": "ME 110",
-                "name": "Workshop I"
+                "name": "Workshop I",
+                "semester": 1,
+                "year": "Semester 1",
+                "credits": 3,
+                "description": "Workshop practice introducing hands-on fabrication and manufacturing skills such as fitting, carpentry, welding, machining or sheet-metal work, safe tool use, measurement, process planning, and shop-floor discipline."
               },
               {
                 "id": "SA 109",
                 "code": "SA 109",
-                "name": "SAG. Lawn Tennis"
+                "name": "S&G Lawn Tennis",
+                "semester": 2,
+                "year": "Semester 2",
+                "credits": 0,
+                "description": "Student activity course in lawn tennis, emphasizing regular participation, basic technique, rules, match play, fitness, coordination, and structured sports engagement."
               },
               {
                 "id": "SA 215",
                 "code": "SA 215",
-                "name": "Yoga-2"
+                "name": "Yoga-2",
+                "semester": 3,
+                "year": "Semester 3",
+                "credits": 0,
+                "description": "Student activity course in yoga practice, continuing physical conditioning, flexibility, breathing, posture work, concentration, and routine-building through guided participation."
               },
               {
                 "id": "SA 216",
                 "code": "SA 216",
-                "name": "Yoga-3"
+                "name": "Yoga-3",
+                "semester": 4,
+                "year": "Semester 4",
+                "credits": 0,
+                "description": "Student activity course in yoga practice, developing continuity in posture sequences, breathing exercises, body awareness, flexibility, balance, and disciplined participation."
               },
               {
                 "id": "SA 315",
                 "code": "SA 315",
-                "name": "Yoga-4"
+                "name": "Yoga-4",
+                "semester": 7,
+                "year": "Semester 7",
+                "credits": 0,
+                "description": "Student activity course in advanced continuation yoga practice, emphasizing regularity, posture refinement, breathing control, mobility, focus, and sustained personal fitness habits."
               }
             ]
           }
