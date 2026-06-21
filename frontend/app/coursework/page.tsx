@@ -1,8 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import { CourseworkAssets } from "@/components/CourseworkAssets";
 import { loadPage } from "@/lib/content";
 
-const COURSEWORK_ASSET_VERSION = "20260620-7";
+const COURSEWORK_ASSET_VERSION = "20260621-1";
 
 interface CourseNode {
   id?: string;
@@ -200,8 +201,7 @@ export default function CourseworkPage() {
       </noscript>
 
       <link rel="stylesheet" href={`/static/coursework.css?v=${COURSEWORK_ASSET_VERSION}`} />
-      <script defer src={`/static/vendor/d3.v7.min.js?v=${COURSEWORK_ASSET_VERSION}`} />
-      <script defer src={`/static/coursework.js?v=${COURSEWORK_ASSET_VERSION}`} />
+      <CourseworkAssets version={COURSEWORK_ASSET_VERSION} />
     </section>
   );
 }

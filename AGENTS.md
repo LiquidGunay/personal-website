@@ -4,6 +4,7 @@ Guidance for future work in this repository. Keep this file short, factual, and 
 
 ## Working agreements
 
+- Trigger production deployments through Git pushes only; do not use `railway up` for this site unless the user explicitly asks for a manual Railway upload.
 - Follow `ExecPLANS.md` and keep `PLANS.md` up to date with progress, decisions, surprises, and outcomes.
 - Keep the repository structure minimal within the current folder layout. Add new code under the existing subpackages instead of creating new top-level folders.
 - Keep `README.md` updated so the repo stays easy to understand and run. Update it whenever you add or move major features, tools, or workflows.
