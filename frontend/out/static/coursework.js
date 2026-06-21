@@ -790,8 +790,10 @@
   function renderDetails(detailsEl, meta) {
     if (!detailsEl) return;
     if (!meta) {
-      detailsEl.innerHTML =
-        '<p class="cw-details-empty">Select a course tile to see its semester and description.</p>';
+      const emptyText = detailsEl.hasAttribute('data-cw-mobile-details')
+        ? 'Select a course from the list to see its semester and description.'
+        : 'Select a course tile to see its semester and description.';
+      detailsEl.innerHTML = `<p class="cw-details-empty">${emptyText}</p>`;
       return;
     }
 
