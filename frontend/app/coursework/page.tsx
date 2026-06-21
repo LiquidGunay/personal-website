@@ -3,7 +3,7 @@ import path from "node:path";
 import { CourseworkAssets } from "@/components/CourseworkAssets";
 import { loadPage } from "@/lib/content";
 
-const COURSEWORK_ASSET_VERSION = "20260621-2";
+const COURSEWORK_ASSET_VERSION = "20260621-3";
 
 interface CourseNode {
   id?: string;

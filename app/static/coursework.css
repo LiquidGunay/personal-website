@@ -1823,3 +1823,12 @@ html[data-theme="dark"] .cw-year-count {
     border-color: var(--cw-button-rule);
   }
 }
+
+/* Keep course-code labels directly on the tile fill; no background halo. */
+#cw-viz .cw-tile-label,
+#cw-viz .cw-tile-label tspan {
+  paint-order: normal;
+  stroke: transparent;
+  stroke-width: 0;
+  text-shadow: none;
+}
