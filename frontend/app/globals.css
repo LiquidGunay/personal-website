@@ -332,11 +332,15 @@ code {
 .home-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(1.25rem, 4vw, 3.4rem);
   align-items: end;
   padding: clamp(2.7rem, 7.5vw, 6.25rem) 0 clamp(1.35rem, 3.5vw, 2.6rem);
   border-bottom: 1px solid var(--border);
+}
+
+.home-hero--with-aside {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
 }
 
 .home-hero::before,
@@ -389,50 +393,6 @@ code {
   min-width: 0;
   display: grid;
   gap: clamp(0.85rem, 1.6vw, 1.2rem);
-}
-
-.home-hero__signal {
-  position: relative;
-  min-height: clamp(7rem, 15vw, 11.5rem);
-  border-block: 1px solid var(--border);
-  background:
-    linear-gradient(90deg, transparent 0 31%, color-mix(in srgb, var(--border) 72%, transparent 28%) 31% 31.4%, transparent 31.4% 67%, color-mix(in srgb, var(--border) 72%, transparent 28%) 67% 67.4%, transparent 67.4%),
-    linear-gradient(color-mix(in srgb, var(--text) 3%, transparent 97%) 1px, transparent 1px);
-  background-size: auto, 100% 28px;
-}
-
-.home-hero__signal::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  border-top: 1px solid color-mix(in srgb, var(--accent) 48%, transparent 52%);
-}
-
-.home-hero__signal span {
-  position: absolute;
-  width: clamp(1.05rem, 2.4vw, 1.7rem);
-  height: clamp(1.05rem, 2.4vw, 1.7rem);
-  border: 1px solid color-mix(in srgb, var(--accent) 58%, var(--border) 42%);
-  background: color-mix(in srgb, var(--surface) 72%, transparent 28%);
-}
-
-.home-hero__signal span:nth-child(1) {
-  left: 18%;
-  top: 28%;
-}
-
-.home-hero__signal span:nth-child(2) {
-  left: 51%;
-  top: 50%;
-  transform: translateY(-50%);
-  border-color: color-mix(in srgb, var(--accent-2) 62%, var(--border) 38%);
-}
-
-.home-hero__signal span:nth-child(3) {
-  right: 14%;
-  bottom: 24%;
 }
 
 .home-hero__note {
@@ -969,9 +929,6 @@ code {
     max-width: 100%;
   }
 
-  .home-hero__signal {
-    min-height: 5.5rem;
-  }
 
   .home-question {
     min-height: 0;

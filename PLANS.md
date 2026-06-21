@@ -62,3 +62,4 @@ Reference mockups generated during planning and copied into the repo:
 - Removed About as a standalone public page, tightened mobile header chrome, revised the homepage visual treatment toward a quieter editorial signal, and started a mobile-first coursework interaction pass with tap-selected details and a readable mobile course list.
 - Reworked the coursework mobile layout so search/semester controls and the readable course list appear before the treemap preview, avoiding tiny tile taps as the primary phone interaction.
 - Replaced the temporary mobile visible-course list with a mobile-specific readable tile chart inside the coursework map area; each tile now carries code, name, semester, subject, and tap-to-expand details.
+- Removed the decorative homepage hero signal because it did not encode meaningful content; the hero now stays text-first unless a real current-note field is present.
