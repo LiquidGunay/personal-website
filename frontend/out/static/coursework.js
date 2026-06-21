@@ -94,8 +94,6 @@
     const yearsEl = mount.querySelector('[data-cw-years]');
     const statsEl = mount.querySelector('[data-cw-stats]');
     const detailsEl = mount.querySelector('[data-cw-details]');
-    const mobileDetailsEl = mount.querySelector('[data-cw-mobile-details]');
-    const mobileListEl = mount.querySelector('[data-cw-mobile-list]');
     const clearBtn = mount.querySelector('[data-cw-clear]');
 
     if (!treemapEl) return;
@@ -103,10 +101,6 @@
     if (detailsEl) {
       detailsEl.setAttribute('aria-live', 'polite');
     }
-    if (mobileDetailsEl) {
-      mobileDetailsEl.setAttribute('aria-live', 'polite');
-    }
-
     const subjects = (data.hierarchy && Array.isArray(data.hierarchy.children) ? data.hierarchy.children : [])
       .map((s) => s && s.name)
       .filter(Boolean);
@@ -122,11 +116,6 @@
 
     const renderAllDetails = (meta) => {
       renderDetails(detailsEl, meta);
-      renderDetails(mobileDetailsEl, meta);
-    };
-
-    const updateMobileList = () => {
-      renderMobileCourseList(mobileListEl, courseMap, state, (id, options) => selectCourse(id, options));
     };
 
     const selectCourse = (id, options = {}) => {
@@ -135,8 +124,7 @@
       syncClearButton(clearBtn, state.selectedId);
       updateSelection(treemapEl, state.selectedId);
       renderAllDetails(selectedMeta);
-      updateMobileListSelection(mobileListEl, state.selectedId);
-      if (options.reveal) revealDetailsOnStackedLayout(detailsEl, mobileDetailsEl);
+      if (options.reveal) revealDetailsOnStackedLayout(detailsEl);
     };
 
     const clearSelection = () => {
@@ -144,7 +132,6 @@
       syncClearButton(clearBtn, state.selectedId);
       updateSelection(treemapEl, state.selectedId);
       renderAllDetails(null);
-      updateMobileListSelection(mobileListEl, state.selectedId);
     };
 
     if (legendEl) {
@@ -188,8 +175,6 @@
 
     syncClearButton(clearBtn, state.selectedId);
     renderAllDetails(null);
-    updateMobileList();
-
     let lastWidth = 0;
     let lastHeight = 0;
     let lastSignature = `${state.focusedSubject || ''}|${state.yearFilter || ''}|${state.query || ''}`;
@@ -209,7 +194,6 @@
       if (!force && !signatureChanged && Math.abs(width - lastWidth) < 4 && Math.abs(height - lastHeight) < 4) return;
       const summary = renderTreemap(treemapEl, data.hierarchy, courseMap, width, height, state, { selectCourse, clearSelection });
       renderStats(statsEl, summary, courseMap.size, state);
-      updateMobileList();
       lastWidth = width;
       lastHeight = height;
       lastSignature = signature;
@@ -654,9 +638,11 @@
     return root;
   }
 
-  function clearSvg(parent) {
+  function clearChart(parent) {
     const svg = parent.querySelector('svg');
     if (svg) svg.remove();
+    const mobileChart = parent.querySelector('.cw-mobile-chart');
+    if (mobileChart) mobileChart.remove();
   }
 
   function renderLegend(container, subjects, courseMap, localState, onFocusChange) {
@@ -772,13 +758,10 @@
     button.hidden = !selectedId;
   }
 
-  function revealDetailsOnStackedLayout(detailsEl, mobileDetailsEl) {
-    const useMobileTarget = mobileDetailsEl && window.matchMedia('(max-width: 760px)').matches;
-    const target = useMobileTarget
-      ? mobileDetailsEl.closest('.cw-mobile-panel') || mobileDetailsEl
-      : detailsEl && (detailsEl.closest('.cw-details') || detailsEl);
+  function revealDetailsOnStackedLayout(detailsEl) {
+    const target = detailsEl && (detailsEl.closest('.cw-details') || detailsEl);
     if (!target) return;
-    if (!useMobileTarget && !window.matchMedia('(max-width: 1120px)').matches) return;
+    if (!window.matchMedia('(max-width: 1120px)').matches) return;
     window.requestAnimationFrame(() => {
       const rect = target.getBoundingClientRect();
       if (rect.top < 0 || rect.top > window.innerHeight * 0.68) {
@@ -790,10 +773,7 @@
   function renderDetails(detailsEl, meta) {
     if (!detailsEl) return;
     if (!meta) {
-      const emptyText = detailsEl.hasAttribute('data-cw-mobile-details')
-        ? 'Select a course from the list to see its semester and description.'
-        : 'Select a course tile to see its semester and description.';
-      detailsEl.innerHTML = `<p class="cw-details-empty">${emptyText}</p>`;
+      detailsEl.innerHTML = '<p class="cw-details-empty">Select a course tile to see its semester and description.</p>';
       return;
     }
 
@@ -827,11 +807,11 @@
   }
 
   function updateSelection(container, selectedId) {
-    const svg = container.querySelector('svg');
-    if (!svg) return;
-    for (const tile of svg.querySelectorAll('.cw-tile')) {
+    for (const tile of container.querySelectorAll('.cw-tile')) {
       const id = tile.getAttribute('data-cw-id');
-      tile.classList.toggle('is-selected', Boolean(selectedId && id === selectedId));
+      const selected = Boolean(selectedId && id === selectedId);
+      tile.classList.toggle('is-selected', selected);
+      if (tile.hasAttribute('aria-pressed')) tile.setAttribute('aria-pressed', String(selected));
     }
   }
 
@@ -848,46 +828,6 @@
     return [...courseMap.values()]
       .filter((meta) => isMetaVisible(meta, localState))
       .sort((a, b) => courseRank(a).localeCompare(courseRank(b)));
-  }
-
-  function updateMobileListSelection(container, selectedId) {
-    if (!container) return;
-    for (const button of container.querySelectorAll('.cw-mobile-course')) {
-      const id = button.getAttribute('data-cw-id');
-      button.setAttribute('aria-pressed', String(Boolean(selectedId && id === selectedId)));
-    }
-  }
-
-  function renderMobileCourseList(container, courseMap, localState, onSelect) {
-    if (!container) return;
-    const courses = visibleCourses(courseMap, localState);
-    container.innerHTML = '';
-
-    const heading = document.createElement('div');
-    heading.className = 'cw-mobile-list-heading';
-    heading.innerHTML = `<span>Visible courses</span><span>${courses.length}</span>`;
-    container.appendChild(heading);
-
-    const list = document.createElement('div');
-    list.className = 'cw-mobile-list-items';
-    container.appendChild(list);
-
-    for (const meta of courses) {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'cw-mobile-course';
-      button.dataset.cwId = meta.id;
-      button.setAttribute('aria-pressed', String(Boolean(localState.selectedId && meta.id === localState.selectedId)));
-      button.innerHTML = `
-        <span class="cw-mobile-course-code">${escapeHtml(meta.code || 'Course')}</span>
-        <span class="cw-mobile-course-main">
-          <span class="cw-mobile-course-name">${escapeHtml(meta.name)}</span>
-          <span class="cw-mobile-course-meta">${escapeHtml([meta.year, meta.category].filter(Boolean).join(' · '))}</span>
-        </span>
-      `;
-      button.addEventListener('click', () => onSelect(meta.id, { reveal: true }));
-      list.appendChild(button);
-    }
   }
 
   function clearEmptyState(container) {
@@ -907,11 +847,80 @@
     container.appendChild(empty);
   }
 
+  function renderMobileTileChart(container, courseMap, localState, handlers) {
+    const selectCourse = handlers && handlers.selectCourse ? handlers.selectCourse : () => {};
+    const clearSelection = handlers && handlers.clearSelection ? handlers.clearSelection : () => {};
+    const courses = visibleCourses(courseMap, localState);
+
+    if (!courses.length) {
+      renderEmptyState(container, localState);
+      if (mount) {
+        mount.classList.toggle('cw-focused', Boolean(localState.focusedSubject));
+        mount.classList.toggle('cw-filtering', hasActiveFilter(localState));
+      }
+      return { visibleCount: 0, subjectCount: 0 };
+    }
+
+    const chart = document.createElement('div');
+    chart.className = 'cw-mobile-chart';
+    chart.setAttribute('role', 'list');
+    chart.setAttribute('aria-label', 'Course tiles');
+
+    for (const meta of courses) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'cw-tile cw-mobile-chart-tile';
+      button.dataset.cwId = meta.id;
+      button.setAttribute('aria-pressed', String(Boolean(localState.selectedId && meta.id === localState.selectedId)));
+      button.setAttribute('aria-label', meta.full || meta.name);
+      button.style.setProperty('--cw-course-color', colourFor(meta.category));
+      button.style.setProperty('--cw-course-fill', ledgerTileFill(meta.category));
+      button.classList.toggle('is-selected', Boolean(localState.selectedId && meta.id === localState.selectedId));
+      button.innerHTML = `
+        <span class="cw-mobile-chart-code">${escapeHtml(meta.code || 'Course')}</span>
+        <span class="cw-mobile-chart-main">
+          <span class="cw-mobile-chart-name">${escapeHtml(meta.name)}</span>
+          <span class="cw-mobile-chart-meta">${escapeHtml([meta.year, meta.category].filter(Boolean).join(' · '))}</span>
+        </span>
+        <span class="cw-mobile-chart-detail">${escapeHtml(meta.description || 'Description coming soon.')}</span>
+      `;
+      button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (localState.selectedId === meta.id) {
+          clearSelection();
+        } else {
+          selectCourse(meta.id);
+        }
+      });
+      chart.appendChild(button);
+    }
+
+    chart.addEventListener('click', (event) => {
+      if (event.target === chart) clearSelection();
+    });
+
+    container.appendChild(chart);
+    if (mount) {
+      mount.classList.toggle('cw-focused', Boolean(localState.focusedSubject));
+      mount.classList.toggle('cw-filtering', hasActiveFilter(localState));
+    }
+
+    return {
+      visibleCount: courses.length,
+      subjectCount: new Set(courses.map((meta) => meta.category)).size,
+    };
+  }
+
   function renderTreemap(container, hierarchyData, courseMap, width, height, localState, handlers) {
     const selectCourse = handlers && handlers.selectCourse ? handlers.selectCourse : () => {};
     const clearSelection = handlers && handlers.clearSelection ? handlers.clearSelection : () => {};
-    clearSvg(container);
+    clearChart(container);
     clearEmptyState(container);
+
+    if (window.matchMedia('(max-width: 900px)').matches) {
+      return renderMobileTileChart(container, courseMap, localState, { selectCourse, clearSelection });
+    }
+
     const tooltip = ensureTooltip(container);
     hideTooltip(tooltip);
 
