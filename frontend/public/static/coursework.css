@@ -1676,3 +1676,150 @@ html[data-theme="dark"] .cw-tile-label {
     height: clamp(300px, 48vh, 405px);
   }
 }
+
+/* Palette pass: warm dark surfaces and calmer filter controls. */
+#cw-viz.cw {
+  --cw-chart-bg: color-mix(in srgb, var(--surface) 58%, var(--bg) 42%);
+  --cw-chart-line: color-mix(in srgb, var(--border) 76%, transparent 24%);
+  --cw-chart-grid-a: rgba(23, 21, 18, 0.024);
+  --cw-chart-grid-b: rgba(23, 21, 18, 0.018);
+  --cw-button-bg: color-mix(in srgb, var(--surface) 68%, var(--bg) 32%);
+  --cw-button-hover: color-mix(in srgb, var(--surface-2) 58%, var(--surface) 42%);
+  --cw-button-active: color-mix(in srgb, var(--accent-soft) 68%, var(--surface) 32%);
+  --cw-button-rule: color-mix(in srgb, var(--border) 82%, transparent 18%);
+}
+
+.cw-legend-btn,
+.cw-year-chip {
+  border: 1px solid var(--cw-button-rule);
+  border-radius: 999px;
+  background: var(--cw-button-bg);
+  padding: 0.44rem 0.72rem;
+  color: var(--cw-muted);
+}
+
+.cw-legend-btn:hover,
+.cw-year-chip:hover,
+.cw-legend-btn:focus-visible,
+.cw-year-chip:focus-visible {
+  background: var(--cw-button-hover);
+  color: var(--cw-ink);
+  border-color: color-mix(in srgb, var(--cw-accent) 58%, var(--cw-rule) 42%);
+}
+
+.cw-legend-btn[aria-pressed="true"],
+.cw-year-chip[aria-pressed="true"] {
+  background: var(--cw-button-active);
+  color: var(--cw-ink);
+  border-color: color-mix(in srgb, var(--cw-accent) 64%, var(--cw-rule) 36%);
+}
+
+.cw-legend-btn[aria-pressed="true"]::after,
+.cw-year-chip[aria-pressed="true"]::after {
+  display: none;
+}
+
+.cw-legend-count,
+.cw-year-count {
+  color: color-mix(in srgb, var(--cw-muted) 78%, transparent 22%);
+  background: transparent;
+  border: 0;
+}
+
+.cw-legend-swatch {
+  border-radius: 0.18rem;
+}
+
+html[data-theme="dark"] #cw-viz.cw {
+  --cw-chart-bg: color-mix(in srgb, var(--surface) 68%, var(--bg) 32%);
+  --cw-chart-line: color-mix(in srgb, var(--border) 90%, transparent 10%);
+  --cw-chart-grid-a: rgba(236, 232, 220, 0.026);
+  --cw-chart-grid-b: rgba(236, 232, 220, 0.018);
+  --cw-button-bg: color-mix(in srgb, var(--surface) 72%, var(--bg) 28%);
+  --cw-button-hover: color-mix(in srgb, var(--surface-2) 54%, var(--surface) 46%);
+  --cw-button-active: color-mix(in srgb, var(--accent-soft) 62%, var(--surface) 38%);
+  --cw-button-rule: color-mix(in srgb, var(--border) 86%, transparent 14%);
+}
+
+html[data-theme="dark"] .cw-figure,
+html[data-theme="dark"] .cw-details-card,
+html[data-theme="dark"] .cw-legend-btn,
+html[data-theme="dark"] .cw-year-chip,
+html[data-theme="dark"] .cw-search input {
+  background: transparent;
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .cw-figure,
+html[data-theme="dark"] .cw-details-card,
+html[data-theme="dark"] .cw-search input,
+html[data-theme="dark"] .cw .viz-canvas {
+  border-color: var(--cw-rule);
+}
+
+html[data-theme="dark"] .cw .viz-canvas {
+  box-shadow: none;
+}
+
+html[data-theme="dark"] .cw-legend-btn,
+html[data-theme="dark"] .cw-year-chip {
+  background: var(--cw-button-bg);
+  border-color: var(--cw-button-rule);
+}
+
+html[data-theme="dark"] .cw-legend-btn:hover,
+html[data-theme="dark"] .cw-year-chip:hover,
+html[data-theme="dark"] .cw-legend-btn:focus-visible,
+html[data-theme="dark"] .cw-year-chip:focus-visible {
+  background: var(--cw-button-hover);
+  border-color: color-mix(in srgb, var(--cw-accent) 52%, var(--cw-rule) 48%);
+}
+
+html[data-theme="dark"] .cw-legend-btn[aria-pressed="true"],
+html[data-theme="dark"] .cw-year-chip[aria-pressed="true"] {
+  background: var(--cw-button-active);
+  border-color: color-mix(in srgb, var(--cw-accent) 58%, var(--cw-rule) 42%);
+}
+
+html[data-theme="dark"] .cw-legend-count,
+html[data-theme="dark"] .cw-year-count {
+  background: transparent;
+  border: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) #cw-viz.cw {
+    --cw-chart-bg: color-mix(in srgb, var(--surface) 68%, var(--bg) 32%);
+    --cw-chart-line: color-mix(in srgb, var(--border) 90%, transparent 10%);
+    --cw-chart-grid-a: rgba(236, 232, 220, 0.026);
+    --cw-chart-grid-b: rgba(236, 232, 220, 0.018);
+    --cw-button-bg: color-mix(in srgb, var(--surface) 72%, var(--bg) 28%);
+    --cw-button-hover: color-mix(in srgb, var(--surface-2) 54%, var(--surface) 46%);
+    --cw-button-active: color-mix(in srgb, var(--accent-soft) 62%, var(--surface) 38%);
+    --cw-button-rule: color-mix(in srgb, var(--border) 86%, transparent 14%);
+  }
+
+  html:not([data-theme="light"]) .cw-figure,
+  html:not([data-theme="light"]) .cw-details-card,
+  html:not([data-theme="light"]) .cw-search input {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  html:not([data-theme="light"]) .cw-figure,
+  html:not([data-theme="light"]) .cw-details-card,
+  html:not([data-theme="light"]) .cw-search input,
+  html:not([data-theme="light"]) .cw .viz-canvas {
+    border-color: var(--cw-rule);
+  }
+
+  html:not([data-theme="light"]) .cw .viz-canvas {
+    box-shadow: none;
+  }
+
+  html:not([data-theme="light"]) .cw-legend-btn,
+  html:not([data-theme="light"]) .cw-year-chip {
+    background: var(--cw-button-bg);
+    border-color: var(--cw-button-rule);
+  }
+}
