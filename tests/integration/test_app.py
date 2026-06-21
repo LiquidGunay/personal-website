@@ -31,12 +31,18 @@ def test_get_post_api_404():
     assert r.status_code == 404
 
 
-def test_get_about_page_content_api():
-    r = client.get("/api/page/about")
+def test_get_home_page_content_api():
+    r = client.get("/api/page/home")
     assert r.status_code == 200
     body = r.json()
-    assert body["slug"] == "about"
+    assert body["slug"] == "home"
     assert body["title"] == "Gunay Soni"
+
+
+def test_about_route_redirects_home():
+    r = client.get("/about", follow_redirects=False)
+    assert r.status_code == 308
+    assert r.headers["location"] == "/"
 
 
 def test_coursework_api():

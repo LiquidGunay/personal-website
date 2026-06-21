@@ -3,7 +3,7 @@ import path from "node:path";
 import { CourseworkAssets } from "@/components/CourseworkAssets";
 import { loadPage } from "@/lib/content";
 
-const COURSEWORK_ASSET_VERSION = "20260621-3";
+const COURSEWORK_ASSET_VERSION = "20260621-4";
 
 interface CourseNode {
   id?: string;
@@ -136,6 +136,12 @@ export default function CourseworkPage() {
               <div className="cw-legend" data-cw-legend aria-label="Subject legend" />
             </figcaption>
             <div className="viz-canvas" data-viz="treemap" aria-label="Coursework treemap" />
+            <div className="cw-mobile-panel" data-cw-mobile-panel>
+              <div className="cw-mobile-selection" data-cw-mobile-details aria-live="polite">
+                <p className="cw-details-empty">Select a course.</p>
+              </div>
+              <div className="cw-mobile-list" data-cw-mobile-list aria-label="Visible courses" />
+            </div>
             <div className="cw-toolbar" aria-label="Coursework controls">
               <label className="cw-search" htmlFor="cw-search-input">
                 <span>Find a course</span>

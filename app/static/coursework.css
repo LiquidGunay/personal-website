@@ -1832,3 +1832,150 @@ html[data-theme="dark"] .cw-year-count {
   stroke-width: 0;
   text-shadow: none;
 }
+
+/* Mobile coursework pass: make tap selection readable without relying on tiny tile labels or hover bubbles. */
+.cw-mobile-panel {
+  display: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cw-tooltip {
+    display: none !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .cw-layout {
+    gap: 0.9rem;
+  }
+
+  .cw-caption {
+    gap: 0.55rem;
+  }
+
+  .cw .viz-canvas {
+    height: clamp(280px, 42vh, 360px);
+    margin: 0.45rem 0 0;
+  }
+
+  .cw-tile-label {
+    display: none;
+  }
+
+  .cw-mobile-panel {
+    display: grid;
+    gap: 0.75rem;
+    padding: 0.75rem 0 0.85rem;
+    border-bottom: 1px solid var(--cw-rule);
+  }
+
+  .cw-details {
+    display: none;
+  }
+
+  .cw-mobile-selection {
+    min-width: 0;
+    border: 1px solid var(--cw-rule);
+    background: color-mix(in srgb, var(--surface) 54%, var(--bg) 46%);
+    padding: 0.78rem;
+  }
+
+  html[data-theme="dark"] .cw-mobile-selection {
+    background: color-mix(in srgb, var(--surface) 68%, var(--bg) 32%);
+  }
+
+  .cw-mobile-selection .cw-details-empty {
+    margin: 0;
+  }
+
+  .cw-mobile-selection .cw-detail-title {
+    font-size: clamp(1.08rem, 5vw, 1.28rem);
+  }
+
+  .cw-mobile-selection .cw-detail-section {
+    padding-top: 0.68rem;
+  }
+
+  .cw-mobile-list {
+    display: grid;
+    gap: 0.45rem;
+    min-width: 0;
+  }
+
+  .cw-mobile-list-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.8rem;
+    color: var(--cw-muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .cw-mobile-list-items {
+    display: grid;
+    max-height: clamp(13rem, 36vh, 19rem);
+    overflow: auto;
+    border-block: 1px solid var(--cw-rule);
+    scrollbar-width: thin;
+  }
+
+  .cw-mobile-course {
+    display: grid;
+    grid-template-columns: minmax(4.2rem, 0.34fr) minmax(0, 1fr);
+    gap: 0.7rem;
+    align-items: baseline;
+    width: 100%;
+    min-height: 44px;
+    border: 0;
+    border-bottom: 1px solid color-mix(in srgb, var(--cw-rule) 72%, transparent 28%);
+    background: transparent;
+    color: var(--cw-ink);
+    padding: 0.62rem 0;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .cw-mobile-course:last-child {
+    border-bottom: 0;
+  }
+
+  .cw-mobile-course[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--accent-soft) 54%, transparent 46%);
+  }
+
+  .cw-mobile-course-code {
+    color: var(--accent-2);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .cw-mobile-course-main {
+    min-width: 0;
+    display: grid;
+    gap: 0.16rem;
+  }
+
+  .cw-mobile-course-name {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+
+  .cw-mobile-course-meta {
+    color: var(--cw-muted);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+
+  .cw-toolbar {
+    border-top: 0;
+    padding-top: 0.7rem;
+  }
+}

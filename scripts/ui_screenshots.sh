@@ -62,7 +62,6 @@ SCHEMES=("light" "dark")
 
 ROUTES=(
   "/:home"
-  "/about:about"
   "/blog:blog"
   "/blog/semantic-entropy-probe-comparison:semantic-entropy-probe-comparison"
   "/coursework:coursework"
@@ -70,7 +69,6 @@ ROUTES=(
 
 declare -A WAIT_SELECTOR
 WAIT_SELECTOR["/"]="#content"
-WAIT_SELECTOR["/about"]="#content"
 WAIT_SELECTOR["/blog"]="#content"
 WAIT_SELECTOR["/blog/semantic-entropy-probe-comparison"]="#content"
 WAIT_SELECTOR["/coursework"]="#cw-viz"

@@ -66,6 +66,10 @@
     return isDarkMode() ? '#11130f' : '#f7f5ee';
   }
 
+  function isCoarsePointer() {
+    return window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches;
+  }
+
   const state = {
     selectedId: null,
     focusedSubject: null,
@@ -90,12 +94,17 @@
     const yearsEl = mount.querySelector('[data-cw-years]');
     const statsEl = mount.querySelector('[data-cw-stats]');
     const detailsEl = mount.querySelector('[data-cw-details]');
+    const mobileDetailsEl = mount.querySelector('[data-cw-mobile-details]');
+    const mobileListEl = mount.querySelector('[data-cw-mobile-list]');
     const clearBtn = mount.querySelector('[data-cw-clear]');
 
     if (!treemapEl) return;
 
     if (detailsEl) {
       detailsEl.setAttribute('aria-live', 'polite');
+    }
+    if (mobileDetailsEl) {
+      mobileDetailsEl.setAttribute('aria-live', 'polite');
     }
 
     const subjects = (data.hierarchy && Array.isArray(data.hierarchy.children) ? data.hierarchy.children : [])
@@ -111,12 +120,39 @@
       }
     };
 
+    const renderAllDetails = (meta) => {
+      renderDetails(detailsEl, meta);
+      renderDetails(mobileDetailsEl, meta);
+    };
+
+    const updateMobileList = () => {
+      renderMobileCourseList(mobileListEl, courseMap, state, (id, options) => selectCourse(id, options));
+    };
+
+    const selectCourse = (id, options = {}) => {
+      state.selectedId = id;
+      const selectedMeta = id ? courseMap.get(id) : null;
+      syncClearButton(clearBtn, state.selectedId);
+      updateSelection(treemapEl, state.selectedId);
+      renderAllDetails(selectedMeta);
+      updateMobileListSelection(mobileListEl, state.selectedId);
+      if (options.reveal) revealDetailsOnStackedLayout(detailsEl, mobileDetailsEl);
+    };
+
+    const clearSelection = () => {
+      state.selectedId = null;
+      syncClearButton(clearBtn, state.selectedId);
+      updateSelection(treemapEl, state.selectedId);
+      renderAllDetails(null);
+      updateMobileListSelection(mobileListEl, state.selectedId);
+    };
+
     if (legendEl) {
       renderLegend(legendEl, subjects, courseMap, state, (subject) => {
         state.focusedSubject = subject;
         normalizeSelection();
         syncClearButton(clearBtn, state.selectedId);
-        renderDetails(detailsEl, state.selectedId ? courseMap.get(state.selectedId) : null);
+        renderAllDetails(state.selectedId ? courseMap.get(state.selectedId) : null);
         render(true);
       });
     }
@@ -126,7 +162,7 @@
         state.yearFilter = yearToken;
         normalizeSelection();
         syncClearButton(clearBtn, state.selectedId);
-        renderDetails(detailsEl, state.selectedId ? courseMap.get(state.selectedId) : null);
+        renderAllDetails(state.selectedId ? courseMap.get(state.selectedId) : null);
         render(true);
       });
     }
@@ -138,7 +174,7 @@
           state.query = searchEl.value.trim().toLowerCase();
           normalizeSelection();
           syncClearButton(clearBtn, state.selectedId);
-          renderDetails(detailsEl, state.selectedId ? courseMap.get(state.selectedId) : null);
+          renderAllDetails(state.selectedId ? courseMap.get(state.selectedId) : null);
           render(true);
         }, 90),
       );
@@ -146,15 +182,13 @@
 
     if (clearBtn) {
       clearBtn.addEventListener('click', () => {
-        state.selectedId = null;
-        syncClearButton(clearBtn, state.selectedId);
-        renderDetails(detailsEl, null);
-        updateSelection(treemapEl, state.selectedId);
+        clearSelection();
       });
     }
 
     syncClearButton(clearBtn, state.selectedId);
-    renderDetails(detailsEl, null);
+    renderAllDetails(null);
+    updateMobileList();
 
     let lastWidth = 0;
     let lastHeight = 0;
@@ -173,8 +207,9 @@
       const signature = `${state.focusedSubject || ''}|${state.yearFilter || ''}|${state.query || ''}`;
       const signatureChanged = signature !== lastSignature;
       if (!force && !signatureChanged && Math.abs(width - lastWidth) < 4 && Math.abs(height - lastHeight) < 4) return;
-      const summary = renderTreemap(treemapEl, data.hierarchy, courseMap, detailsEl, clearBtn, width, height, state);
+      const summary = renderTreemap(treemapEl, data.hierarchy, courseMap, width, height, state, { selectCourse, clearSelection });
       renderStats(statsEl, summary, courseMap.size, state);
+      updateMobileList();
       lastWidth = width;
       lastHeight = height;
       lastSignature = signature;
@@ -737,12 +772,16 @@
     button.hidden = !selectedId;
   }
 
-  function revealDetailsOnStackedLayout(detailsEl) {
-    if (!detailsEl || !window.matchMedia('(max-width: 1120px)').matches) return;
-    const target = detailsEl.closest('.cw-details') || detailsEl;
+  function revealDetailsOnStackedLayout(detailsEl, mobileDetailsEl) {
+    const useMobileTarget = mobileDetailsEl && window.matchMedia('(max-width: 760px)').matches;
+    const target = useMobileTarget
+      ? mobileDetailsEl.closest('.cw-mobile-panel') || mobileDetailsEl
+      : detailsEl && (detailsEl.closest('.cw-details') || detailsEl);
+    if (!target) return;
+    if (!useMobileTarget && !window.matchMedia('(max-width: 1120px)').matches) return;
     window.requestAnimationFrame(() => {
       const rect = target.getBoundingClientRect();
-      if (rect.top < 0 || rect.top > window.innerHeight * 0.72) {
+      if (rect.top < 0 || rect.top > window.innerHeight * 0.68) {
         target.scrollIntoView({ block: 'start', behavior: 'smooth' });
       }
     });
@@ -794,6 +833,61 @@
     }
   }
 
+  function courseRank(meta) {
+    const token = meta && meta.yearToken ? String(meta.yearToken) : '';
+    const match = token.match(/(\d{1,2})/);
+    const number = match ? Number.parseInt(match[1], 10) : 99;
+    const subject = meta && meta.category ? meta.category : '';
+    const code = meta && meta.code ? meta.code : meta.name || '';
+    return `${String(number).padStart(2, '0')}|${subject}|${code}`;
+  }
+
+  function visibleCourses(courseMap, localState) {
+    return [...courseMap.values()]
+      .filter((meta) => isMetaVisible(meta, localState))
+      .sort((a, b) => courseRank(a).localeCompare(courseRank(b)));
+  }
+
+  function updateMobileListSelection(container, selectedId) {
+    if (!container) return;
+    for (const button of container.querySelectorAll('.cw-mobile-course')) {
+      const id = button.getAttribute('data-cw-id');
+      button.setAttribute('aria-pressed', String(Boolean(selectedId && id === selectedId)));
+    }
+  }
+
+  function renderMobileCourseList(container, courseMap, localState, onSelect) {
+    if (!container) return;
+    const courses = visibleCourses(courseMap, localState);
+    container.innerHTML = '';
+
+    const heading = document.createElement('div');
+    heading.className = 'cw-mobile-list-heading';
+    heading.innerHTML = `<span>Visible courses</span><span>${courses.length}</span>`;
+    container.appendChild(heading);
+
+    const list = document.createElement('div');
+    list.className = 'cw-mobile-list-items';
+    container.appendChild(list);
+
+    for (const meta of courses) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'cw-mobile-course';
+      button.dataset.cwId = meta.id;
+      button.setAttribute('aria-pressed', String(Boolean(localState.selectedId && meta.id === localState.selectedId)));
+      button.innerHTML = `
+        <span class="cw-mobile-course-code">${escapeHtml(meta.code || 'Course')}</span>
+        <span class="cw-mobile-course-main">
+          <span class="cw-mobile-course-name">${escapeHtml(meta.name)}</span>
+          <span class="cw-mobile-course-meta">${escapeHtml([meta.year, meta.category].filter(Boolean).join(' · '))}</span>
+        </span>
+      `;
+      button.addEventListener('click', () => onSelect(meta.id, { reveal: true }));
+      list.appendChild(button);
+    }
+  }
+
   function clearEmptyState(container) {
     const empty = container.querySelector('.cw-empty-state');
     if (empty) empty.remove();
@@ -811,7 +905,9 @@
     container.appendChild(empty);
   }
 
-  function renderTreemap(container, hierarchyData, courseMap, detailsEl, clearBtn, width, height, localState) {
+  function renderTreemap(container, hierarchyData, courseMap, width, height, localState, handlers) {
+    const selectCourse = handlers && handlers.selectCourse ? handlers.selectCourse : () => {};
+    const clearSelection = handlers && handlers.clearSelection ? handlers.clearSelection : () => {};
     clearSvg(container);
     clearEmptyState(container);
     const tooltip = ensureTooltip(container);
@@ -930,6 +1026,7 @@
         return Boolean(localState.selectedId && id === localState.selectedId);
       })
       .on('mouseenter', (event, d) => {
+        if (isCoarsePointer()) return;
         const id = d.data.id || d.data.code || d.data.name;
         const meta = courseMap.get(id);
         const html = formatCourseTooltip(meta);
@@ -939,6 +1036,7 @@
       })
       .on('mouseleave', () => hideTooltip(tooltip))
       .on('focus', (event, d) => {
+        if (isCoarsePointer()) return;
         const id = d.data.id || d.data.code || d.data.name;
         const meta = courseMap.get(id);
         const html = formatCourseTooltip(meta);
@@ -951,19 +1049,12 @@
         event.stopPropagation();
         hideTooltip(tooltip);
         const id = d.data.id || d.data.code || d.data.name;
-        localState.selectedId = id;
-        syncClearButton(clearBtn, localState.selectedId);
-        updateSelection(container, localState.selectedId);
-        renderDetails(detailsEl, courseMap.get(id));
-        revealDetailsOnStackedLayout(detailsEl);
+        selectCourse(id, { reveal: true });
       })
       .on('keydown', (event, d) => {
         const key = event.key;
         if (key === 'Escape') {
-          localState.selectedId = null;
-          syncClearButton(clearBtn, localState.selectedId);
-          updateSelection(container, localState.selectedId);
-          renderDetails(detailsEl, null);
+          clearSelection();
           hideTooltip(tooltip);
           return;
         }
@@ -972,11 +1063,7 @@
         event.stopPropagation();
         hideTooltip(tooltip);
         const id = d.data.id || d.data.code || d.data.name;
-        localState.selectedId = id;
-        syncClearButton(clearBtn, localState.selectedId);
-        updateSelection(container, localState.selectedId);
-        renderDetails(detailsEl, courseMap.get(id));
-        revealDetailsOnStackedLayout(detailsEl);
+        selectCourse(id, { reveal: true });
       });
 
     tiles.attr('opacity', 1).attr('transform', 'translate(0, 0)');
@@ -1031,10 +1118,7 @@
 
     svg.on('click', () => {
       hideTooltip(tooltip);
-      localState.selectedId = null;
-      syncClearButton(clearBtn, localState.selectedId);
-      updateSelection(container, localState.selectedId);
-      renderDetails(detailsEl, null);
+      clearSelection();
     });
 
     return {

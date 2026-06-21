@@ -6,7 +6,7 @@ This repository now uses a React + Next.js frontend with a Python/FastAPI backen
 
 - React/Next.js app: `frontend/` (App Router, TypeScript)
 - API + static coordinator: `app/main.py`
-- Content: `content/posts/<slug>/index.md` and `content/pages/*.md`
+- Content: `content/posts/<slug>/index.md` and `content/pages/home.md`
 
 ## Content model
 
@@ -87,7 +87,7 @@ SEO/utility endpoints still served by FastAPI:
    - `npm --prefix frontend run build`
 2. Start backend-only host:
    - `uv run uvicorn app.main:app --host 127.0.0.1 --port 8000`
-3. Backend serves `frontend/out` for frontend routes (`/`, `/about`, `/blog`, `/coursework`) and keeps JSON APIs on `/api/*`.
+3. Backend serves `frontend/out` for frontend routes (`/`, `/blog`, `/coursework`) and keeps JSON APIs on `/api/*`; `/about` redirects to `/`.
 
 ## Validation
 
@@ -98,4 +98,4 @@ SEO/utility endpoints still served by FastAPI:
 - Visual checks:
   - `scripts/ui_screenshots.sh`
 
-`scripts/ui_screenshots.sh` captures `/`, `/about`, `/blog`, a sample post, and `/coursework` at desktop/tablet/mobile sizes in light and dark mode.
+`scripts/ui_screenshots.sh` captures `/`, `/blog`, a sample post, and `/coursework` at desktop/tablet/mobile sizes in light and dark mode.

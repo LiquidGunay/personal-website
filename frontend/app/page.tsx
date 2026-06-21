@@ -45,11 +45,18 @@ export default function HomePage() {
             <ReactMarkdown>{heroTagline}</ReactMarkdown>
           </div>
         </div>
-        {currentNote ? (
-          <div className="home-hero__note">
-            <ReactMarkdown>{currentNote}</ReactMarkdown>
+        <div className="home-hero__aside">
+          <div className="home-hero__signal" aria-hidden="true">
+            <span />
+            <span />
+            <span />
           </div>
-        ) : null}
+          {currentNote ? (
+            <div className="home-hero__note">
+              <ReactMarkdown>{currentNote}</ReactMarkdown>
+            </div>
+          ) : null}
+        </div>
       </section>
 
       <section className="home-background" aria-label="Background">

@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, RedirectResponse, Response
 
 from .services.content import Page, Post, get_page, get_post_by_slug, list_posts
 from .services.rss import render_rss
@@ -143,8 +143,9 @@ def llms_txt() -> Response:
 
 
 @app.get("/about", include_in_schema=False)
+@app.get("/about/", include_in_schema=False)
 def about() -> Response:
-    return _serve_frontend("about")
+    return RedirectResponse(url="/", status_code=308)
 
 
 @app.get("/blog", include_in_schema=False)

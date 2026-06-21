@@ -1,12 +1,8 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { PrimaryNav } from "@/components/PrimaryNav";
 import { ThemeToggle } from "@/components/ThemeToggle";
-
-const navItems = [
-  { href: "/", label: "Home" },
-  { href: "/coursework", label: "Coursework" },
-];
 
 export function SiteShell({ children }: { children: ReactNode }) {
   return (
@@ -19,13 +15,7 @@ export function SiteShell({ children }: { children: ReactNode }) {
           Gunay Soni
         </Link>
         <div className="site-header__actions">
-          <nav aria-label="Primary">
-            {navItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <PrimaryNav />
           <ThemeToggle />
         </div>
       </header>
