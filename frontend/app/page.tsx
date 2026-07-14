@@ -38,24 +38,21 @@ export default function HomePage() {
 
   return (
     <section className="home-shell">
-      <section className={currentNote ? "home-hero home-hero--with-aside" : "home-hero"} aria-labelledby="home-title">
+      <section className="home-hero" aria-labelledby="home-title">
         <div className="home-hero__intro">
           <h1 id="home-title">{heroTitle}</h1>
           <div className="home-hero__tagline">
             <ReactMarkdown>{heroTagline}</ReactMarkdown>
           </div>
         </div>
-        {currentNote ? (
-          <div className="home-hero__aside">
+        <div className="home-hero__summary">
+          <ReactMarkdown>{background}</ReactMarkdown>
+          {currentNote ? (
             <div className="home-hero__note">
               <ReactMarkdown>{currentNote}</ReactMarkdown>
             </div>
-          </div>
-        ) : null}
-      </section>
-
-      <section className="home-background" aria-label="Background">
-        <ReactMarkdown>{background}</ReactMarkdown>
+          ) : null}
+        </div>
       </section>
 
       <section className="home-section" aria-labelledby="home-questions-title">

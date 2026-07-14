@@ -6,6 +6,9 @@ import { SiteShell } from "@/components/SiteShell";
 export const metadata: Metadata = {
   title: "Gunay Soni",
   description: "Technical writing and research notes on uncertainty-aware machine learning systems.",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 const themeInitScript = `(() => {

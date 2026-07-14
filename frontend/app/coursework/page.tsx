@@ -120,8 +120,8 @@ export default function CourseworkPage() {
             <dd>{subjectCount}</dd>
           </div>
           <div>
-            <dt>View</dt>
-            <dd>Treemap</dd>
+            <dt>Semesters</dt>
+            <dd>{yearGroups.length}</dd>
           </div>
         </dl>
       </header>

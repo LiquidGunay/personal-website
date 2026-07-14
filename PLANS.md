@@ -1,5 +1,26 @@
 # Plans
 
+## UI audit and polish - 2026-07-11
+
+- [x] Capture current desktop, tablet, and mobile screenshots before changing the UI.
+- [x] Tighten text hierarchy, placement, and whitespace across the shared shell, home, blog, and coursework views.
+- [x] Re-run type, backend, and responsive screenshot checks; record the audit outcome.
+
+Audit outcome: desktop, tablet, and mobile layouts remain readable in both themes. The coursework screenshot wait now verifies its rendered desktop treemap or mobile tile list, rather than the empty mount container.
+
+## Homepage First-Viewport Correction - 2026-07-11
+
+- [x] Move the homepage summary into the desktop hero to use its empty right-hand space.
+- [x] Reduce the hero's vertical footprint and remove the repeated full-name header mark.
+- [x] Verify the 1280x800 homepage shows the summary and start of the current-questions section without scrolling.
+
+Outcome: the desktop hero now uses the available second column for the full background summary. The current-questions section, including all three prompts, is visible in the first 1280x800 viewport.
+
+## Browser Icon - 2026-07-11
+
+- [x] Remove the header monogram now that the homepage identity is prominent.
+- [x] Generate and add a binary-data black-hole favicon for browser tabs.
+
 ## Design direction update - 2026-06-11
 
 - Homepage direction: combine the "Editorial Field Notes" mockup with restrained "Visual Garden" texture. Keep the home page text-forward, readable, and personal rather than turning it into a portfolio dashboard.

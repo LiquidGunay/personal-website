@@ -165,7 +165,7 @@ a:hover {
   top: 0.85rem;
   z-index: 4;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   gap: 1rem;
   padding: 0.55rem 0;
@@ -326,21 +326,17 @@ code {
 
 .home-shell {
   display: grid;
-  gap: clamp(1.4rem, 3vw, 2.8rem);
+  gap: clamp(1.2rem, 2.2vw, 2rem);
 }
 
 .home-hero {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: clamp(1.25rem, 4vw, 3.4rem);
+  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(1.8rem, 5vw, 5rem);
   align-items: end;
-  padding: clamp(2.7rem, 7.5vw, 6.25rem) 0 clamp(1.35rem, 3.5vw, 2.6rem);
+  padding: clamp(1.7rem, 4vw, 3.25rem) 0 clamp(1.15rem, 2.2vw, 1.65rem);
   border-bottom: 1px solid var(--border);
-}
-
-.home-hero--with-aside {
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 320px);
 }
 
 .home-hero::before,
@@ -375,7 +371,7 @@ code {
   margin: 0;
   max-width: 11ch;
   font-family: var(--font-serif);
-  font-size: clamp(3rem, 7.2vw, 6.4rem);
+  font-size: clamp(3rem, 5.8vw, 5.3rem);
   line-height: 0.92;
   letter-spacing: 0;
   font-weight: 650;
@@ -389,10 +385,19 @@ code {
   font-size: clamp(1.02rem, 0.8vw + 0.95rem, 1.18rem);
 }
 
-.home-hero__aside {
+.home-hero__summary {
   min-width: 0;
   display: grid;
-  gap: clamp(0.85rem, 1.6vw, 1.2rem);
+  gap: clamp(0.8rem, 1.5vw, 1rem);
+}
+
+.home-hero__summary > p {
+  margin: 0;
+  max-width: 43rem;
+  color: color-mix(in srgb, var(--text) 84%, transparent 16%);
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 0.65vw + 0.98rem, 1.48rem);
+  line-height: 1.38;
 }
 
 .home-hero__note {
@@ -441,30 +446,14 @@ code {
   color: var(--bg);
 }
 
-.home-background {
-  max-width: 72ch;
-  padding: clamp(1.1rem, 2.4vw, 1.8rem) 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.home-background p {
-  margin: 0;
-  color: color-mix(in srgb, var(--text) 84%, transparent 16%);
-  font-family: var(--font-serif);
-  font-size: clamp(1.18rem, 0.95vw + 1rem, 1.72rem);
-  line-height: 1.42;
-}
-
 .home-hero__tagline p,
 .home-hero__note p,
-.home-background p,
 .home-question p {
   margin: 0;
 }
 
 .home-hero__tagline strong,
 .home-hero__note strong,
-.home-background strong,
 .home-question strong {
   color: var(--text);
   font-weight: 750;
@@ -472,7 +461,6 @@ code {
 
 .home-hero__tagline em,
 .home-hero__note em,
-.home-background em,
 .home-question em {
   color: var(--accent);
   font-style: italic;
@@ -485,7 +473,7 @@ code {
 
 .home-section h2 {
   margin: 0;
-  max-width: 20ch;
+  max-width: 34ch;
   font-family: var(--font-serif);
   font-size: clamp(1.65rem, 3vw, 2.65rem);
   line-height: 1.05;
@@ -502,8 +490,8 @@ code {
   min-width: 0;
   display: grid;
   align-content: start;
-  gap: clamp(1.8rem, 6vw, 5rem);
-  min-height: clamp(13rem, 22vw, 18rem);
+  gap: clamp(1.4rem, 3.5vw, 2.8rem);
+  min-height: clamp(11.5rem, 16vw, 15rem);
   padding: clamp(0.95rem, 2vw, 1.35rem);
   border-right: 1px solid var(--border);
 }
@@ -626,10 +614,25 @@ code {
 }
 
 .blog-paused {
-  min-height: 42vh;
-  align-content: center;
+  min-height: clamp(15rem, 34vh, 23rem);
+  align-content: start;
   border-block: 1px solid var(--border);
-  padding: clamp(2rem, 7vw, 5rem) 0;
+  padding: clamp(1.5rem, 5vw, 3.5rem) 0;
+}
+
+.blog-paused > header {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.blog-paused > header h1 {
+  max-width: 16ch;
+}
+
+.blog-paused__intro {
+  margin: 0;
+  max-width: 52ch;
+  font-size: clamp(1rem, 0.4vw + 0.92rem, 1.1rem);
 }
 
 .blog-index > header h1,
@@ -922,6 +925,10 @@ code {
   .home-questions,
   .home-quotes {
     grid-template-columns: 1fr;
+  }
+
+  .home-hero__summary {
+    max-width: 46rem;
   }
 
   .home-hero h1,

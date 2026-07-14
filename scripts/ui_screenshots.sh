@@ -71,7 +71,7 @@ declare -A WAIT_SELECTOR
 WAIT_SELECTOR["/"]="#content"
 WAIT_SELECTOR["/blog"]="#content"
 WAIT_SELECTOR["/blog/semantic-entropy-probe-comparison"]="#content"
-WAIT_SELECTOR["/coursework"]="#cw-viz"
+WAIT_SELECTOR["/coursework"]=".viz-canvas svg, .cw-mobile-chart"
 
 capture() {
   local route="$1"

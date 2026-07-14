@@ -11,7 +11,9 @@ export default function BlogIndexPage() {
   return (
     <section className="blog-index blog-paused">
       <header>
+        <p className="eyebrow">Notebook</p>
         <h1>{blogStatus}</h1>
+        <p className="blog-paused__intro">Research notes and technical writing are in progress.</p>
       </header>
     </section>
   );
